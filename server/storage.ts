@@ -160,7 +160,18 @@ export class DatabaseStorage implements IStorage {
   async getOrCreateDeathCause(name: string, categoryId: number, qid?: string): Promise<DeathCause> {
     if (qid) {
       const [existing] = await db.select().from(deathCauses).where(eq(deathCauses.qid, qid));
-      if (existing) return existing;
+      if (existing) {
+        // Update category if it changed (handles recategorization)
+        if (existing.categoryId !== categoryId) {
+          console.log(`Updating death cause "${existing.name}" category: ${existing.categoryId} -> ${categoryId}`);
+          const [updated] = await db.update(deathCauses)
+            .set({ categoryId })
+            .where(eq(deathCauses.id, existing.id))
+            .returning();
+          return updated;
+        }
+        return existing;
+      }
     }
 
     const [deathCause] = await db.insert(deathCauses)
