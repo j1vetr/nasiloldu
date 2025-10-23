@@ -68,13 +68,18 @@ Wikidata verilerine dayalı, tamamen Türkçe, kapsamlı ve güncel ünlü ölü
 - Türkçe capitalization (i→İ) için shared utils fonksiyonu
 
 ## Mevcut Veri Durumu
-**Toplam: 36 kişi**
-- **Hastalık**: 34 kişi
-- **Suikast**: 2 kişi (Adnan Menderes, Nihat Erim)
+**Toplam: 63 kişi**
+- **Hastalık**: 42 kişi
+- **Suikast**: 19 kişi
+- **Kaza**: 2 kişi
 
-**Türk Siyasetçiler (25 kişi):**
-- **Cumhurbaşkanları (9)**: Mustafa Kemal Atatürk, İsmet İnönü, Celal Bayar, Cemal Gürsel, Cevdet Sunay, Fahri Korutürk, Kenan Evren, Turgut Özal, Süleyman Demirel
-- **Başbakanlar (16)**: Adnan Menderes (suikast), Bülent Ecevit, Necmettin Erbakan, Nihat Erim (suikast), Ali Fethi Okyar, Refik Saydam, Şükrü Saracoğlu, Recep Peker, Hasan Saka, Şemsettin Günaltay, Suat Hayri Ürgüplü, Ferit Melen, Naim Talu, Sadi Irmak, Yıldırım Akbulut, Mesut Yılmaz
+**Kategorilere Göre Dağılım:**
+- **Türk Siyasetçiler (25)**: 9 Cumhurbaşkanı + 16 Başbakan
+- **Gazeteciler/Yazarlar (9)**: Uğur Mumcu, Hrant Dink, Abdi İpekçi, Çetin Emeç, Metin Göktepe, Nilgün Marmara, Savaş Ay, Sebahattin Ali, Hasan Fehmi Bey
+- **Akademisyenler (6)**: Ahmet Taner Kışlalı, Bahriye Üçok, Muammer Aksoy, Necip Hablemitoğlu, Cavit Orhan Tütengil, Bedri Karafakioğlu
+- **Sanatçılar (8)**: Kemal Sunal, Ayhan Işık, Barış Akarsu, Kazım Koyuncu, Cenk Koray, Kerim Tekin, Onur Şener
+- **Sendikacı/Aktivist (4)**: Kemal Türkler, Ali İsmail Korkmaz, Ethem Sarısülük, Gaffar Okkan
+- **Diğer (11)**: Hikmet Kıvılcımlı, Turan Dursun, vb.
 
 ## Son Güncellemeler (23 Ekim 2025)
 - ✅ Temel schema tanımlandı (PostgreSQL + Drizzle ORM)
@@ -92,3 +97,7 @@ Wikidata verilerine dayalı, tamamen Türkçe, kapsamlı ve güncel ünlü ölü
 - ✅ Wikidata QID doğrulaması yapıldı (yanlış QID'ler düzeltildi)
 - ✅ Mobil responsive tasarım tamamlandı (Header Sheet menu, HomePage responsive breakpoints)
 - ✅ Emoji'ler lucide-react icon'larla değiştirildi (universal_design_guidelines uyumu)
+- ✅ 27 yeni kişi eklendi (19 suikast/cinayet kurbanı, 6 sanatçı, 2 diğer)
+- ✅ categorizeDeathCause fonksiyonu Türkçe locale desteği ile güncellendi (toLocaleLowerCase('tr-TR'))
+- ✅ Türkçe ölüm nedeni etiketleri eklendi (ateşli silah, bomba, kurşun, trafik kaza, vb.)
+- ✅ Kategori dağılımı düzeltildi: Hastalık 42, Suikast 19, Kaza 2

@@ -195,7 +195,8 @@ export async function fetchPersonsByQids(qids: string[]): Promise<WikidataPerson
 export function categorizeDeathCause(deathCauseLabel: string | null): string {
   if (!deathCauseLabel) return "hastalik";
   
-  const lowerLabel = deathCauseLabel.toLowerCase();
+  // Türkçe karakterleri doğru handle etmek için tr-TR locale kullan
+  const lowerLabel = deathCauseLabel.toLocaleLowerCase('tr-TR');
   
   // İntihar
   if (lowerLabel.includes("intihar") || lowerLabel.includes("suicide")) {
@@ -211,9 +212,10 @@ export function categorizeDeathCause(deathCauseLabel: string | null): string {
       lowerLabel.includes("hanged") || lowerLabel.includes("shot") ||
       lowerLabel.includes("ateşli silah") || lowerLabel.includes("kurşun") ||
       lowerLabel.includes("bomba") || lowerLabel.includes("bomb") ||
-      lowerLabel.includes("öldürme") || lowerLabel.includes("katil") ||
-      lowerLabel.includes("gunshot") || lowerLabel.includes("shooting") ||
-      lowerLabel.includes("asılma") || lowerLabel.includes("asıldı")) {
+      lowerLabel.includes("öldürme") || lowerLabel.includes("öldürüldü") ||
+      lowerLabel.includes("katil") || lowerLabel.includes("gunshot") || 
+      lowerLabel.includes("shooting") || lowerLabel.includes("asılma") || 
+      lowerLabel.includes("asıldı")) {
     return "suikast";
   }
   
