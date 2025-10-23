@@ -202,19 +202,25 @@ export function categorizeDeathCause(deathCauseLabel: string | null): string {
     return "intihar";
   }
   
-  // Suikast / İdam / Cinayet / Asılma
+  // Suikast / İdam / Cinayet / Asılma / Ateşli Silah
   if (lowerLabel.includes("suikast") || lowerLabel.includes("cinayet") || 
       lowerLabel.includes("assassination") || lowerLabel.includes("murder") ||
       lowerLabel.includes("murdered") || lowerLabel.includes("killed") ||
       lowerLabel.includes("idam") || lowerLabel.includes("execution") ||
       lowerLabel.includes("capital punishment") || lowerLabel.includes("hanging") ||
-      lowerLabel.includes("hanged") || lowerLabel.includes("shot")) {
+      lowerLabel.includes("hanged") || lowerLabel.includes("shot") ||
+      lowerLabel.includes("ateşli silah") || lowerLabel.includes("kurşun") ||
+      lowerLabel.includes("bomba") || lowerLabel.includes("bomb") ||
+      lowerLabel.includes("öldürme") || lowerLabel.includes("katil") ||
+      lowerLabel.includes("gunshot") || lowerLabel.includes("shooting") ||
+      lowerLabel.includes("asılma") || lowerLabel.includes("asıldı")) {
     return "suikast";
   }
   
   // Kaza
   if (lowerLabel.includes("kaza") || lowerLabel.includes("accident") ||
-      lowerLabel.includes("crash") || lowerLabel.includes("drowning")) {
+      lowerLabel.includes("crash") || lowerLabel.includes("drowning") ||
+      lowerLabel.includes("trafik")) {
     return "kaza";
   }
   
