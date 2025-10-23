@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import { Heart } from "lucide-react";
+import logoUrl from "@assets/logo nsl_1761194999380.png";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -45,13 +46,10 @@ export function Footer() {
           <div className="space-y-4">
             <Link href="/" className="inline-flex items-center gap-3 group" data-testid="link-footer-home">
               <img 
-                src="/favicon.png" 
+                src={logoUrl} 
                 alt="nasiloldu.net logo" 
-                className="w-10 h-10 transition-transform group-hover:scale-110"
+                className="h-10 w-auto transition-transform group-hover:scale-110"
               />
-              <h3 className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                nasiloldu.net
-              </h3>
             </Link>
             
             <p className="text-sm text-muted-foreground leading-relaxed">
