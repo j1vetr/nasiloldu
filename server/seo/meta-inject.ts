@@ -26,19 +26,21 @@ export async function generateMetaTags(url: string): Promise<MetaTags | null> {
   
   // Ana sayfa
   if (url === '/' || url === '') {
+    // Person count - dinamik olarak çekilebilir ama şimdilik static
+    const totalPersons = 236;
     return {
-      title: 'nasiloldu.net - Ünlü Kişiler Nasıl Öldü?',
-      description: 'Ünlü kişilerin ölüm nedenlerini, tarihlerini ve detaylarını keşfedin. Wikidata ve Wikipedia verilerine dayalı, kapsamlı ve güncel ölüm bilgileri platformu. 236+ ünlü kişi.',
+      title: 'Ünlü Kişiler Nasıl Öldü? | nasiloldu.net',
+      description: `${totalPersons}+ ünlü kişinin ölüm nedenlerini, tarihlerini ve detaylı hayat hikayelerini keşfedin. Wikidata ve Wikipedia verilerine dayalı, Türkçe, kapsamlı ve güncel ölüm bilgileri platformu.`,
       canonical: baseUrl,
       ogType: 'website',
       ogImage: `${baseUrl}/og-image.jpg`,
-      keywords: 'ünlü ölümler, ünlü kişiler, ölüm nedenleri, tarihte bugün, wikidata, ansiklopedi',
+      keywords: 'ünlü ölümler, ünlü kişiler, ölüm nedenleri, tarihte bugün, wikidata, ansiklopedi, Türkçe',
       schema: {
         '@context': 'https://schema.org',
         '@type': 'WebSite',
         'name': 'nasiloldu.net',
         'url': baseUrl,
-        'description': 'Ünlü kişilerin ölüm bilgileri platformu',
+        'description': `${totalPersons}+ ünlü kişinin ölüm nedenlerini, tarihlerini ve detaylı hayat hikayelerini keşfedin. Wikidata ve Wikipedia verilerine dayalı, Türkçe, kapsamlı ve güncel ölüm bilgileri platformu.`,
         'potentialAction': {
           '@type': 'SearchAction',
           'target': {
@@ -68,13 +70,17 @@ export async function generateMetaTags(url: string): Promise<MetaTags | null> {
 
     if (person) {
       const deathDateTurkish = formatTurkishDate(person.deathDate);
+      const seoDescription = person.description 
+        ? person.description.substring(0, 155) + '...'
+        : `${person.name} (${person.profession.name}, ${person.country.name}) ${deathDateTurkish} tarihinde ${person.deathCause ? person.deathCause.name + ' nedeniyle' : ''} vefat etti. Doğum tarihi: ${formatTurkishDate(person.birthDate)}. Detaylı hayat hikayesi ve ölüm bilgileri.`;
+      
       return {
-        title: `${person.name} Nasıl Öldü? - ${deathDateTurkish} | nasiloldu.net`,
-        description: person.description?.substring(0, 160) || `${person.name} - ${person.profession.name}, ${person.country.name}. Doğum: ${formatDate(person.birthDate)}, Ölüm: ${formatDate(person.deathDate)}. ${person.deathCause ? `Ölüm Nedeni: ${person.deathCause.name}` : ''}`,
+        title: `${person.name} Nasıl Öldü? | nasiloldu.net`,
+        description: seoDescription,
         canonical: `${baseUrl}/nasil-oldu/${person.slug}`,
         ogType: 'profile',
         ogImage: person.imageUrl || `${baseUrl}/og-image.jpg`,
-        keywords: `${person.name}, ${person.profession.name}, ${person.country.name}, ölüm nedeni, ${deathDateTurkish}`,
+        keywords: `${person.name}, nasıl öldü, ${person.profession.name}, ${person.country.name}, ölüm nedeni, ${deathDateTurkish}`,
         schema: {
           '@context': 'https://schema.org',
           '@type': 'Person',
@@ -101,11 +107,11 @@ export async function generateMetaTags(url: string): Promise<MetaTags | null> {
     
     if (category) {
       return {
-        title: `${category.name} - Ölüm Kategorisi | nasiloldu.net`,
-        description: `${category.name} kategorisindeki ünlü kişilerin ölüm bilgilerini keşfedin. Detaylı bilgiler, tarihler ve arka plan hikayeleri.`,
+        title: `${category.name} Nedeniyle Ölen Ünlüler | nasiloldu.net`,
+        description: `${category.name} nedeniyle vefat eden ünlülerin detaylı hayat hikayesi ve ölüm bilgileri. ${category.name} kategorisindeki tüm ünlüleri keşfedin.`,
         canonical: `${baseUrl}/kategori/${category.slug}`,
         ogType: 'website',
-        keywords: `${category.name}, ünlü ölümler, ölüm nedenleri`,
+        keywords: `${category.name}, ünlü ölümler, ölüm nedenleri, vefat edenler`,
       };
     }
   }
@@ -118,11 +124,11 @@ export async function generateMetaTags(url: string): Promise<MetaTags | null> {
     
     if (country) {
       return {
-        title: `${country.name} - Ünlü Ölümleri | nasiloldu.net`,
-        description: `${country.name} ülkesinden ölen ünlü kişilerin detaylı ölüm bilgileri. Tarihler, nedenler ve arka plan hikayeleri.`,
+        title: `${country.name} Ünlüleri Nasıl Öldü? | nasiloldu.net`,
+        description: `${country.name} ülkesinden vefat eden ünlülerin detaylı hayat hikayesi ve ölüm bilgileri. ${country.name}'dan ölen ünlüleri keşfedin.`,
         canonical: `${baseUrl}/ulke/${country.slug}`,
         ogType: 'website',
-        keywords: `${country.name}, ünlü kişiler, ölüm bilgileri`,
+        keywords: `${country.name}, ünlüler, ünlü kişiler, ölüm bilgileri, vefat edenler`,
       };
     }
   }
@@ -135,11 +141,11 @@ export async function generateMetaTags(url: string): Promise<MetaTags | null> {
     
     if (profession) {
       return {
-        title: `${profession.name} - Ünlü Ölümleri | nasiloldu.net`,
-        description: `${profession.name} mesleğindeki ünlü kişilerin ölüm bilgileri. Detaylı tarihler, nedenler ve arka plan hikayeleri.`,
+        title: `${profession.name} Ünlüleri Nasıl Öldü? | nasiloldu.net`,
+        description: `${profession.name} mesleğinden ünlülerin detaylı hayat hikayesi ve ölüm bilgileri. Vefat eden ${profession.name} ünlülerini keşfedin.`,
         canonical: `${baseUrl}/meslek/${profession.slug}`,
         ogType: 'website',
-        keywords: `${profession.name}, ünlü kişiler, ölüm bilgileri`,
+        keywords: `${profession.name}, ünlü kişiler, ölüm bilgileri, vefat edenler`,
       };
     }
   }
@@ -173,11 +179,11 @@ export async function generateMetaTags(url: string): Promise<MetaTags | null> {
       keywords: 'ülkeler, ünlü kişiler, ölüm bilgileri',
     },
     '/bugun': {
-      title: 'Bugün Ölenler - nasiloldu.net',
-      description: 'Tarihte bugün ölen ünlü kişileri keşfedin. Günlük güncellenen ölüm yıldönümleri.',
+      title: 'Bugün Ölen Ünlüler - Ölüm Yıldönümleri | nasiloldu.net',
+      description: 'Tarihte bugün vefat eden ünlü kişileri keşfedin. Günlük güncellenen ölüm yıldönümleri ve detaylı hayat hikayeleri.',
       canonical: `${baseUrl}/bugun`,
       ogType: 'website',
-      keywords: 'bugün ölenler, tarihte bugün, ölüm yıldönümleri',
+      keywords: 'bugün ölenler, tarihte bugün, ölüm yıldönümleri, vefat edenler',
     },
   };
 
