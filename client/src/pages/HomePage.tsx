@@ -2,10 +2,15 @@ import { useQuery } from "@tanstack/react-query";
 import { PersonCard } from "@/components/PersonCard";
 import { CategoryCard } from "@/components/CategoryCard";
 import { PageLoading, PersonCardSkeleton } from "@/components/LoadingSpinner";
-import { Calendar, TrendingUp, Layers } from "lucide-react";
+import { Calendar, TrendingUp, Layers, Search } from "lucide-react";
 import type { PersonWithRelations, Category } from "@shared/schema";
+import { useState } from "react";
+import { useLocation } from "wouter";
 
 export default function HomePage() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [, setLocation] = useLocation();
+
   const { data: todayDeaths, isLoading: loadingToday } = useQuery<PersonWithRelations[]>({
     queryKey: ["/api/persons/today"],
   });
@@ -22,60 +27,144 @@ export default function HomePage() {
     queryKey: ["/api/categories"],
   });
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      setLocation(`/ara?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-b from-card to-background border-b border-border">
-        <div className="container mx-auto px-4 py-16 md:py-24 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-primary mb-4" data-testid="text-hero-title">
+      {/* Premium Hero Section with Gradient */}
+      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
+        {/* Gradient Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-black via-black to-zinc-900">
+          {/* Yellow Radial Glow */}
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[120px]" />
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[100px]" />
+        </div>
+
+        {/* Grid Pattern Overlay */}
+        <div 
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), 
+                             linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)`,
+            backgroundSize: '50px 50px'
+          }}
+        />
+
+        {/* Hero Content */}
+        <div className="relative z-10 container mx-auto px-4 text-center">
+          <h1 
+            className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-primary via-yellow-400 to-primary bg-clip-text text-transparent"
+            data-testid="text-hero-title"
+          >
             Ünlüler Nasıl Öldü?
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-            Wikidata verilerine dayalı, kapsamlı ve güncel ünlü ölüm bilgileri platformu
+          <p className="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto mb-12">
+            Wikidata ve Wikipedia verilerine dayalı, kapsamlı ve güncel ünlü ölüm bilgileri platformu
           </p>
+
+          {/* Glassmorphic Search Bar */}
+          <form onSubmit={handleSearch} className="max-w-2xl mx-auto">
+            <div className="relative group">
+              {/* Glass Container */}
+              <div className="absolute inset-0 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 group-focus-within:border-primary/50 transition-all duration-300" />
+              
+              <div className="relative flex items-center">
+                <Search className="absolute left-6 w-5 h-5 text-zinc-400 pointer-events-none" />
+                <input
+                  type="text"
+                  placeholder="Bir ünlünün adını arayın..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-14 pr-6 py-5 bg-transparent text-white placeholder:text-zinc-500 focus:outline-none text-lg"
+                  data-testid="input-search"
+                />
+                <button
+                  type="submit"
+                  className="absolute right-2 px-6 py-3 bg-gradient-to-r from-primary to-yellow-400 text-black font-semibold rounded-xl hover:shadow-lg hover:shadow-primary/50 hover:scale-105 transition-all duration-300"
+                  data-testid="button-search"
+                >
+                  Ara
+                </button>
+              </div>
+            </div>
+          </form>
+
+          {/* Featured Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mt-16">
+            {[
+              { label: "Kişi", value: recentPersons?.length || 0, icon: "👤" },
+              { label: "Kategori", value: categories?.length || 0, icon: "📂" },
+              { label: "Güncel", value: "2025", icon: "📅" },
+            ].map((stat, i) => (
+              <div 
+                key={i}
+                className="relative group"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md rounded-xl border border-white/10 group-hover:border-primary/30 transition-all duration-300" />
+                <div className="relative p-6 text-center">
+                  <div className="text-3xl mb-2">{stat.icon}</div>
+                  <div className="text-2xl md:text-3xl font-bold text-primary mb-1">{stat.value}</div>
+                  <div className="text-sm text-zinc-400">{stat.label}</div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      <div className="container mx-auto px-4 py-12 space-y-16">
+      <div className="container mx-auto px-4 py-16 space-y-20">
         {/* Bugün Ölenler */}
         <section>
-          <div className="flex items-center gap-3 mb-6">
-            <Calendar className="w-6 h-6 text-primary" />
-            <h2 className="text-2xl md:text-3xl font-semibold text-foreground">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="p-3 bg-primary/10 rounded-xl backdrop-blur-sm">
+              <Calendar className="w-6 h-6 text-primary" />
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-white">
               Bugün Ölenler
             </h2>
           </div>
           {loadingToday ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {[...Array(4)].map((_, i) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[...Array(3)].map((_, i) => (
                 <PersonCardSkeleton key={i} />
               ))}
             </div>
           ) : todayDeaths && todayDeaths.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {todayDeaths.map((person) => (
                 <PersonCard key={person.id} person={person} />
               ))}
             </div>
           ) : (
-            <div className="text-center py-12 text-muted-foreground">
-              <p>Bugün ölen ünlü kaydı bulunamadı.</p>
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/0 backdrop-blur-md rounded-2xl border border-white/10" />
+              <div className="relative text-center py-16 text-zinc-400">
+                <Calendar className="w-16 h-16 mx-auto mb-4 opacity-30" />
+                <p className="text-lg">Bugün ölen ünlü kaydı bulunamadı.</p>
+              </div>
             </div>
           )}
         </section>
 
         {/* Kategoriler */}
         <section>
-          <div className="flex items-center gap-3 mb-6">
-            <Layers className="w-6 h-6 text-primary" />
-            <h2 className="text-2xl md:text-3xl font-semibold text-foreground">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="p-3 bg-primary/10 rounded-xl backdrop-blur-sm">
+              <Layers className="w-6 h-6 text-primary" />
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-white">
               Kategoriler
             </h2>
           </div>
           {loadingCategories ? (
             <PageLoading />
           ) : categories && categories.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {categories.map((category) => (
                 <CategoryCard key={category.id} category={category} />
               ))}
@@ -85,48 +174,56 @@ export default function HomePage() {
 
         {/* En Çok Arananlar */}
         <section>
-          <div className="flex items-center gap-3 mb-6">
-            <TrendingUp className="w-6 h-6 text-primary" />
-            <h2 className="text-2xl md:text-3xl font-semibold text-foreground">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="p-3 bg-primary/10 rounded-xl backdrop-blur-sm">
+              <TrendingUp className="w-6 h-6 text-primary" />
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-white">
               En Çok Arananlar
             </h2>
           </div>
           {loadingPopular ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {[...Array(4)].map((_, i) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[...Array(3)].map((_, i) => (
                 <PersonCardSkeleton key={i} />
               ))}
             </div>
           ) : popularPersons && popularPersons.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {popularPersons.slice(0, 8).map((person) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {popularPersons.slice(0, 6).map((person) => (
                 <PersonCard key={person.id} person={person} />
               ))}
             </div>
           ) : (
-            <div className="text-center py-12 text-muted-foreground">
-              <p>Henüz popüler içerik bulunmamaktadır.</p>
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/0 backdrop-blur-md rounded-2xl border border-white/10" />
+              <div className="relative text-center py-16 text-zinc-400">
+                <TrendingUp className="w-16 h-16 mx-auto mb-4 opacity-30" />
+                <p className="text-lg">Henüz popüler içerik bulunmamaktadır.</p>
+              </div>
             </div>
           )}
         </section>
 
         {/* Son Eklenenler */}
         <section>
-          <div className="flex items-center gap-3 mb-6">
-            <Calendar className="w-6 h-6 text-primary" />
-            <h2 className="text-2xl md:text-3xl font-semibold text-foreground">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="p-3 bg-primary/10 rounded-xl backdrop-blur-sm">
+              <Calendar className="w-6 h-6 text-primary" />
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-white">
               Son Eklenenler
             </h2>
           </div>
           {loadingRecent ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {[...Array(4)].map((_, i) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[...Array(3)].map((_, i) => (
                 <PersonCardSkeleton key={i} />
               ))}
             </div>
           ) : recentPersons && recentPersons.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {recentPersons.slice(0, 8).map((person) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {recentPersons.slice(0, 6).map((person) => (
                 <PersonCard key={person.id} person={person} />
               ))}
             </div>
