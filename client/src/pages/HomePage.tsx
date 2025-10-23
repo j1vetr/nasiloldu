@@ -11,6 +11,10 @@ export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [, setLocation] = useLocation();
 
+  const { data: stats } = useQuery<{ totalPersons: number; totalCategories: number; totalCountries: number; totalProfessions: number }>({
+    queryKey: ["/api/stats"],
+  });
+
   const { data: todayDeaths, isLoading: loadingToday } = useQuery<PersonWithRelations[]>({
     queryKey: ["/api/persons/today"],
   });
@@ -99,8 +103,8 @@ export default function HomePage() {
           {/* Featured Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mt-16">
             {[
-              { label: "Kişi", value: recentPersons?.length || 0, Icon: Users, testId: "stat-persons" },
-              { label: "Kategori", value: categories?.length || 0, Icon: FolderOpen, testId: "stat-categories" },
+              { label: "Kişi", value: stats?.totalPersons || 0, Icon: Users, testId: "stat-persons" },
+              { label: "Kategori", value: stats?.totalCategories || 0, Icon: FolderOpen, testId: "stat-categories" },
               { label: "Güncel", value: "2025", Icon: CalendarDays, testId: "stat-year" },
             ].map((stat, i) => (
               <div 

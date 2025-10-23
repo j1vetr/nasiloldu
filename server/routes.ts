@@ -142,6 +142,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Stats
+  app.get("/api/stats", async (req, res) => {
+    try {
+      const stats = await storage.getStats();
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching stats:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   // Persons
   app.get("/api/persons", async (req, res) => {
     try {

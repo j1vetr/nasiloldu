@@ -28,6 +28,9 @@ export interface IStorage {
   getAdminByUsername(username: string): Promise<Admin | undefined>;
   createAdmin(admin: InsertAdmin): Promise<Admin>;
   
+  // Stats methods
+  getStats(): Promise<{ totalPersons: number; totalCategories: number; totalCountries: number; totalProfessions: number }>;
+  
   // Category methods
   getAllCategories(): Promise<Category[]>;
   getCategoryBySlug(slug: string): Promise<Category | undefined>;
@@ -362,12 +365,23 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Stats
-  async getDashboardStats() {
+  async getStats() {
     const [totalPersons] = await db.select({ count: sql<number>`count(*)::int` }).from(persons);
     const [totalCategories] = await db.select({ count: sql<number>`count(*)::int` }).from(categories);
     const [totalCountries] = await db.select({ count: sql<number>`count(*)::int` }).from(countries);
     const [totalProfessions] = await db.select({ count: sql<number>`count(*)::int` }).from(professions);
 
+    return {
+      totalPersons: totalPersons.count,
+      totalCategories: totalCategories.count,
+      totalCountries: totalCountries.count,
+      totalProfessions: totalProfessions.count,
+    };
+  }
+
+  async getDashboardStats() {
+    const stats = await this.getStats();
+    
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     const [recentPersonsCount] = await db.select({ count: sql<number>`count(*)::int` })
@@ -377,10 +391,7 @@ export class DatabaseStorage implements IStorage {
     const todayDeaths = await this.getTodayDeaths();
 
     return {
-      totalPersons: totalPersons.count,
-      totalCategories: totalCategories.count,
-      totalCountries: totalCountries.count,
-      totalProfessions: totalProfessions.count,
+      ...stats,
       recentPersons: recentPersonsCount.count,
       todayDeaths: todayDeaths.length,
     };
