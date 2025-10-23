@@ -128,3 +128,8 @@ Wikidata verilerine dayalı, tamamen Türkçe, kapsamlı ve güncel ünlü ölü
   - "Keşfet" CTA butonu (gradient sarı)
   - Mobile menüde logo görünümü
   - Active state: primary/10 bg + border
+- ✅ **Scroll-to-Top Fix**:
+  - ScrollToTop component (useLayoutEffect ile)
+  - window.history.scrollRestoration = 'manual' (browser native scroll hatırlamayı devre dışı bıraktı)
+  - Tüm navigasyonlarda (ileri, geri, link, kart) scroll pozisyonu sıfırlanır
+  - Browser back button ile geri dönünce bile scroll en üstte açılır
