@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SEOHead, generatePersonSchema } from "@/components/SEOHead";
 import { capitalize } from "@/lib/utils";
+import { formatDate, formatTurkishDate } from "@shared/utils";
 import { 
   User, ExternalLink, Calendar, MapPin, Briefcase, 
   AlertCircle, Heart, Clock, Globe 
@@ -42,23 +43,6 @@ export default function PersonDetailPage() {
       </div>
     );
   }
-
-  const formatDate = (dateStr: string | null) => {
-    if (!dateStr) return "Bilinmiyor";
-    const [year, month, day] = dateStr.split("-");
-    return `${day}.${month}.${year}`;
-  };
-
-  const formatTurkishDate = (dateStr: string | null) => {
-    if (!dateStr) return "Bilinmiyor";
-    const [year, month, day] = dateStr.split("-");
-    const months = [
-      "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
-      "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"
-    ];
-    const monthName = months[parseInt(month) - 1];
-    return `${parseInt(day)} ${monthName} ${year}`;
-  };
 
   const getAge = () => {
     if (!person.birthDate || !person.deathDate) return null;

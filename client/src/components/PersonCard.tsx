@@ -1,6 +1,7 @@
 import { Link } from "wouter";
 import { Badge } from "@/components/ui/badge";
 import { capitalize } from "@/lib/utils";
+import { formatDate } from "@shared/utils";
 import { User, Calendar, MapPin, Briefcase, ArrowUpRight } from "lucide-react";
 import type { PersonWithRelations } from "@shared/schema";
 
@@ -9,12 +10,6 @@ interface PersonCardProps {
 }
 
 export function PersonCard({ person }: PersonCardProps) {
-  const formatDate = (dateStr: string | null) => {
-    if (!dateStr) return "Bilinmiyor";
-    const [year, month, day] = dateStr.split("-");
-    return `${day}.${month}.${year}`;
-  };
-
   const getAge = () => {
     if (!person.birthDate || !person.deathDate) return null;
     const birth = new Date(person.birthDate);

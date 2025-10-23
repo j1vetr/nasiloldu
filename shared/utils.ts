@@ -59,6 +59,66 @@ export function toTurkishLowerCase(str: string): string {
 }
 
 /**
+ * ISO 8601 tarihini DD.MM.YYYY formatına çevirir
+ * UTC accessor'ları kullanarak timezone bağımsız çalışır
+ * 
+ * @param dateStr - ISO 8601 formatında tarih (örn: "1945-04-30T00:00:00Z")
+ * @returns DD.MM.YYYY formatında tarih veya "Bilinmiyor"
+ * 
+ * Örnekler:
+ * - "1945-04-30T00:00:00Z" → "30.04.1945"
+ * - null → "Bilinmiyor"
+ * - invalid → "Bilinmiyor"
+ */
+export function formatDate(dateStr: string | null): string {
+  if (!dateStr) return "Bilinmiyor";
+  
+  const date = new Date(dateStr);
+  
+  // Invalid date kontrolü
+  if (Number.isNaN(date.getTime())) {
+    return "Bilinmiyor";
+  }
+  
+  // UTC accessor'ları kullan (timezone bağımsız)
+  const day = date.getUTCDate().toString().padStart(2, '0');
+  const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+  const year = date.getUTCFullYear();
+  
+  return `${day}.${month}.${year}`;
+}
+
+/**
+ * ISO 8601 tarihini Türkçe ay isimleriyle formatlar
+ * UTC accessor'ları kullanarak timezone bağımsız çalışır
+ * 
+ * @param dateStr - ISO 8601 formatında tarih
+ * @returns "30 Nisan 1945" formatında tarih veya "Bilinmiyor"
+ */
+export function formatTurkishDate(dateStr: string | null): string {
+  if (!dateStr) return "Bilinmiyor";
+  
+  const date = new Date(dateStr);
+  
+  // Invalid date kontrolü
+  if (Number.isNaN(date.getTime())) {
+    return "Bilinmiyor";
+  }
+  
+  const months = [
+    "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
+    "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"
+  ];
+  
+  // UTC accessor'ları kullan
+  const day = date.getUTCDate();
+  const monthName = months[date.getUTCMonth()];
+  const year = date.getUTCFullYear();
+  
+  return `${day} ${monthName} ${year}`;
+}
+
+/**
  * İngilizce meslek adlarını Türkçe'ye çevirir
  */
 export function translateProfession(profession: string): string {

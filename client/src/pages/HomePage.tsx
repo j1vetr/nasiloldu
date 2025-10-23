@@ -7,6 +7,7 @@ import type { PersonWithRelations, Category } from "@shared/schema";
 import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { capitalize } from "@/lib/utils";
+import { formatDate } from "@shared/utils";
 import { SEOHead } from "@/components/SEOHead";
 
 export default function HomePage() {
@@ -72,12 +73,6 @@ export default function HomePage() {
       setLocation(`/ara?q=${encodeURIComponent(searchQuery.trim())}`);
       setShowSuggestions(false);
     }
-  };
-
-  const formatDate = (dateStr: string | null) => {
-    if (!dateStr) return "Bilinmiyor";
-    const [year, month, day] = dateStr.split("-");
-    return `${day}.${month}.${year}`;
   };
 
   const handleSuggestionClick = (slug: string) => {
