@@ -149,6 +149,14 @@ export default function PersonDetailPage() {
                       {capitalize(person.profession.name)}
                     </Badge>
                   </div>
+                  {person.slug === 'mustafa-kemal-ataturk' && (
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-primary/90 backdrop-blur-sm rounded-full" />
+                      <Badge variant="default" className="relative bg-transparent border-0 text-black font-semibold px-4 py-1.5 text-sm">
+                        Kahraman
+                      </Badge>
+                    </div>
+                  )}
                   <div className="relative">
                     <div className="absolute inset-0 bg-white/10 backdrop-blur-md rounded-full border border-white/20" />
                     <Badge variant="secondary" className="relative bg-transparent border-0 text-white font-medium px-4 py-1.5 text-sm">
