@@ -106,6 +106,12 @@ Wikidata verilerine dayalı, tamamen Türkçe, kapsamlı ve güncel ünlü ölü
 - ✅ 27 ülke Türkçe'ye çevrildi (United States→Amerika Birleşik Devletleri)
 - ✅ Slug optimizasyonu: tek harfli kelimeler birleştirildi (e-h→eh)
 - ✅ Favicon güncellendi (favcion nsl_1761255172919.png)
+- ✅ **Tarih formatı bug fix** (23 Ekim 2025 - Gece):
+  - Problem: "30T00:00:00Z.04.1945" gibi bozuk tarih formatları
+  - Çözüm: UTC accessor'ları kullanarak timezone-bağımsız formatDate/formatTurkishDate fonksiyonları
+  - Merkezileştirilmiş shared/utils.ts'de tanımlandı
+  - Tüm sayfalarda tutarlı kullanım (PersonDetailPage, HomePage, PersonCard)
+  - NaN validation + "Bilinmiyor" fallback
 
 ### Devrimsel Hero ve AJAX Arama Güncellemesi (23 Ekim 2025 - Gece)
 - ✅ **Hero Başlık Fix**: Ö harfi kesik problemi düzeltildi (lineHeight: 1.25)
