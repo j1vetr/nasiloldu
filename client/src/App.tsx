@@ -7,6 +7,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import HomePage from "@/pages/HomePage";
 import PersonDetailPage from "@/pages/PersonDetailPage";
+import CategoriesPage from "@/pages/CategoriesPage";
 import CategoryPage from "@/pages/CategoryPage";
 import CountryPage from "@/pages/CountryPage";
 import ProfessionPage from "@/pages/ProfessionPage";
@@ -26,6 +27,7 @@ function Router() {
       {/* Public Pages */}
       <Route path="/" component={HomePage} />
       <Route path="/nasil-oldu/:slug" component={PersonDetailPage} />
+      <Route path="/kategoriler" component={CategoriesPage} />
       <Route path="/kategori/:tip" component={CategoryPage} />
       <Route path="/ulke/:ulke-adi" component={CountryPage} />
       <Route path="/meslek/:meslek-adi" component={ProfessionPage} />
