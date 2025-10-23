@@ -49,6 +49,17 @@ export default function PersonDetailPage() {
     return `${day}.${month}.${year}`;
   };
 
+  const formatTurkishDate = (dateStr: string | null) => {
+    if (!dateStr) return "Bilinmiyor";
+    const [year, month, day] = dateStr.split("-");
+    const months = [
+      "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
+      "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"
+    ];
+    const monthName = months[parseInt(month) - 1];
+    return `${parseInt(day)} ${monthName} ${year}`;
+  };
+
   const getAge = () => {
     if (!person.birthDate || !person.deathDate) return null;
     const birth = new Date(person.birthDate);
@@ -67,7 +78,7 @@ export default function PersonDetailPage() {
   return (
     <div className="min-h-screen">
       <SEOHead
-        title={`${person.name} Nasıl Öldü? - nasiloldu.net`}
+        title={`${person.name} Nasıl Öldü? - ${formatTurkishDate(person.deathDate)}`}
         description={person.description || `${person.name} - ${person.profession.name}, ${person.country.name}. Doğum: ${formatDate(person.birthDate)}, Ölüm: ${formatDate(person.deathDate)}. ${person.deathCause ? `Ölüm Nedeni: ${person.deathCause.name}` : ''}`}
         canonical={`https://nasiloldu.net/nasil-oldu/${person.slug}`}
         ogType="profile"
