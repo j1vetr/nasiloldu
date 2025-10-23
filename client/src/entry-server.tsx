@@ -12,9 +12,9 @@ export interface RenderResult {
 // Static location hook for SSR
 const staticLocationHook = (path: string) => () => [path, () => {}] as [string, (to: string) => void];
 
-export async function render(url: string): Promise<RenderResult> {
-  // Create a fresh QueryClient for this request
-  const queryClient = new QueryClient({
+export async function render(url: string, queryClient?: QueryClient): Promise<RenderResult> {
+  // Use provided queryClient or create a new one
+  const client = queryClient || new QueryClient({
     defaultOptions: {
       queries: {
         staleTime: 60 * 1000,
@@ -26,14 +26,14 @@ export async function render(url: string): Promise<RenderResult> {
   // Render the app with wouter's static location hook for SSR
   const html = renderToString(
     <Router hook={staticLocationHook(url)}>
-      <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={client}>
         <App />
       </QueryClientProvider>
     </Router>
   );
 
   // Dehydrate the query cache for hydration on the client
-  const dehydratedState = dehydrate(queryClient);
+  const dehydratedState = dehydrate(client);
 
   return { html, dehydratedState };
 }

@@ -1,60 +1,25 @@
 /**
- * SEO Middleware
- * Production: SSR rendering + meta tag injection for all users
- * Development: Meta tag injection for crawlers only
+ * Universal SSR Middleware
+ * Renders React on server for ALL users in BOTH dev and production
  */
 
 import { Request, Response, NextFunction } from 'express';
 import { generateMetaTags, injectMetaTags } from '../seo/meta-inject';
-import { renderPageSSR } from '../ssr';
+import { storage } from '../storage';
+import { QueryClient } from '@tanstack/react-query';
 import fs from 'fs';
 import path from 'path';
 
 const isProd = process.env.NODE_ENV === 'production';
 
 /**
- * User agent'ın crawler olup olmadığını kontrol eder
+ * Universal SSR Middleware - Works in both dev and production
  */
-function isCrawler(userAgent: string): boolean {
-  const crawlers = [
-    'Googlebot',
-    'Google-InspectionTool', // Google Search Console
-    'Bingbot',
-    'Slurp', // Yahoo
-    'DuckDuckBot',
-    'Baiduspider',
-    'YandexBot',
-    'facebookexternalhit', // Facebook
-    'Twitterbot',
-    'LinkedInBot',
-    'WhatsApp',
-    'TelegramBot',
-    'Discordbot',
-    'Slackbot',
-    'redditbot',
-    'SkypeUriPreview',
-    'HeadlessChrome',
-    'Lighthouse',
-    'PageSpeed',
-  ];
-
-  const ua = userAgent.toLowerCase();
-  return crawlers.some(crawler => ua.includes(crawler.toLowerCase()));
-}
-
-/**
- * Production SSR Middleware - Serves SSR HTML to all users
- */
-export async function productionSSRMiddleware(
+export async function universalSSRMiddleware(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
-  // Only run in production
-  if (!isProd) {
-    return next();
-  }
-
   const url = req.path;
 
   // Skip non-HTML requests
@@ -63,78 +28,174 @@ export async function productionSSRMiddleware(
   }
 
   try {
+    // Create fresh QueryClient for this request
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          staleTime: 60 * 1000,
+          retry: false,
+        },
+      },
+    });
+
+    // DATA PREFETCHING - Based on route
+    await prefetchRouteData(url, queryClient);
+
+    // Use entry-server.tsx to render
+    const { render } = await import('../../client/src/entry-server');
+    const { html: appHtml, dehydratedState } = await render(url, queryClient);
+
     // Load HTML template
-    const htmlPath = path.join(process.cwd(), 'dist', 'public', 'index.html');
-    let html = fs.readFileSync(htmlPath, 'utf-8');
+    let html: string;
+    if (isProd) {
+      const htmlPath = path.join(process.cwd(), 'dist', 'public', 'index.html');
+      html = fs.readFileSync(htmlPath, 'utf-8');
+    } else {
+      const htmlPath = path.join(process.cwd(), 'client', 'index.html');
+      html = fs.readFileSync(htmlPath, 'utf-8');
+    }
 
-    // Render React app with SSR
-    html = await renderPageSSR(url, html);
+    // Inject SSR HTML
+    html = html.replace(
+      /<div id="root"[^>]*>[\s\S]*?<\/div>/,
+      `<div id="root">${appHtml}</div>`
+    );
 
-    // Generate and inject meta tags
+    // Inject dehydrated state
+    const stateScript = `<script>window.__REACT_QUERY_STATE__ = ${JSON.stringify(dehydratedState).replace(/</g, '\\u003c')};</script>`;
+    html = html.replace(/<\/body>/, `${stateScript}\n  </body>`);
+
+    // Generate and inject SEO meta tags
     const metaTags = await generateMetaTags(url);
     if (metaTags) {
       html = injectMetaTags(html, metaTags);
     }
 
-    // Send SSR HTML
+    // Send complete SSR HTML
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.setHeader('X-Robots-Tag', 'index, follow');
     res.send(html);
     
   } catch (error) {
-    console.error('❌ Production SSR middleware error:', error);
+    console.error('❌ Universal SSR error:', error);
     next();
   }
 }
 
 /**
- * Development SEO Middleware - Meta tag injection for crawlers only
+ * Prefetch data based on route
  */
-export async function developmentSEOMiddleware(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  // Only run in development
-  if (isProd) {
-    return next();
-  }
-
-  const userAgent = req.get('user-agent') || '';
-  const url = req.path;
-
-  // Skip non-HTML requests
-  if (!req.accepts('html') || url.startsWith('/api/') || url.startsWith('/assets/') || url.match(/\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$/)) {
-    return next();
-  }
-
-  // Crawler değilse normal akışa devam et
-  if (!isCrawler(userAgent)) {
-    return next();
-  }
-
+async function prefetchRouteData(url: string, queryClient: QueryClient) {
   try {
-    // URL için meta tagları üret
-    const metaTags = await generateMetaTags(url);
-    
-    if (!metaTags) {
-      return next();
+    // Home page
+    if (url === '/') {
+      await Promise.all([
+        queryClient.prefetchQuery({
+          queryKey: ['/api/stats'],
+          queryFn: async () => storage.getStats(),
+        }),
+        queryClient.prefetchQuery({
+          queryKey: ['/api/categories'],
+          queryFn: async () => storage.getAllCategories(),
+        }),
+        queryClient.prefetchQuery({
+          queryKey: ['/api/persons/popular'],
+          queryFn: async () => storage.getPopularPersons(6),
+        }),
+        queryClient.prefetchQuery({
+          queryKey: ['/api/persons/recent'],
+          queryFn: async () => storage.getRecentPersons(6),
+        }),
+        queryClient.prefetchQuery({
+          queryKey: ['/api/persons/today'],
+          queryFn: async () => storage.getTodayPersons(),
+        }),
+      ]);
     }
 
-    // HTML template'ini oku
-    const htmlPath = path.join(process.cwd(), 'client', 'index.html');
-    let html = fs.readFileSync(htmlPath, 'utf-8');
+    // Person detail page
+    const personMatch = url.match(/^\/nasil-oldu\/([^\/]+)$/);
+    if (personMatch) {
+      const slug = personMatch[1];
+      const person = await storage.getPersonBySlug(slug);
+      if (person) {
+        await Promise.all([
+          queryClient.prefetchQuery({
+            queryKey: ['/api/persons', slug],
+            queryFn: async () => person,
+          }),
+          queryClient.prefetchQuery({
+            queryKey: ['/api/persons', slug, 'related'],
+            queryFn: async () => storage.getRelatedPersons(person.id, 6),
+          }),
+        ]);
+      }
+    }
 
-    // Meta tagları inject et
-    html = injectMetaTags(html, metaTags);
+    // Category page
+    const categoryMatch = url.match(/^\/kategori\/([^\/]+)$/);
+    if (categoryMatch) {
+      const categorySlug = categoryMatch[1];
+      const category = await storage.getCategoryBySlug(categorySlug);
+      if (category) {
+        await queryClient.prefetchQuery({
+          queryKey: ['/api/categories', categorySlug, 'persons'],
+          queryFn: async () => storage.getPersonsByCategory(category.id),
+        });
+      }
+    }
 
-    // Modified HTML'i gönder
-    res.setHeader('Content-Type', 'text/html; charset=utf-8');
-    res.setHeader('X-Robots-Tag', 'index, follow');
-    res.send(html);
-    
+    // Country page
+    const countryMatch = url.match(/^\/ulke\/([^\/]+)$/);
+    if (countryMatch) {
+      const countrySlug = countryMatch[1];
+      const country = await storage.getCountryBySlug(countrySlug);
+      if (country) {
+        await queryClient.prefetchQuery({
+          queryKey: ['/api/countries', countrySlug, 'persons'],
+          queryFn: async () => storage.getPersonsByCountry(country.id),
+        });
+      }
+    }
+
+    // Profession page
+    const professionMatch = url.match(/^\/meslek\/([^\/]+)$/);
+    if (professionMatch) {
+      const professionSlug = professionMatch[1];
+      const profession = await storage.getProfessionBySlug(professionSlug);
+      if (profession) {
+        await queryClient.prefetchQuery({
+          queryKey: ['/api/professions', professionSlug, 'persons'],
+          queryFn: async () => storage.getPersonsByProfession(profession.id),
+        });
+      }
+    }
+
+    // Today page
+    if (url === '/bugun') {
+      await queryClient.prefetchQuery({
+        queryKey: ['/api/persons/today'],
+        queryFn: async () => storage.getTodayPersons(),
+      });
+    }
+
+    // Categories page
+    if (url === '/kategoriler') {
+      await queryClient.prefetchQuery({
+        queryKey: ['/api/categories'],
+        queryFn: async () => storage.getAllCategories(),
+      });
+    }
+
+    // Countries page
+    if (url === '/ulkeler') {
+      await queryClient.prefetchQuery({
+        queryKey: ['/api/countries'],
+        queryFn: async () => storage.getAllCountries(),
+      });
+    }
   } catch (error) {
-    console.error('SEO middleware error:', error);
-    next();
+    console.error('⚠️  Data prefetch error:', error);
+    // Continue with empty cache
   }
 }
