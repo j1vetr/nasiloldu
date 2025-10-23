@@ -45,7 +45,7 @@ function categorizeDeathCause(deathCauseText: string): string {
   
   if (cause.includes('kaza') || cause.includes('trafik') || 
       cause.includes('uçak') || cause.includes('helikopter') ||
-      cause.includes('yangın')) {
+      cause.includes('yangın') || cause.includes('gezi parkı')) {
     return 'kaza';
   }
   
@@ -129,7 +129,7 @@ const newPeople = [
   {
     name: "Doğan Öz",
     qid: "Q5288606",
-    deathDate: "1999-11-18",
+    deathDate: "1978-12-04",
     deathCause: "suikast",
     profession: "Gazeteci",
     country: "Türkiye"
@@ -145,7 +145,7 @@ const newPeople = [
   {
     name: "Ferhat Tepe",
     qid: "Q5444593",
-    deathDate: "1999-05-25",
+    deathDate: "1993-05-25",
     deathCause: "suikast",
     profession: "Akademisyen",
     country: "Türkiye"
@@ -185,7 +185,7 @@ const newPeople = [
   {
     name: "Nesimi Çimen",
     qid: "Q6997044",
-    deathDate: "2004-06-17",
+    deathDate: "1993-06-30",
     deathCause: "kanser",
     profession: "Gazeteci",
     country: "Türkiye"
@@ -241,7 +241,7 @@ const newPeople = [
   {
     name: "Ceylan Önkol",
     qid: "Q5066924",
-    deathDate: "2013-09-17",
+    deathDate: "2009-09-28",
     deathCause: "gezi parkı olayları",
     profession: "Aktivist",
     country: "Türkiye"
@@ -273,7 +273,7 @@ const newPeople = [
   {
     name: "Cahit Tanyol",
     qid: "Q5017833",
-    deathDate: "2019-04-17",
+    deathDate: "2020-04-17",
     deathCause: "yaşlılık",
     profession: "Sosyolog",
     country: "Türkiye"
