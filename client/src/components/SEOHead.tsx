@@ -53,23 +53,19 @@ export function SEOHead({ title, description, canonical, ogType = "website", sch
       linkElement.href = canonical;
     }
 
-    // Schema.org JSON-LD
-    const scriptId = "seo-json-ld";
-    let scriptElement = document.getElementById(scriptId) as HTMLScriptElement;
+    // Schema.org JSON-LD (supports single object or array)
+    // Clean up old schema scripts
+    document.querySelectorAll('script[type="application/ld+json"][id^="seo-json-ld"]').forEach(el => el.remove());
     
     if (schema) {
-      if (!scriptElement) {
-        scriptElement = document.createElement("script");
-        scriptElement.id = scriptId;
+      const schemas = Array.isArray(schema) ? schema : [schema];
+      schemas.forEach((schemaObj, index) => {
+        const scriptElement = document.createElement("script");
+        scriptElement.id = `seo-json-ld-${index}`;
         scriptElement.type = "application/ld+json";
+        scriptElement.textContent = JSON.stringify(schemaObj);
         document.head.appendChild(scriptElement);
-      }
-      scriptElement.textContent = JSON.stringify(schema);
-    } else {
-      // Remove JSON-LD script if schema is undefined
-      if (scriptElement) {
-        scriptElement.remove();
-      }
+      });
     }
   }, [title, description, canonical, ogType, schema]);
 

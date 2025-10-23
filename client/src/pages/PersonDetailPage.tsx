@@ -59,6 +59,32 @@ export default function PersonDetailPage() {
     ? person.description.split('\n\n').filter(p => p.trim().length > 0)
     : [];
 
+  // Breadcrumb Schema for SEO
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Ana Sayfa",
+        "item": "https://nasiloldu.net/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": person.category.name,
+        "item": `https://nasiloldu.net/kategori/${person.category.slug}`
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": person.name,
+        "item": `https://nasiloldu.net/nasil-oldu/${person.slug}`
+      }
+    ]
+  };
+
   return (
     <div className="min-h-screen">
       <SEOHead
@@ -66,7 +92,7 @@ export default function PersonDetailPage() {
         description={person.description || `${person.name} - ${person.profession.name}, ${person.country.name}. Doğum: ${formatDate(person.birthDate)}, Ölüm: ${formatDate(person.deathDate)}. ${person.deathCause ? `Ölüm Nedeni: ${person.deathCause.name}` : ''}`}
         canonical={`https://nasiloldu.net/nasil-oldu/${person.slug}`}
         ogType="profile"
-        schema={generatePersonSchema(person)}
+        schema={[generatePersonSchema(person), breadcrumbSchema]}
       />
 
       {/* Cinematic Hero Section */}
