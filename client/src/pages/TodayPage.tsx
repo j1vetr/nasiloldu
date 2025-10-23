@@ -15,11 +15,15 @@ export default function TodayPage() {
     month: "long",
   });
 
+  const personCount = persons?.length || 0;
+  const seoTitle = `${formattedDate} - Bugün Ölen Ünlüler | nasiloldu.net`;
+  const seoDescription = `${formattedDate} tarihinde vefat eden ${personCount} ünlünün ölüm yıldönümü. Bugün ölen ünlülerin detaylı hayat hikayeleri ve ölüm bilgileri.`;
+
   return (
     <div className="min-h-screen">
       <SEOHead
-        title="Bugün Ölenler - nasiloldu.net"
-        description={`${formattedDate} tarihinde vefat eden ünlüler. Bugünün ölüm yıldönümleri.`}
+        title={seoTitle}
+        description={seoDescription}
         canonical="https://nasiloldu.net/bugun"
       />
       <div className="container mx-auto px-4 py-8">

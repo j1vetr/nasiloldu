@@ -81,18 +81,30 @@ export default function HomePage() {
     setSearchQuery("");
   };
 
+  const totalPersons = stats?.totalPersons || 236;
+  const seoTitle = "Ünlü Kişiler Nasıl Öldü? | nasiloldu.net";
+  const seoDescription = `${totalPersons}+ ünlü kişinin ölüm nedenlerini, tarihlerini ve detaylı hayat hikayelerini keşfedin. Wikidata ve Wikipedia verilerine dayalı, Türkçe, kapsamlı ve güncel ölüm bilgileri platformu.`;
+
   return (
     <div className="min-h-screen flex flex-col">
       <SEOHead
-        title="nasiloldu.net - Ünlü Kişiler Nasıl Öldü?"
-        description="Ünlü kişilerin ölüm nedenlerini, tarihlerini ve detaylarını keşfedin. Wikidata ve Wikipedia verilerine dayalı, kapsamlı ve güncel bilgi platformu. 92+ ünlü kişi."
+        title={seoTitle}
+        description={seoDescription}
         canonical="https://nasiloldu.net/"
         schema={{
           "@context": "https://schema.org",
           "@type": "WebSite",
           "name": "nasiloldu.net",
           "url": "https://nasiloldu.net",
-          "description": "Ünlü kişilerin ölüm bilgileri platformu"
+          "description": seoDescription,
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://nasiloldu.net/ara?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
         }}
       />
       {/* Revolutionary Hero Section */}

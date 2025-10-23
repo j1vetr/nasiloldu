@@ -43,17 +43,22 @@ export default function CategoryPage() {
 
   const Icon = categoryIcons[category.slug as keyof typeof categoryIcons] || HeartPulse;
 
+  const personCount = persons?.length || 0;
+  const seoTitle = `${category.name} Nedeniyle Ölen Ünlüler | nasiloldu.net`;
+  const seoDescription = `${category.name} nedeniyle vefat eden ${personCount} ünlünün detaylı hayat hikayesi ve ölüm bilgileri. ${category.name} kategorisindeki tüm ünlüleri keşfedin.`;
+
   return (
     <div className="min-h-screen">
       <SEOHead
-        title={`${category.name} - Ölüm Kategorisi | nasiloldu.net`}
-        description={`${category.name} kategorisindeki ünlülerin ölüm bilgilerini keşfedin. Detaylı bilgiler ve ansiklopedik açıklamalar.`}
+        title={seoTitle}
+        description={seoDescription}
         canonical={`https://nasiloldu.net/kategori/${category.slug}`}
         schema={{
           "@context": "https://schema.org",
           "@type": "CollectionPage",
           "name": `${category.name} Kategorisi`,
-          "description": `${category.name} kategorisindeki ünlüler`
+          "description": seoDescription,
+          "numberOfItems": personCount
         }}
       />
       <div className="container mx-auto px-4 py-8">

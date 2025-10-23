@@ -85,13 +85,20 @@ export default function PersonDetailPage() {
     ]
   };
 
+  // SEO-optimized title and description
+  const seoTitle = `${person.name} Nasıl Öldü? | nasiloldu.net`;
+  const seoDescription = person.description 
+    ? person.description.substring(0, 155) + '...'
+    : `${person.name} (${person.profession.name}, ${person.country.name}) ${formatTurkishDate(person.deathDate)} tarihinde ${person.deathCause ? person.deathCause.name + ' nedeniyle' : ''} vefat etti. Doğum tarihi: ${formatTurkishDate(person.birthDate)}. Detaylı hayat hikayesi ve ölüm bilgileri.`;
+
   return (
     <div className="min-h-screen">
       <SEOHead
-        title={`${person.name} Nasıl Öldü? - ${formatTurkishDate(person.deathDate)}`}
-        description={person.description || `${person.name} - ${person.profession.name}, ${person.country.name}. Doğum: ${formatDate(person.birthDate)}, Ölüm: ${formatDate(person.deathDate)}. ${person.deathCause ? `Ölüm Nedeni: ${person.deathCause.name}` : ''}`}
+        title={seoTitle}
+        description={seoDescription}
         canonical={`https://nasiloldu.net/nasil-oldu/${person.slug}`}
         ogType="profile"
+        ogImage={person.imageUrl}
         schema={[generatePersonSchema(person), breadcrumbSchema]}
       />
 

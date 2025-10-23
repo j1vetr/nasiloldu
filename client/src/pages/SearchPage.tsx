@@ -15,11 +15,17 @@ export default function SearchPage() {
     enabled: query.length > 0,
   });
 
+  const resultCount = results?.length || 0;
+  const seoTitle = query ? `"${query}" Arama Sonuçları - ${resultCount} Sonuç | nasiloldu.net` : "Ünlü Kişiler Arama | nasiloldu.net";
+  const seoDescription = query 
+    ? `"${query}" için ${resultCount} arama sonucu bulundu. Ünlü kişilerin ölüm nedenlerini, tarihlerini ve detaylarını keşfedin.`
+    : "Ünlü kişilerin ölüm bilgilerinde arama yapın. İsim, meslek veya ülke ile arama yapabilirsiniz.";
+
   return (
     <div className="min-h-screen">
       <SEOHead
-        title={query ? `"${query}" Arama Sonuçları | nasiloldu.net` : "Arama | nasiloldu.net"}
-        description={query ? `"${query}" için arama sonuçları. Ünlü kişilerin ölüm bilgilerinde arama yapın.` : "Ünlü kişilerin ölüm bilgilerinde arama yapın."}
+        title={seoTitle}
+        description={seoDescription}
         canonical={`https://nasiloldu.net/ara${query ? `?q=${encodeURIComponent(query)}` : ''}`}
       />
       <div className="container mx-auto px-4 py-8">

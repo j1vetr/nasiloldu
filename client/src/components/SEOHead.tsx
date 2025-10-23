@@ -6,10 +6,11 @@ interface SEOHeadProps {
   description: string;
   canonical?: string;
   ogType?: string;
+  ogImage?: string | null;
   schema?: any;
 }
 
-export function SEOHead({ title, description, canonical, ogType = "website", schema }: SEOHeadProps) {
+export function SEOHead({ title, description, canonical, ogType = "website", ogImage, schema }: SEOHeadProps) {
   useEffect(() => {
     // Update title
     document.title = title;
@@ -36,11 +37,17 @@ export function SEOHead({ title, description, canonical, ogType = "website", sch
     if (canonical) {
       updateMetaTag("og:url", canonical, true);
     }
+    if (ogImage) {
+      updateMetaTag("og:image", ogImage, true);
+    }
 
     // Twitter Cards
     updateMetaTag("twitter:card", "summary_large_image");
     updateMetaTag("twitter:title", title);
     updateMetaTag("twitter:description", description);
+    if (ogImage) {
+      updateMetaTag("twitter:image", ogImage);
+    }
 
     // Canonical link
     if (canonical) {
@@ -67,7 +74,7 @@ export function SEOHead({ title, description, canonical, ogType = "website", sch
         document.head.appendChild(scriptElement);
       });
     }
-  }, [title, description, canonical, ogType, schema]);
+  }, [title, description, canonical, ogType, ogImage, schema]);
 
   return null;
 }

@@ -34,11 +34,15 @@ export default function CountryPage() {
     );
   }
 
+  const personCount = persons?.length || 0;
+  const seoTitle = `${country.name} Ünlüleri Nasıl Öldü? | nasiloldu.net`;
+  const seoDescription = `${country.name} ülkesinden ${personCount} ünlünün detaylı hayat hikayesi ve ölüm bilgileri. ${country.name}'dan vefat eden ünlüleri keşfedin.`;
+
   return (
     <div className="min-h-screen">
       <SEOHead
-        title={`${country.name} - Ülke Sayfası | nasiloldu.net`}
-        description={`${country.name} ülkesinden vefat eden ünlülerin listesi ve detaylı ölüm bilgileri.`}
+        title={seoTitle}
+        description={seoDescription}
         canonical={`https://nasiloldu.net/ulke/${country.slug}`}
       />
       <div className="container mx-auto px-4 py-8">

@@ -34,11 +34,15 @@ export default function ProfessionPage() {
     );
   }
 
+  const personCount = persons?.length || 0;
+  const seoTitle = `${profession.name} Ünlüleri Nasıl Öldü? | nasiloldu.net`;
+  const seoDescription = `${profession.name} mesleğinden ${personCount} ünlünün detaylı hayat hikayesi ve ölüm bilgileri. Vefat eden ${profession.name} ünlülerini keşfedin.`;
+
   return (
     <div className="min-h-screen">
       <SEOHead
-        title={`${profession.name} - Meslek Sayfası | nasiloldu.net`}
-        description={`${profession.name} mesleğinden ünlülerin ölüm bilgileri. Detaylı bilgiler ve ansiklopedik açıklamalar.`}
+        title={seoTitle}
+        description={seoDescription}
         canonical={`https://nasiloldu.net/meslek/${profession.slug}`}
       />
       <div className="container mx-auto px-4 py-8">
