@@ -5,6 +5,7 @@ import { PersonCard } from "@/components/PersonCard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SEOHead, generatePersonSchema } from "@/components/SEOHead";
+import { capitalize } from "@/lib/utils";
 import { 
   User, ExternalLink, Calendar, MapPin, Briefcase, 
   AlertCircle, Heart, Clock, Globe 
@@ -134,7 +135,7 @@ export default function PersonDetailPage() {
                   <div className="relative">
                     <div className="absolute inset-0 bg-white/10 backdrop-blur-md rounded-full border border-white/20" />
                     <Badge variant="secondary" className="relative bg-transparent border-0 text-white font-medium px-4 py-1.5 text-sm">
-                      {person.profession.name}
+                      {capitalize(person.profession.name)}
                     </Badge>
                   </div>
                   <div className="relative">
@@ -262,7 +263,7 @@ export default function PersonDetailPage() {
                         </div>
                         <div>
                           <p className="text-sm text-zinc-500 mb-1">Ölüm Nedeni</p>
-                          <p className="text-lg font-semibold text-white">{person.deathCause.name}</p>
+                          <p className="text-lg font-semibold text-white">{capitalize(person.deathCause.name)}</p>
                         </div>
                       </div>
                     )}
@@ -343,7 +344,7 @@ export default function PersonDetailPage() {
                     </div>
                     <div className="flex-1">
                       <p className="text-xs text-zinc-500 mb-1">Meslek</p>
-                      <p className="text-sm text-white">{person.profession.name}</p>
+                      <p className="text-sm text-white">{capitalize(person.profession.name)}</p>
                     </div>
                   </div>
 

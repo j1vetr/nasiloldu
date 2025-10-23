@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import { Badge } from "@/components/ui/badge";
+import { capitalize } from "@/lib/utils";
 import { User, Calendar, MapPin } from "lucide-react";
 import type { PersonWithRelations } from "@shared/schema";
 
@@ -88,7 +89,7 @@ export function PersonCard({ person }: PersonCardProps) {
             </h3>
             
             <div className="flex items-center gap-2 text-sm text-zinc-400">
-              <span className="font-medium text-primary/90">{person.profession.name}</span>
+              <span className="font-medium text-primary/90">{capitalize(person.profession.name)}</span>
               <span>•</span>
               <span className="flex items-center gap-1">
                 <MapPin className="w-3 h-3" />
@@ -107,7 +108,7 @@ export function PersonCard({ person }: PersonCardProps) {
               <div className="pt-2 border-t border-white/5">
                 <p className="text-xs text-zinc-500 line-clamp-1">
                   <span className="text-zinc-600">Ölüm:</span>{" "}
-                  <span className="text-zinc-300">{person.deathCause.name}</span>
+                  <span className="text-zinc-300">{capitalize(person.deathCause.name)}</span>
                 </p>
               </div>
             )}
