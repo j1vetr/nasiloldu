@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { CategoryCard } from "@/components/CategoryCard";
 import { PageLoading } from "@/components/LoadingSpinner";
 import type { Category } from "@shared/schema";
+import { SEOHead } from "@/components/SEOHead";
 
 export default function CategoriesPage() {
   const { data: categories, isLoading } = useQuery<Category[]>({
@@ -14,6 +15,11 @@ export default function CategoriesPage() {
 
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title="Kategoriler - nasiloldu.net"
+        description="Ölüm nedenlerine göre kategoriler. Hastalık, Kaza, İntihar ve Suikast kategorilerini keşfedin."
+        canonical="https://nasiloldu.net/kategoriler"
+      />
       <div className="container mx-auto px-4 py-8">
         <div className="mb-12 text-center">
           <h1 className="text-3xl md:text-5xl font-bold text-primary mb-4" data-testid="text-page-title">

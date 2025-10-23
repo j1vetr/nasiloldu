@@ -1,8 +1,14 @@
 import { Card } from "@/components/ui/card";
+import { SEOHead } from "@/components/SEOHead";
 
 export default function KVKKPage() {
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title="KVKK Aydınlatma Metni - nasiloldu.net"
+        description="nasiloldu.net KVKK aydınlatma metni. Kişisel verilerin korunması ve işlenmesi hakkında bilgiler."
+        canonical="https://nasiloldu.net/kvkk"
+      />
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <h1 className="text-3xl md:text-5xl font-bold text-primary mb-6" data-testid="text-page-title">
           KVKK Aydınlatma Metni

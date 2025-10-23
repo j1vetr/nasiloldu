@@ -1,9 +1,15 @@
 import { Card } from "@/components/ui/card";
 import { Mail, MessageSquare, Globe } from "lucide-react";
+import { SEOHead } from "@/components/SEOHead";
 
 export default function ContactPage() {
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title="İletişim - nasiloldu.net"
+        description="nasiloldu.net ile iletişime geçin. Sorularınız, önerileriniz ve geri bildirimleriniz için."
+        canonical="https://nasiloldu.net/iletisim"
+      />
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <h1 className="text-3xl md:text-5xl font-bold text-primary mb-6" data-testid="text-page-title">
           İletişim

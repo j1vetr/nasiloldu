@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { PersonCard, PersonCardSkeleton } from "@/components/PersonCard";
 import { Search } from "lucide-react";
 import type { PersonWithRelations } from "@shared/schema";
+import { SEOHead } from "@/components/SEOHead";
 
 export default function SearchPage() {
   const [location] = useLocation();
@@ -16,6 +17,11 @@ export default function SearchPage() {
 
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title={query ? `"${query}" Arama Sonuçları | nasiloldu.net` : "Arama | nasiloldu.net"}
+        description={query ? `"${query}" için arama sonuçları. Ünlü kişilerin ölüm bilgilerinde arama yapın.` : "Ünlü kişilerin ölüm bilgilerinde arama yapın."}
+        canonical={`https://nasiloldu.net/ara${query ? `?q=${encodeURIComponent(query)}` : ''}`}
+      />
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">

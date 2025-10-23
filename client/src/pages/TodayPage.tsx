@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { PersonCard, PersonCardSkeleton } from "@/components/PersonCard";
 import { Calendar } from "lucide-react";
 import type { PersonWithRelations } from "@shared/schema";
+import { SEOHead } from "@/components/SEOHead";
 
 export default function TodayPage() {
   const { data: persons, isLoading } = useQuery<PersonWithRelations[]>({
@@ -16,6 +17,11 @@ export default function TodayPage() {
 
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title="Bugün Ölenler - nasiloldu.net"
+        description={`${formattedDate} tarihinde vefat eden ünlüler. Bugünün ölüm yıldönümleri.`}
+        canonical="https://nasiloldu.net/bugun"
+      />
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">

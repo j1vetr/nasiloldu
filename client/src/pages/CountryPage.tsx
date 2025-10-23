@@ -5,6 +5,7 @@ import { PageLoading } from "@/components/LoadingSpinner";
 import { Button } from "@/components/ui/button";
 import { MapPin } from "lucide-react";
 import type { PersonWithRelations, Country } from "@shared/schema";
+import { SEOHead } from "@/components/SEOHead";
 
 export default function CountryPage() {
   const { "ulke-adi": countrySlug } = useParams();
@@ -35,6 +36,11 @@ export default function CountryPage() {
 
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title={`${country.name} - Ülke Sayfası | nasiloldu.net`}
+        description={`${country.name} ülkesinden vefat eden ünlülerin listesi ve detaylı ölüm bilgileri.`}
+        canonical={`https://nasiloldu.net/ulke/${country.slug}`}
+      />
       <div className="container mx-auto px-4 py-8">
         <nav className="mb-6 text-sm text-muted-foreground flex items-center gap-2">
           <Link href="/" className="hover:text-primary">

@@ -5,6 +5,7 @@ import { PageLoading } from "@/components/LoadingSpinner";
 import { Button } from "@/components/ui/button";
 import { Briefcase } from "lucide-react";
 import type { PersonWithRelations, Profession } from "@shared/schema";
+import { SEOHead } from "@/components/SEOHead";
 
 export default function ProfessionPage() {
   const { "meslek-adi": professionSlug } = useParams();
@@ -35,6 +36,11 @@ export default function ProfessionPage() {
 
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title={`${profession.name} - Meslek Sayfası | nasiloldu.net`}
+        description={`${profession.name} mesleğinden ünlülerin ölüm bilgileri. Detaylı bilgiler ve ansiklopedik açıklamalar.`}
+        canonical={`https://nasiloldu.net/meslek/${profession.slug}`}
+      />
       <div className="container mx-auto px-4 py-8">
         <nav className="mb-6 text-sm text-muted-foreground flex items-center gap-2">
           <Link href="/" className="hover:text-primary">

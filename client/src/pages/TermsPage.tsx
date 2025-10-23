@@ -1,8 +1,14 @@
 import { Card } from "@/components/ui/card";
+import { SEOHead } from "@/components/SEOHead";
 
 export default function TermsPage() {
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title="Kullanım Şartları - nasiloldu.net"
+        description="nasiloldu.net kullanım şartları. Platform kullanım kuralları ve koşulları."
+        canonical="https://nasiloldu.net/kullanim-sartlari"
+      />
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <h1 className="text-3xl md:text-5xl font-bold text-primary mb-6" data-testid="text-page-title">
           Kullanım Şartları

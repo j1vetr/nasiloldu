@@ -1,9 +1,15 @@
 import { Card } from "@/components/ui/card";
 import { Info, Database, Shield, TrendingUp } from "lucide-react";
+import { SEOHead } from "@/components/SEOHead";
 
 export default function AboutPage() {
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title="Hakkımızda - nasiloldu.net"
+        description="nasiloldu.net hakkında bilgi edinin. Wikidata ve Wikipedia verilerine dayalı ölüm bilgileri platformu."
+        canonical="https://nasiloldu.net/hakkinda"
+      />
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <h1 className="text-3xl md:text-5xl font-bold text-primary mb-6" data-testid="text-page-title">
           Hakkımızda

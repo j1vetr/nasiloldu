@@ -5,6 +5,7 @@ import { PageLoading } from "@/components/LoadingSpinner";
 import { Button } from "@/components/ui/button";
 import { HeartPulse, Car, HeartCrack, Target } from "lucide-react";
 import type { PersonWithRelations, Category } from "@shared/schema";
+import { SEOHead } from "@/components/SEOHead";
 
 const categoryIcons = {
   hastalik: HeartPulse,
@@ -44,6 +45,17 @@ export default function CategoryPage() {
 
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title={`${category.name} - Ölüm Kategorisi | nasiloldu.net`}
+        description={`${category.name} kategorisindeki ünlülerin ölüm bilgilerini keşfedin. Detaylı bilgiler ve ansiklopedik açıklamalar.`}
+        canonical={`https://nasiloldu.net/kategori/${category.slug}`}
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          "name": `${category.name} Kategorisi`,
+          "description": `${category.name} kategorisindeki ünlüler`
+        }}
+      />
       <div className="container mx-auto px-4 py-8">
         {/* Breadcrumb */}
         <nav className="mb-6 text-sm text-muted-foreground flex items-center gap-2">

@@ -7,6 +7,7 @@ import type { PersonWithRelations, Category } from "@shared/schema";
 import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { capitalize } from "@/lib/utils";
+import { SEOHead } from "@/components/SEOHead";
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -87,6 +88,18 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEOHead
+        title="nasiloldu.net - Ünlü Kişiler Nasıl Öldü?"
+        description="Ünlü kişilerin ölüm nedenlerini, tarihlerini ve detaylarını keşfedin. Wikidata ve Wikipedia verilerine dayalı, kapsamlı ve güncel bilgi platformu. 92+ ünlü kişi."
+        canonical="https://nasiloldu.net/"
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": "nasiloldu.net",
+          "url": "https://nasiloldu.net",
+          "description": "Ünlü kişilerin ölüm bilgileri platformu"
+        }}
+      />
       {/* Revolutionary Hero Section */}
       <section className="relative min-h-[75vh] flex items-center justify-center overflow-hidden">
         {/* Animated Background */}
