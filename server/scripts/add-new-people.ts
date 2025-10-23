@@ -36,12 +36,16 @@ function categorizeDeathCause(deathCauseText: string): string {
   
   if (cause.includes('kurşun') || cause.includes('ateşli silah') || 
       cause.includes('suikast') || cause.includes('öldürüldü') ||
-      cause.includes('cinayet') || cause.includes('bomba')) {
+      cause.includes('cinayet') || cause.includes('bomba') ||
+      cause.includes('işkence') || cause.includes('linç') ||
+      cause.includes('katledil') || cause.includes('vuruldu') ||
+      cause.includes('öldürül')) {
     return 'suikast';
   }
   
   if (cause.includes('kaza') || cause.includes('trafik') || 
-      cause.includes('uçak') || cause.includes('helikopter')) {
+      cause.includes('uçak') || cause.includes('helikopter') ||
+      cause.includes('yangın')) {
     return 'kaza';
   }
   

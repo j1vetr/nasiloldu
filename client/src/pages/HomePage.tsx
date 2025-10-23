@@ -183,6 +183,7 @@ export default function HomePage() {
                         {searchResults.slice(0, 8).map((person) => (
                           <button
                             key={person.id}
+                            type="button"
                             onClick={() => handleSuggestionClick(person.slug)}
                             className="w-full flex items-center gap-4 p-4 hover:bg-white/5 transition-colors border-b border-white/5 last:border-0 text-left group"
                             data-testid={`suggestion-${person.id}`}
