@@ -37,12 +37,12 @@ export default function HomePage() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Premium Hero Section with Gradient */}
-      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[50vh] sm:min-h-[60vh] md:min-h-[70vh] flex items-center justify-center overflow-hidden py-12">
         {/* Gradient Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-black via-black to-zinc-900">
           {/* Yellow Radial Glow */}
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[120px]" />
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[100px]" />
+          <div className="absolute top-1/4 left-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-primary/20 rounded-full blur-[120px]" />
+          <div className="absolute bottom-1/4 right-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-primary/10 rounded-full blur-[100px]" />
         </div>
 
         {/* Grid Pattern Overlay */}
@@ -58,34 +58,36 @@ export default function HomePage() {
         {/* Hero Content */}
         <div className="relative z-10 container mx-auto px-4 text-center">
           <h1 
-            className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-primary via-yellow-400 to-primary bg-clip-text text-transparent"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-primary via-yellow-400 to-primary bg-clip-text text-transparent leading-tight"
             data-testid="text-hero-title"
           >
             Ünlüler Nasıl Öldü?
           </h1>
-          <p className="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto mb-12">
+          <p className="text-base sm:text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto mb-8 sm:mb-12 px-4">
             Wikidata ve Wikipedia verilerine dayalı, kapsamlı ve güncel ünlü ölüm bilgileri platformu
           </p>
 
           {/* Glassmorphic Search Bar */}
-          <form onSubmit={handleSearch} className="max-w-2xl mx-auto">
+          <form onSubmit={handleSearch} className="max-w-2xl mx-auto px-4">
             <div className="relative group">
               {/* Glass Container */}
               <div className="absolute inset-0 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 group-focus-within:border-primary/50 transition-all duration-300" />
               
-              <div className="relative flex items-center">
-                <Search className="absolute left-6 w-5 h-5 text-zinc-400 pointer-events-none" />
-                <input
-                  type="text"
-                  placeholder="Bir ünlünün adını arayın..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-14 pr-6 py-5 bg-transparent text-white placeholder:text-zinc-500 focus:outline-none text-lg"
-                  data-testid="input-search"
-                />
+              <div className="relative flex flex-col sm:flex-row items-center gap-2 sm:gap-0 p-2">
+                <div className="relative flex-1 w-full">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-zinc-400 pointer-events-none" />
+                  <input
+                    type="text"
+                    placeholder="Bir ünlünün adını arayın..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-11 sm:pl-14 pr-4 py-3 sm:py-4 bg-transparent text-white placeholder:text-zinc-500 focus:outline-none text-base sm:text-lg rounded-xl sm:rounded-none"
+                    data-testid="input-search"
+                  />
+                </div>
                 <button
                   type="submit"
-                  className="absolute right-2 px-6 py-3 bg-gradient-to-r from-primary to-yellow-400 text-black font-semibold rounded-xl hover:shadow-lg hover:shadow-primary/50 hover:scale-105 transition-all duration-300"
+                  className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-primary to-yellow-400 text-black font-semibold rounded-xl hover:shadow-lg hover:shadow-primary/50 hover:scale-105 transition-all duration-300 whitespace-nowrap"
                   data-testid="button-search"
                 >
                   Ara
