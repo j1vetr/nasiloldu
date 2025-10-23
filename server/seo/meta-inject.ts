@@ -185,19 +185,36 @@ export async function generateMetaTags(url: string): Promise<MetaTags | null> {
 }
 
 /**
- * Meta tagları HTML'e inject eder
+ * Meta tagları HTML'e inject eder (duplicate prevention ile)
  */
 export function injectMetaTags(html: string, meta: MetaTags): string {
   let result = html;
 
-  // Title
+  // Title - replace existing
   result = result.replace(
     /<title>.*?<\/title>/,
     `<title>${escapeHtml(meta.title)}</title>`
   );
 
+  // Remove duplicate SSR-injected tags from previous requests (if any)
+  result = result.replace(/<!-- SSR Meta Tags \(for crawlers\) -->[\s\S]*?<!-- Canonical -->\s*<link rel="canonical"[^>]*>/g, '');
+
+  // Remove existing dynamic meta tags that we'll replace
+  result = result.replace(/<meta name="title"[^>]*>/g, '');
+  result = result.replace(/<meta name="description"[^>]*>/g, '');
+  result = result.replace(/<meta property="og:title"[^>]*>/g, '');
+  result = result.replace(/<meta property="og:description"[^>]*>/g, '');
+  result = result.replace(/<meta property="og:type"[^>]*>/g, '');
+  result = result.replace(/<meta property="og:url"[^>]*>/g, '');
+  result = result.replace(/<meta property="og:image"[^>]*>/g, '');
+  result = result.replace(/<meta name="twitter:title"[^>]*>/g, '');
+  result = result.replace(/<meta name="twitter:description"[^>]*>/g, '');
+  result = result.replace(/<meta name="twitter:image"[^>]*>/g, '');
+  result = result.replace(/<link rel="canonical"[^>]*>/g, '');
+
   // Meta tags
   const metaTags = `
+    <!-- SSR Meta Tags (for crawlers) -->
     <meta name="title" content="${escapeHtml(meta.title)}" />
     <meta name="description" content="${escapeHtml(meta.description)}" />
     ${meta.keywords ? `<meta name="keywords" content="${escapeHtml(meta.keywords)}" />` : ''}
@@ -220,7 +237,7 @@ export function injectMetaTags(html: string, meta: MetaTags): string {
     <!-- Canonical -->
     <link rel="canonical" href="${escapeHtml(meta.canonical)}" />
     
-    ${meta.schema ? `<!-- Schema.org JSON-LD -->
+    ${meta.schema ? `<!-- Schema.org JSON-LD (SSR) -->
     <script type="application/ld+json">${JSON.stringify(meta.schema)}</script>` : ''}
   `;
 

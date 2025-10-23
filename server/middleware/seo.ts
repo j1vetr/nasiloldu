@@ -49,8 +49,8 @@ export async function seoMiddleware(
   const userAgent = req.get('user-agent') || '';
   const url = req.path;
 
-  // Sadece HTML sayfaları için çalış
-  if (!req.accepts('html') || url.startsWith('/api/') || url.startsWith('/assets/')) {
+  // Sadece HTML sayfaları için çalış (query params dahil search pages)
+  if (!req.accepts('html') || url.startsWith('/api/') || url.startsWith('/assets/') || url.match(/\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$/)) {
     return next();
   }
 

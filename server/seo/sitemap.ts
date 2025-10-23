@@ -67,11 +67,10 @@ export async function generateSitemap(): Promise<string> {
     });
   });
 
-  // Meslekler (en popüler 50 meslek)
+  // Tüm meslekler
   const allProfessions = await db
     .select()
-    .from(professions)
-    .limit(50);
+    .from(professions);
   
   allProfessions.forEach(profession => {
     urls.push({
