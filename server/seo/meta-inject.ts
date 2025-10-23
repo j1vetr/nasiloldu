@@ -1,0 +1,243 @@
+/**
+ * Server-Side Meta Tag Injection
+ * Crawlerlar için SEO meta taglarını HTML'e inject eder
+ */
+
+import { db } from '../db';
+import { persons, categories, countries, professions } from '@shared/schema';
+import { eq } from 'drizzle-orm';
+import { formatDate, formatTurkishDate } from '@shared/utils';
+
+export interface MetaTags {
+  title: string;
+  description: string;
+  canonical: string;
+  ogType?: string;
+  ogImage?: string;
+  keywords?: string;
+  schema?: any;
+}
+
+/**
+ * URL'e göre meta tagları üretir
+ */
+export async function generateMetaTags(url: string): Promise<MetaTags | null> {
+  const baseUrl = 'https://nasiloldu.net';
+  
+  // Ana sayfa
+  if (url === '/' || url === '') {
+    return {
+      title: 'nasiloldu.net - Ünlü Kişiler Nasıl Öldü?',
+      description: 'Ünlü kişilerin ölüm nedenlerini, tarihlerini ve detaylarını keşfedin. Wikidata ve Wikipedia verilerine dayalı, kapsamlı ve güncel ölüm bilgileri platformu. 236+ ünlü kişi.',
+      canonical: baseUrl,
+      ogType: 'website',
+      ogImage: `${baseUrl}/og-image.jpg`,
+      keywords: 'ünlü ölümler, ünlü kişiler, ölüm nedenleri, tarihte bugün, wikidata, ansiklopedi',
+      schema: {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        'name': 'nasiloldu.net',
+        'url': baseUrl,
+        'description': 'Ünlü kişilerin ölüm bilgileri platformu',
+        'potentialAction': {
+          '@type': 'SearchAction',
+          'target': {
+            '@type': 'EntryPoint',
+            'urlTemplate': `${baseUrl}/ara?q={search_term_string}`,
+          },
+          'query-input': 'required name=search_term_string',
+        },
+      },
+    };
+  }
+
+  // Kişi detay sayfası: /nasil-oldu/:slug
+  const personMatch = url.match(/^\/nasil-oldu\/([^/]+)/);
+  if (personMatch) {
+    const slug = personMatch[1];
+    const [person] = await db.query.persons.findMany({
+      where: eq(persons.slug, slug),
+      with: {
+        category: true,
+        country: true,
+        profession: true,
+        deathCause: true,
+      },
+      limit: 1,
+    });
+
+    if (person) {
+      const deathDateTurkish = formatTurkishDate(person.deathDate);
+      return {
+        title: `${person.name} Nasıl Öldü? - ${deathDateTurkish} | nasiloldu.net`,
+        description: person.description?.substring(0, 160) || `${person.name} - ${person.profession.name}, ${person.country.name}. Doğum: ${formatDate(person.birthDate)}, Ölüm: ${formatDate(person.deathDate)}. ${person.deathCause ? `Ölüm Nedeni: ${person.deathCause.name}` : ''}`,
+        canonical: `${baseUrl}/nasil-oldu/${person.slug}`,
+        ogType: 'profile',
+        ogImage: person.imageUrl || `${baseUrl}/og-image.jpg`,
+        keywords: `${person.name}, ${person.profession.name}, ${person.country.name}, ölüm nedeni, ${deathDateTurkish}`,
+        schema: {
+          '@context': 'https://schema.org',
+          '@type': 'Person',
+          'name': person.name,
+          'birthDate': person.birthDate || undefined,
+          'deathDate': person.deathDate || undefined,
+          'jobTitle': person.profession.name,
+          'nationality': {
+            '@type': 'Country',
+            'name': person.country.name,
+          },
+          'description': person.description || `${person.name} - ${person.profession.name}`,
+          'image': person.imageUrl || undefined,
+        },
+      };
+    }
+  }
+
+  // Kategori sayfası: /kategori/:slug
+  const categoryMatch = url.match(/^\/kategori\/([^/]+)/);
+  if (categoryMatch) {
+    const slug = categoryMatch[1];
+    const [category] = await db.select().from(categories).where(eq(categories.slug, slug));
+    
+    if (category) {
+      return {
+        title: `${category.name} - Ölüm Kategorisi | nasiloldu.net`,
+        description: `${category.name} kategorisindeki ünlü kişilerin ölüm bilgilerini keşfedin. Detaylı bilgiler, tarihler ve arka plan hikayeleri.`,
+        canonical: `${baseUrl}/kategori/${category.slug}`,
+        ogType: 'website',
+        keywords: `${category.name}, ünlü ölümler, ölüm nedenleri`,
+      };
+    }
+  }
+
+  // Ülke sayfası: /ulke/:slug
+  const countryMatch = url.match(/^\/ulke\/([^/]+)/);
+  if (countryMatch) {
+    const slug = countryMatch[1];
+    const [country] = await db.select().from(countries).where(eq(countries.slug, slug));
+    
+    if (country) {
+      return {
+        title: `${country.name} - Ünlü Ölümleri | nasiloldu.net`,
+        description: `${country.name} ülkesinden ölen ünlü kişilerin detaylı ölüm bilgileri. Tarihler, nedenler ve arka plan hikayeleri.`,
+        canonical: `${baseUrl}/ulke/${country.slug}`,
+        ogType: 'website',
+        keywords: `${country.name}, ünlü kişiler, ölüm bilgileri`,
+      };
+    }
+  }
+
+  // Meslek sayfası: /meslek/:slug
+  const professionMatch = url.match(/^\/meslek\/([^/]+)/);
+  if (professionMatch) {
+    const slug = professionMatch[1];
+    const [profession] = await db.select().from(professions).where(eq(professions.slug, slug));
+    
+    if (profession) {
+      return {
+        title: `${profession.name} - Ünlü Ölümleri | nasiloldu.net`,
+        description: `${profession.name} mesleğindeki ünlü kişilerin ölüm bilgileri. Detaylı tarihler, nedenler ve arka plan hikayeleri.`,
+        canonical: `${baseUrl}/meslek/${profession.slug}`,
+        ogType: 'website',
+        keywords: `${profession.name}, ünlü kişiler, ölüm bilgileri`,
+      };
+    }
+  }
+
+  // Statik sayfalar için default meta tags
+  const staticPages: Record<string, MetaTags> = {
+    '/hakkinda': {
+      title: 'Hakkında - nasiloldu.net',
+      description: 'nasiloldu.net hakkında bilgi edinin. Ünlü kişilerin ölüm bilgilerini Wikidata ve Wikipedia verilerine dayalı olarak sunuyoruz.',
+      canonical: `${baseUrl}/hakkinda`,
+      ogType: 'website',
+    },
+    '/iletisim': {
+      title: 'İletişim - nasiloldu.net',
+      description: 'nasiloldu.net ile iletişime geçin. Geri bildirimleriniz ve önerileriniz bizim için değerlidir.',
+      canonical: `${baseUrl}/iletisim`,
+      ogType: 'website',
+    },
+    '/kategoriler': {
+      title: 'Tüm Kategoriler - nasiloldu.net',
+      description: 'Ölüm kategorilerine göre ünlü kişileri keşfedin. Hastalık, kaza, intihar, suikast kategorileri.',
+      canonical: `${baseUrl}/kategoriler`,
+      ogType: 'website',
+      keywords: 'hastalık, kaza, intihar, suikast, ölüm kategorileri',
+    },
+    '/ulkeler': {
+      title: 'Tüm Ülkeler - nasiloldu.net',
+      description: 'Ülkelere göre ünlü kişilerin ölüm bilgilerini keşfedin. 45+ ülke, 236+ ünlü kişi.',
+      canonical: `${baseUrl}/ulkeler`,
+      ogType: 'website',
+      keywords: 'ülkeler, ünlü kişiler, ölüm bilgileri',
+    },
+    '/bugun': {
+      title: 'Bugün Ölenler - nasiloldu.net',
+      description: 'Tarihte bugün ölen ünlü kişileri keşfedin. Günlük güncellenen ölüm yıldönümleri.',
+      canonical: `${baseUrl}/bugun`,
+      ogType: 'website',
+      keywords: 'bugün ölenler, tarihte bugün, ölüm yıldönümleri',
+    },
+  };
+
+  return staticPages[url] || null;
+}
+
+/**
+ * Meta tagları HTML'e inject eder
+ */
+export function injectMetaTags(html: string, meta: MetaTags): string {
+  let result = html;
+
+  // Title
+  result = result.replace(
+    /<title>.*?<\/title>/,
+    `<title>${escapeHtml(meta.title)}</title>`
+  );
+
+  // Meta tags
+  const metaTags = `
+    <meta name="title" content="${escapeHtml(meta.title)}" />
+    <meta name="description" content="${escapeHtml(meta.description)}" />
+    ${meta.keywords ? `<meta name="keywords" content="${escapeHtml(meta.keywords)}" />` : ''}
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="${meta.ogType || 'website'}" />
+    <meta property="og:url" content="${escapeHtml(meta.canonical)}" />
+    <meta property="og:title" content="${escapeHtml(meta.title)}" />
+    <meta property="og:description" content="${escapeHtml(meta.description)}" />
+    ${meta.ogImage ? `<meta property="og:image" content="${escapeHtml(meta.ogImage)}" />` : ''}
+    <meta property="og:site_name" content="nasiloldu.net" />
+    <meta property="og:locale" content="tr_TR" />
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="${escapeHtml(meta.title)}" />
+    <meta name="twitter:description" content="${escapeHtml(meta.description)}" />
+    ${meta.ogImage ? `<meta name="twitter:image" content="${escapeHtml(meta.ogImage)}" />` : ''}
+    
+    <!-- Canonical -->
+    <link rel="canonical" href="${escapeHtml(meta.canonical)}" />
+    
+    ${meta.schema ? `<!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">${JSON.stringify(meta.schema)}</script>` : ''}
+  `;
+
+  // Inject before </head>
+  result = result.replace('</head>', `${metaTags}\n  </head>`);
+
+  return result;
+}
+
+/**
+ * HTML özel karakterlerini escape eder
+ */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
