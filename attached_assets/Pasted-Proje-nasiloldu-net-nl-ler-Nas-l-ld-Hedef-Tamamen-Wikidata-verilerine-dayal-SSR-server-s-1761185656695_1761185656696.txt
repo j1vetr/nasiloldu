@@ -1,0 +1,133 @@
+Proje: nasiloldu.net — Ünlüler Nasıl Öldü?
+
+Hedef:
+Tamamen Wikidata verilerine dayalı, SSR (server-side rendered), Google’ın hiyerarşi kurallarına tam uygun, sarı-siyah renk paletli, profesyonel ve yüksek SEO otoritesine sahip bir bilgi platformu.
+Önemli Not:
+
+Replit Auth veya herhangi bir harici kimlik doğrulama sistemi kesinlikle kullanılmayacak.
+
+Tek veritabanı PostgreSQL olacak. Başka hiçbir veritabanı (SQLite, Mongo, Firebase, JSON vb.) kullanılmayacak.
+
+1) Temel Kurallar
+
+Veri Kaynağı: %100 Wikidata API/SPARQL.
+Kişi adı, doğum/ölüm tarihi, ölüm nedeni, ölüm yeri, meslek, uyruk, görsel, Wikipedia bağlantısı.
+Günlük/haftalık otomatik güncelleme.
+
+SSR Zorunluluğu: Tüm sayfalar server-side render edilecek; Google botu HTML içinde tüm metinleri görebilmeli.
+
+Renk Paleti: Sarı #FFD60A + Siyah #000000.
+
+Veritabanı:
+
+PostgreSQL tek kaynak.
+
+Tüm veri ilişkileri burada tutulacak (kişiler, kategoriler, ülkeler, meslekler, ölüm nedenleri).
+
+ORM (SQLAlchemy veya Prisma vb.) kullanılabilir ama backend PostgreSQL’e bağlı olacak.
+
+Veriler “qid” (Wikidata kimliği) ile tekilleştirilecek.
+
+2) Sayfa ve URL Yapısı (Google Dostu)
+
+/ – anasayfa: bugün ölenler, son eklenenler, en çok arananlar, kategoriler.
+
+/nasil-oldu/<slug> – kişi detay sayfası.
+
+/kategori/<tip> – ölüm tipi kategorileri (hastalik, kaza, intihar, suikast).
+
+/ulke/<ulke-adi> – ülke bazlı filtre.
+
+/meslek/<meslek-adi> – meslek bazlı filtre.
+
+/bugun, /tarih/<yyyy-mm-dd> – tarih bazlı liste.
+
+/ara?q= – SSR arama sonuç sayfası.
+
+/hakkinda, /iletisim, /kvkk, /kullanim-sartlari – statik sayfalar.
+
+Her sayfa SSR olacak ve <h1> – <h2> hiyerarşisi Google’ın önerdiği biçimde düzenlenecek.
+
+3) SEO Gereksinimleri
+
+Meta Title / Description her sayfada dinamik.
+
+Schema.org JSON-LD (Person, ItemList, BreadcrumbList, FAQPage).
+
+Canonical, Open Graph, Twitter Cards, Sitemap, robots.txt eksiksiz.
+
+İç bağlantı: her kişi sayfası en az 6 ilgili link içerir.
+
+hreflang: TR (hazır) + EN altyapı hazır.
+
+Sitemap: PostgreSQL tabanlı veriyle otomatik üretilir ve günlük yenilenir.
+
+4) Kategorileme
+
+Ana kategoriler: Hastalık, Kaza, İntihar, Suikast (alt kırılımlar mümkün).
+
+Her kişiye 1 ülke + 1 meslek zorunlu.
+
+Eksik bilgi varsa “Bilinmiyor” yazılacak.
+
+5) Admin Panel
+
+Auth sistemi Replit Auth değil, tamamen PostgreSQL üzerinde kimlik doğrulama (admin kullanıcı tablosu).
+
+Roller: Admin, Editör.
+
+Admin’de kişi, kategori, ülke, meslek yönetimi; veri içe aktarma; onay kuyruğu.
+
+Admin’de yapılan her değişiklik canlı SSR siteye anında yansır (cache invalidation).
+
+Değişiklik geçmişi (revision history) PostgreSQL’de tutulur.
+
+Benzer içerik önerisi sistemi (kategori/ülke/meslek kesişimiyle).
+
+6) Performans ve Kalite
+
+Web Vitals: LCP < 2.5s, CLS < 0.1.
+
+Resimler: SSR <img> içinde, lazy load.
+
+Erişilebilirlik: Semantik HTML, ALT metinler, tab erişimi.
+
+Cache: PostgreSQL verisine bağlı akıllı cache; güncelleme sonrası otomatik invalidation.
+
+Güvenlik: PostgreSQL erişimi .env’de, SSL bağlantı zorunlu.
+
+7) İçerik Tarzı
+
+Tarafsız, ansiklopedik anlatım.
+
+Açılış paragrafı: kişi adı + meslek + ülke + ölüm tarihi/nedeni/yeri.
+
+Kaynak: Wikidata + (varsa) Wikipedia (özetlenmiş, özgün biçimde).
+
+8) Gelir Modeli
+
+Minimal, hızlı yüklenen AdSense blokları.
+
+Biyografi kitapları / belgeseller için affiliate alanı (nofollow/sponsored).
+
+9) Sürdürülebilirlik
+
+PostgreSQL + Wikidata senkronizasyonu (cron job veya zamanlayıcı).
+
+Günlük otomatik yedekleme.
+
+Hata ve indeks kontrolleri (bozuk link, mobil kullanılabilirlik).
+
+10) Tamamlanmış Sayılması İçin
+
+Tüm sayfalar SSR, PostgreSQL kaynaklı.
+
+Replit Auth veya başka auth yok.
+
+Tüm veriler Wikidata’dan otomatik çekiliyor.
+
+Sitemap, robots, canonical, schema, OG/Twitter hazır.
+
+Admin panel PostgreSQL verisini tam kontrol ediyor.
+
+Tasarım sarı-siyah, modern, hızlı, erişilebilir.
