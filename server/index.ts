@@ -1,9 +1,16 @@
 import express, { type Request, Response, NextFunction } from "express";
+import compression from "compression";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { generateSEOData, injectSEOIntoHTML } from "./seo";
 
 const app = express();
+
+// Compression middleware (gzip/deflate)
+app.use(compression({
+  threshold: 1024, // Only compress responses > 1KB
+  level: 6, // Compression level (0-9, 6 is balanced)
+}));
 
 declare module 'http' {
   interface IncomingMessage {
@@ -85,6 +92,21 @@ app.use((req, res, next) => {
         }
         return res;
       };
+      next();
+    });
+  }
+
+  // Cache headers for static assets (production only)
+  if (app.get("env") === "production") {
+    app.use((req, res, next) => {
+      // Cache static assets for 1 year
+      if (req.path.match(/\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$/)) {
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      }
+      // Cache HTML pages for 1 hour (with revalidation)
+      else if (!req.path.startsWith('/api/')) {
+        res.setHeader('Cache-Control', 'public, max-age=3600, must-revalidate');
+      }
       next();
     });
   }
