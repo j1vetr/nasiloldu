@@ -64,10 +64,11 @@ Wikidata verilerine dayalı, tamamen Türkçe, kapsamlı ve güncel ünlü ölü
 - Türkçe capitalization (i→İ) için shared utils fonksiyonu
 
 ## Mevcut Veri Durumu
-**Toplam: 63 kişi**
-- **Hastalık**: 42 kişi
-- **Suikast**: 19 kişi
-- **Kaza**: 2 kişi
+**Toplam: 124 kişi**
+- **Hastalık**: 84 kişi
+- **Suikast**: 31 kişi
+- **Kaza**: 8 kişi
+- **İntihar**: 1 kişi
 
 **Kategorilere Göre Dağılım:**
 - **Türk Siyasetçiler (25)**: 9 Cumhurbaşkanı + 16 Başbakan
@@ -75,7 +76,8 @@ Wikidata verilerine dayalı, tamamen Türkçe, kapsamlı ve güncel ünlü ölü
 - **Akademisyenler (6)**: Ahmet Taner Kışlalı, Bahriye Üçok, Muammer Aksoy, Necip Hablemitoğlu, Cavit Orhan Tütengil, Bedri Karafakioğlu
 - **Sanatçılar (8)**: Kemal Sunal, Ayhan Işık, Barış Akarsu, Kazım Koyuncu, Cenk Koray, Kerim Tekin, Onur Şener
 - **Sendikacı/Aktivist (4)**: Kemal Türkler, Ali İsmail Korkmaz, Ethem Sarısülük, Gaffar Okkan
-- **Diğer (11)**: Hikmet Kıvılcımlı, Turan Dursun, vb.
+- **Tarihsel Figürler (32)**: Cumhuriyet dönemi askerler, diplomatlar, yazarlar, akademisyenler (Fevzi Çakmak, Kâzım Karabekir, Halide Edib Adıvar, Yakup Kadri Karaosmanoğlu, Halil İnalcık, vb.)
+- **Diğer (40)**: Hikmet Kıvılcımlı, Turan Dursun, vb.
 
 ## Son Güncellemeler (23 Ekim 2025)
 - ✅ Temel schema tanımlandı (PostgreSQL + Drizzle ORM)
@@ -158,3 +160,18 @@ Wikidata verilerine dayalı, tamamen Türkçe, kapsamlı ve güncel ünlü ölü
   - robots.txt: Sitemap referansı + admin disallow
   - Tüm sayfalar canonical URLs ile
   - Architect final review: Production-ready ✅
+
+### 32 Yeni Tarihsel Figür Eklendi (23 Ekim 2025 - Öğleden Sonra)
+- ✅ **Wikipedia Full Text Extraction Script**: Minimum 500 kelime açıklama ile
+- ✅ **32 Cumhuriyet Dönemi Tarihsel Figürü**:
+  - Askerler: Fevzi Çakmak, Kâzım Karabekir, Ali Fuat Cebesoy, Fahrettin Altay, Kâzım Özalp, Cemal Madanoğlu
+  - Diplomatlar: Rauf Orbay, Fatin Rüştü Zorlu, Tevfik Rüştü Aras, İhsan Sabri Çağlayangil, Kâzım Dirik
+  - Siyasetçiler: Hasan Polatkan, Nuri Conker, Mahmut Esat Bozkurt, Ahmet Fikri Tüzer, Turan Güneş, Falih Rıfkı Atay, Hamdullah Suphi Tanrıöver, İsmet Sezgin, Rauf Denktaş, Turhan Feyzioğlu
+  - Yazarlar: Halide Edib Adıvar, Yakup Kadri Karaosmanoğlu, Şevket Süreyya Aydemir, Yunus Nadi Abalıoğlu, Hasan Âli Yücel
+  - Akademisyenler/Bilim İnsanları: Ziya Gökalp, Enver Ziya Karal, Ekrem Akurgal (arkeolog), Halil İnalcık (tarihçi)
+  - Diğer: Sabiha Gökçen (pilot), Fazıl Küçük (gazeteci)
+- ✅ **Wikipedia Başlık Düzeltmeleri**: "Kazım" → "Kâzım" (â harfi), "Edip" → "Edib"
+- ✅ **Turhan Feyzioğlu Özel Ekleme**: Türkçe Wikipedia sayfası olmadığı için biyografya.com'dan 519 kelimelik detaylı biyografi
+- ✅ **Yeni Meslekler**: arkeolog, tarihçi
+- ✅ **Toplam Veri**: 92 → 124 kişi (32 yeni ekleme)
+- ✅ **Kategori Dağılımı Güncellendi**: Hastalık 42 → 84 (+42)
