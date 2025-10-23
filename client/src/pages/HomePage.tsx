@@ -136,7 +136,7 @@ export default function HomePage() {
             </p>
 
             {/* AJAX Search Bar */}
-            <div className="max-w-3xl mx-auto pt-6" ref={searchRef}>
+            <div className="max-w-3xl mx-auto pt-6 relative z-[100]" ref={searchRef}>
               <form onSubmit={handleSearch} className="relative">
                 {/* Main Search Input */}
                 <div className="relative group">
@@ -232,23 +232,36 @@ export default function HomePage() {
               </form>
             </div>
 
-            {/* Stats Pills */}
-            <div className="flex flex-wrap items-center justify-center gap-4 pt-8">
+            {/* Stats Cards - Enhanced */}
+            <div className="flex flex-wrap items-center justify-center gap-6 pt-12">
               {[
-                { label: "Kişi", value: stats?.totalPersons || 0, Icon: Users },
-                { label: "Kategori", value: stats?.totalCategories || 0, Icon: Layers },
-                { label: "Ülke", value: stats?.totalCountries || 0, Icon: FolderOpen },
+                { label: "Toplam Kişi", value: stats?.totalPersons || 0, Icon: Users, gradient: "from-primary/20 to-yellow-500/20" },
+                { label: "Kategori", value: stats?.totalCategories || 0, Icon: Layers, gradient: "from-blue-500/20 to-cyan-500/20" },
+                { label: "Ülke", value: stats?.totalCountries || 0, Icon: FolderOpen, gradient: "from-purple-500/20 to-pink-500/20" },
               ].map((stat, i) => (
                 <div 
                   key={i}
-                  className="inline-flex items-center gap-3 px-5 py-3 bg-white/5 backdrop-blur-xl rounded-full border border-white/10 hover:border-primary/30 transition-all"
+                  className="group relative"
+                  data-testid={`stat-card-${stat.label.toLowerCase()}`}
                 >
-                  <div className="p-2 bg-primary/10 rounded-full">
-                    <stat.Icon className="w-4 h-4 text-primary" />
-                  </div>
-                  <div className="text-left">
-                    <div className="text-xl font-bold text-white">{stat.value}</div>
-                    <div className="text-xs text-zinc-500">{stat.label}</div>
+                  {/* Glow Effect */}
+                  <div className={`absolute -inset-1 bg-gradient-to-r ${stat.gradient} rounded-2xl blur-xl opacity-50 group-hover:opacity-100 transition-opacity duration-500`} />
+                  
+                  {/* Card */}
+                  <div className="relative bg-black/80 backdrop-blur-2xl rounded-2xl border border-white/20 hover:border-primary/50 transition-all duration-300 px-8 py-6 min-w-[160px]">
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="p-4 bg-gradient-to-br from-primary/20 to-yellow-500/10 rounded-2xl border border-primary/30 group-hover:scale-110 transition-transform duration-300">
+                        <stat.Icon className="w-7 h-7 text-primary" />
+                      </div>
+                      <div className="text-center">
+                        <div className="text-4xl font-black bg-gradient-to-r from-white to-zinc-300 bg-clip-text text-transparent mb-1">
+                          {stat.value}
+                        </div>
+                        <div className="text-sm font-semibold text-zinc-400 uppercase tracking-wider">
+                          {stat.label}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
