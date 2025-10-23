@@ -1,23 +1,13 @@
 import { Link, useLocation } from "wouter";
-import { Search, Menu, X } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
+import logoUrl from "@assets/logo nsl_1761194999380.png";
 
 export function Header() {
-  const [location, setLocation] = useLocation();
-  const [searchQuery, setSearchQuery] = useState("");
+  const [location] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      setLocation(`/ara?q=${encodeURIComponent(searchQuery.trim())}`);
-      setSearchQuery("");
-      setMobileMenuOpen(false);
-    }
-  };
 
   const navItems = [
     { label: "Ana Sayfa", href: "/" },
@@ -26,116 +16,108 @@ export function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto px-3 sm:px-4">
-        <div className="flex h-14 sm:h-16 items-center justify-between gap-2 sm:gap-4">
+    <header className="sticky top-0 z-50 w-full bg-black/80 backdrop-blur-xl border-b border-white/10">
+      <div className="container mx-auto px-4">
+        <div className="flex h-20 items-center justify-between gap-6">
+          
           {/* Logo */}
           <Link 
             href="/" 
             data-testid="link-home" 
-            className="flex items-center gap-2 text-lg sm:text-xl font-bold text-primary hover-elevate rounded-md px-2 sm:px-3 py-2 flex-shrink-0"
+            className="flex items-center gap-3 hover-elevate rounded-xl px-3 py-2 flex-shrink-0 group"
           >
-            <span className="hidden md:inline">nasiloldu.net</span>
-            <span className="md:hidden">nasiloldu</span>
+            <img 
+              src={logoUrl} 
+              alt="nasiloldu.net logo" 
+              className="h-10 w-auto transition-transform duration-300 group-hover:scale-105"
+            />
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden md:flex items-center gap-2 flex-1 justify-center">
             {navItems.map((item) => (
               <Link 
                 key={item.href} 
                 href={item.href}
-                className={`px-3 lg:px-4 py-2 rounded-md text-sm font-medium transition-colors hover-elevate whitespace-nowrap ${
+                className={`relative px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 hover-elevate ${
                   location === item.href
-                    ? "bg-primary/10 text-primary"
-                    : "text-foreground"
+                    ? "text-primary"
+                    : "text-zinc-300 hover:text-white"
                 }`}
                 data-testid={`link-nav-${item.label.toLowerCase().replace(/\s+/g, "-")}`}
               >
-                {item.label}
+                {location === item.href && (
+                  <div className="absolute inset-0 bg-primary/10 rounded-xl border border-primary/20" />
+                )}
+                <span className="relative">{item.label}</span>
               </Link>
             ))}
           </nav>
 
-          {/* Desktop Search Bar */}
-          <form onSubmit={handleSearch} className="hidden lg:flex items-center gap-2 flex-1 max-w-md">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Bir ünlünün adını arayın..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 bg-card border-border"
-                data-testid="input-search"
-              />
-            </div>
-            <Button type="submit" size="icon" variant="default" data-testid="button-search">
-              <Search className="h-4 w-4" />
-            </Button>
-          </form>
+          {/* CTA Button - Desktop Only */}
+          <div className="hidden md:flex items-center gap-3">
+            <Link href="/kategoriler">
+              <Button 
+                variant="default" 
+                className="bg-gradient-to-r from-primary to-yellow-400 text-black font-bold hover:shadow-lg hover:shadow-primary/50 transition-all"
+              >
+                Keşfet
+              </Button>
+            </Link>
+          </div>
 
-          {/* Mobile Search Button (opens search in sheet) */}
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="lg:hidden flex-shrink-0" 
-            onClick={() => setMobileMenuOpen(true)}
-            data-testid="button-mobile-search"
-          >
-            <Search className="h-5 w-5" />
-          </Button>
-
-          {/* Mobile Menu Sheet */}
+          {/* Mobile Menu */}
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden flex-shrink-0" data-testid="button-mobile-menu">
-                <Menu className="h-5 w-5" />
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="md:hidden hover:bg-white/10" 
+                data-testid="button-mobile-menu"
+              >
+                <Menu className="h-6 w-6 text-white" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-              <div className="flex flex-col gap-6 mt-8">
-                {/* Mobile Search */}
-                <form onSubmit={handleSearch} className="flex flex-col gap-3">
-                  <h3 className="text-sm font-medium text-muted-foreground">Arama</h3>
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      type="search"
-                      placeholder="Bir ünlünün adını arayın..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-9 bg-card border-border"
-                      data-testid="input-search-mobile"
-                    />
-                  </div>
-                  <Button type="submit" variant="default" className="w-full" data-testid="button-search-mobile">
-                    <Search className="h-4 w-4 mr-2" />
-                    Ara
-                  </Button>
-                </form>
+            <SheetContent side="right" className="w-[300px] bg-black/95 backdrop-blur-2xl border-l border-white/10">
+              <div className="flex flex-col gap-8 mt-12">
+                
+                {/* Logo in Mobile Menu */}
+                <div className="flex justify-center">
+                  <img 
+                    src={logoUrl} 
+                    alt="nasiloldu.net logo" 
+                    className="h-12 w-auto"
+                  />
+                </div>
 
                 {/* Mobile Navigation */}
-                <div className="flex flex-col gap-3">
-                  <h3 className="text-sm font-medium text-muted-foreground">Menü</h3>
-                  <nav className="flex flex-col gap-2">
-                    {navItems.map((item) => (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        onClick={() => setMobileMenuOpen(false)}
-                        className={`px-4 py-3 rounded-md text-sm font-medium transition-colors hover-elevate ${
-                          location === item.href
-                            ? "bg-primary/10 text-primary"
-                            : "text-foreground"
-                        }`}
-                        data-testid={`link-mobile-nav-${item.label.toLowerCase().replace(/\s+/g, "-")}`}
-                      >
-                        {item.label}
-                      </Link>
-                    ))}
-                  </nav>
-                </div>
+                <nav className="flex flex-col gap-3">
+                  {navItems.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`px-6 py-4 rounded-xl text-base font-semibold transition-all hover-elevate ${
+                        location === item.href
+                          ? "bg-primary/10 text-primary border border-primary/20"
+                          : "text-zinc-300 hover:text-white hover:bg-white/5"
+                      }`}
+                      data-testid={`link-mobile-nav-${item.label.toLowerCase().replace(/\s+/g, "-")}`}
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </nav>
+
+                {/* Mobile CTA */}
+                <Link href="/kategoriler" onClick={() => setMobileMenuOpen(false)}>
+                  <Button 
+                    variant="default" 
+                    className="w-full bg-gradient-to-r from-primary to-yellow-400 text-black font-bold text-lg py-6"
+                  >
+                    Keşfet
+                  </Button>
+                </Link>
               </div>
             </SheetContent>
           </Sheet>
