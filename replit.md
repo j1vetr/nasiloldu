@@ -99,6 +99,13 @@ Wikidata verilerine dayalı, tamamen Türkçe, kapsamlı ve güncel ünlü ölü
 - ✅ categorizeDeathCause fonksiyonu Türkçe locale desteği ile güncellendi (toLocaleLowerCase('tr-TR'))
 - ✅ Türkçe ölüm nedeni etiketleri eklendi (ateşli silah, bomba, kurşun, trafik kaza, vb.)
 - ✅ Kategori dağılımı düzeltildi: Hastalık 42, Suikast 19, Kaza 2
+- ✅ Ülkeler sayfası (/ulkeler) eklendi - 45 ülke listelenebilir
+- ✅ Navbar'a "Ülkeler" menüsü eklendi
+- ✅ Ülke bayrakları entegrasyonu (country-flag-icons) - SVG bayraklar
+- ✅ 107 meslek Türkçe'ye çevrildi (Actor→Oyuncu, Musician→Müzisyen)
+- ✅ 27 ülke Türkçe'ye çevrildi (United States→Amerika Birleşik Devletleri)
+- ✅ Slug optimizasyonu: tek harfli kelimeler birleştirildi (e-h→eh)
+- ✅ Favicon güncellendi (favcion nsl_1761255172919.png)
 
 ### Devrimsel Hero ve AJAX Arama Güncellemesi (23 Ekim 2025 - Gece)
 - ✅ **Hero Başlık Fix**: Ö harfi kesik problemi düzeltildi (lineHeight: 1.25)

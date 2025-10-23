@@ -1,7 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { Globe, Users, ChevronRight, Loader2 } from "lucide-react";
+import { Users, ChevronRight, Loader2, Globe } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { getCountryCode } from "@shared/country-codes";
+import * as CountryFlags from 'country-flag-icons/react/3x2';
 
 interface Country {
   id: number;
@@ -67,9 +69,20 @@ export default function Countries() {
               <Card className="group p-6 hover-elevate active-elevate-2 transition-all duration-300 cursor-pointer border-zinc-800 bg-zinc-900/50 hover:border-primary/30">
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex items-center gap-4 flex-1 min-w-0">
-                    <div className="w-12 h-12 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
-                      <Globe className="w-6 h-6 text-primary" />
-                    </div>
+                    {(() => {
+                      const countryCode = getCountryCode(country.name);
+                      const FlagComponent = countryCode ? (CountryFlags as any)[countryCode] : null;
+                      
+                      return (
+                        <div className="w-12 h-12 rounded-lg overflow-hidden border border-zinc-700 flex items-center justify-center flex-shrink-0 group-hover:border-primary/30 transition-colors bg-zinc-800/50">
+                          {FlagComponent ? (
+                            <FlagComponent className="w-full h-full object-cover" />
+                          ) : (
+                            <Globe className="w-6 h-6 text-zinc-600" />
+                          )}
+                        </div>
+                      );
+                    })()}
                     
                     <div className="flex-1 min-w-0">
                       <h3 className="text-lg font-bold text-white group-hover:text-primary transition-colors truncate">
