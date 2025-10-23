@@ -101,3 +101,30 @@ Wikidata verilerine dayalı, tamamen Türkçe, kapsamlı ve güncel ünlü ölü
 - ✅ categorizeDeathCause fonksiyonu Türkçe locale desteği ile güncellendi (toLocaleLowerCase('tr-TR'))
 - ✅ Türkçe ölüm nedeni etiketleri eklendi (ateşli silah, bomba, kurşun, trafik kaza, vb.)
 - ✅ Kategori dağılımı düzeltildi: Hastalık 42, Suikast 19, Kaza 2
+
+### Devrimsel Hero ve AJAX Arama Güncellemesi (23 Ekim 2025 - Gece)
+- ✅ **Hero Başlık Fix**: Ö harfi kesik problemi düzeltildi (lineHeight: 1.25)
+- ✅ **Yeni Hero Tasarımı**: 
+  - Animated glow orbs (pulse animasyonlar)
+  - Radial grid pattern background
+  - İki parçalı gradient başlık (beyaz "Ünlüler" + sarı "Nasıl Öldü?")
+  - Sparkles badge ile Wikidata vurgusu
+  - Modern stats pills (inline flex, glassmorphic)
+  - Scroll indicator animasyonu
+  - min-h-[75vh] yükseklik
+- ✅ **AJAX Arama Sistemi**:
+  - 3+ karakter yazınca otomatik dropdown
+  - Gerçek zamanlı `/api/search?q={query}` sorgusu
+  - Maksimum 8 sonuç gösterimi
+  - Her sonuç: resim (14x14), isim, meslek+ülke, ölüm tarihi
+  - Click-outside ile kapanma
+  - Loading spinner ve empty state
+  - Sonuca tıkla → /nasil-oldu/{slug} navigasyonu
+- ✅ **Yeni Navbar Tasarımı**:
+  - Logo entegrasyonu (@assets/logo nsl_1761194999380.png)
+  - h-20 yükseklik
+  - Siyah arka plan + backdrop-blur-xl
+  - Ortalanmış navigasyon (desktop)
+  - "Keşfet" CTA butonu (gradient sarı)
+  - Mobile menüde logo görünümü
+  - Active state: primary/10 bg + border
