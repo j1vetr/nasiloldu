@@ -167,7 +167,7 @@ export default function HomePage() {
 
                 {/* AJAX Search Results Dropdown */}
                 {showSuggestions && searchQuery.length >= 3 && (
-                  <div className="absolute w-full mt-3 bg-black/95 backdrop-blur-2xl rounded-2xl border border-white/10 shadow-2xl shadow-primary/10 overflow-hidden z-50">
+                  <div className="absolute w-full mt-3 bg-black/95 backdrop-blur-2xl rounded-2xl border border-white/10 shadow-2xl shadow-primary/10 overflow-hidden z-[9999]">
                     {searchLoading ? (
                       <div className="p-8 text-center">
                         <div className="inline-block w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
@@ -256,12 +256,6 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-          <div className="w-6 h-10 border-2 border-white/20 rounded-full p-1">
-            <div className="w-1 h-2 bg-primary rounded-full mx-auto animate-pulse" />
-          </div>
-        </div>
       </section>
 
       <div className="container mx-auto px-4 py-16 space-y-20">
