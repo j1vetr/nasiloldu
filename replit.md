@@ -107,8 +107,8 @@ Wikidata verilerine dayalı, tamamen Türkçe, kapsamlı ve güncel ünlü ölü
 - ✅ **Yeni Hero Tasarımı**: 
   - Animated glow orbs (pulse animasyonlar)
   - Radial grid pattern background
-  - İki parçalı gradient başlık (beyaz "Ünlüler" + sarı "Nasıl Öldü?")
-  - Sparkles badge ile Wikidata vurgusu
+  - İki parçalı gradient başlık (beyaz "Ünlü Kişiler" + sarı "Nasıl Öldü?")
+  - Minimal tasarım (badge ve subtitle kaldırıldı)
   - Modern stats pills (inline flex, glassmorphic)
   - Scroll indicator animasyonu
   - min-h-[75vh] yükseklik

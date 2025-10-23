@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { PersonCard, PersonCardSkeleton } from "@/components/PersonCard";
 import { CategoryCard } from "@/components/CategoryCard";
 import { PageLoading } from "@/components/LoadingSpinner";
-import { Calendar, TrendingUp, Layers, Search, Users, FolderOpen, CalendarDays, ArrowRight, Sparkles } from "lucide-react";
+import { Calendar, TrendingUp, Layers, Search, Users, FolderOpen, CalendarDays, ArrowRight } from "lucide-react";
 import type { PersonWithRelations, Category } from "@shared/schema";
 import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
@@ -110,12 +110,6 @@ export default function HomePage() {
         <div className="relative z-10 container mx-auto px-4 py-16">
           <div className="max-w-5xl mx-auto text-center space-y-8">
             
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 backdrop-blur-xl rounded-full border border-primary/20">
-              <Sparkles className="w-4 h-4 text-primary" />
-              <span className="text-sm font-semibold text-primary">Wikidata & Wikipedia Bazlı Platform</span>
-            </div>
-
             {/* Main Heading */}
             <h1 
               className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-black leading-[1.2] tracking-tight"
@@ -123,17 +117,12 @@ export default function HomePage() {
               style={{ lineHeight: '1.25' }}
             >
               <span className="block bg-gradient-to-r from-white via-zinc-200 to-white bg-clip-text text-transparent mb-3">
-                Ünlüler
+                Ünlü Kişiler
               </span>
               <span className="block bg-gradient-to-r from-primary via-yellow-300 to-primary bg-clip-text text-transparent animate-pulse">
                 Nasıl Öldü?
               </span>
             </h1>
-
-            {/* Subtitle */}
-            <p className="text-lg sm:text-xl md:text-2xl text-zinc-400 max-w-3xl mx-auto font-light">
-              Kapsamlı, güncel ve ansiklopedik ölüm bilgileri. {stats?.totalPersons || 63} ünlü kişi, 4 kategori.
-            </p>
 
             {/* AJAX Search Bar */}
             <div className="max-w-3xl mx-auto pt-6 relative z-[100]" ref={searchRef}>
