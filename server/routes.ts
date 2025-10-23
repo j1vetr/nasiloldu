@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { fetchPersonsFromWikidata, PROFESSION_QIDS, categorizeDeathCause } from "./wikidata";
 import { generateSitemap, generateRobotsTxt } from "./seo";
+import { fetchWikipediaExtract } from "./wikipedia";
 import bcrypt from "bcrypt";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -353,6 +354,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
             .replace(/[^a-z0-9]+/g, '-')
             .replace(/^-+|-+$/g, '');
 
+          // Fetch Wikipedia extract for detailed description
+          let detailedDescription = wp.description;
+          if (wp.wikipediaUrl) {
+            console.log(`Fetching Wikipedia extract for ${wp.name}...`);
+            const wikiExtract = await fetchWikipediaExtract(wp.name);
+            if (wikiExtract && wikiExtract.length > 200) {
+              detailedDescription = wikiExtract;
+              console.log(`✓ Got ${wikiExtract.length} chars for ${wp.name}`);
+            } else {
+              console.log(`✗ No Wikipedia extract for ${wp.name}, using Wikidata description`);
+            }
+          }
+
           // Create person
           await storage.createPerson({
             qid: wp.qid,
@@ -363,7 +377,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             deathPlace: wp.deathPlace,
             imageUrl: wp.imageUrl,
             wikipediaUrl: wp.wikipediaUrl,
-            description: wp.description,
+            description: detailedDescription,
             professionId: profession.id,
             countryId: country.id,
             deathCauseId: deathCause?.id || null,
