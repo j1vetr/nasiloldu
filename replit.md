@@ -241,3 +241,31 @@ Wikidata verilerine dayalı, tamamen Türkçe, kapsamlı ve güncel ünlü ölü
 - ✅ **SEOHead Component**: Array schema support (multiple JSON-LD per page)
 - ✅ **File Extension Skip**: SSR middleware asset requests bypass ediyor
 - ✅ **Production-Ready**: Full Google-first SEO optimization tamamlandı
+
+### 📊 Google-First SEO Title Standardization (23 Ekim 2025 - Final)
+- ✅ **Title Format Standardı**: Tüm sayfalarda `[İçerik] | nasiloldu.net` formatı (Google best practices)
+- ✅ **Frontend SEO (Client-Side)**:
+  - PersonDetailPage: `{isim} Nasıl Öldü? | nasiloldu.net`
+  - CategoryPage: `{kategori} Nedeniyle Ölen Ünlüler | nasiloldu.net`
+  - CountryPage: `{ülke} Ünlüleri Nasıl Öldü? | nasiloldu.net`
+  - ProfessionPage: `{meslek} Ünlüleri Nasıl Öldü? | nasiloldu.net`
+  - HomePage: `Ünlü Kişiler Nasıl Öldü? | nasiloldu.net`
+  - TodayPage: `Bugün Ölen Ünlüler - Ölüm Yıldönümleri | nasiloldu.net`
+  - SearchPage: Koşullu title (`{query} Arama Sonuçları | nasiloldu.net` veya default)
+- ✅ **SSR Meta Injection (Crawler-Side)**:
+  - server/seo/meta-inject.ts'de tüm title formatları frontend ile sync
+  - Crawler'lar (Googlebot, Bingbot, vb.) için production'da dinamik meta tag injection
+  - Development mode: Vite middleware SSR'ı engeller (normal), client-side SEOHead çalışır
+  - Production mode: SSR middleware crawler detection ile otomatik devreye girer
+- ✅ **index.html Static Fallback**:
+  - Title, description, og tags, twitter cards güncel formatta
+  - Noscript content güncellendi (236+ kişi)
+  - Schema.org WebSite JSON-LD güncel description ile
+- ✅ **SEOHead Component Enhancement**:
+  - ogImage prop eklendi (dinamik Open Graph resim desteği)
+  - Tüm sayfalarda backend verisi ile dinamik SEO
+- ✅ **Description Optimization**:
+  - PersonDetailPage: Wikipedia description'ı (155 karakter) + fallback
+  - Her sayfa için SEO-optimized, 150-160 karakter descriptions
+  - Türkçe keywords güncellendi ("nasıl öldü", "vefat edenler", vb.)
+- ✅ **Google Parity**: Sayfada ne görünüyorsa Google da aynısını görüyor (SSR + client-side SEO sync)
