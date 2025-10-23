@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams, Link, useLocation } from "wouter";
-import { PersonCard } from "@/components/PersonCard";
-import { PageLoading, PersonCardSkeleton } from "@/components/LoadingSpinner";
+import { PersonCard, PersonCardSkeleton } from "@/components/PersonCard";
+import { PageLoading } from "@/components/LoadingSpinner";
 import { Button } from "@/components/ui/button";
 import { HeartPulse, Car, HeartCrack, Target } from "lucide-react";
 import type { PersonWithRelations, Category } from "@shared/schema";

@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { PersonCard } from "@/components/PersonCard";
-import { PersonCardSkeleton } from "@/components/LoadingSpinner";
+import { PersonCard, PersonCardSkeleton } from "@/components/PersonCard";
 import { Search } from "lucide-react";
 import type { PersonWithRelations } from "@shared/schema";
 

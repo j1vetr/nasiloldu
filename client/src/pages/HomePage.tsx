@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { PersonCard } from "@/components/PersonCard";
+import { PersonCard, PersonCardSkeleton } from "@/components/PersonCard";
 import { CategoryCard } from "@/components/CategoryCard";
-import { PageLoading, PersonCardSkeleton } from "@/components/LoadingSpinner";
+import { PageLoading } from "@/components/LoadingSpinner";
 import { Calendar, TrendingUp, Layers, Search, Users, FolderOpen, CalendarDays } from "lucide-react";
 import type { PersonWithRelations, Category } from "@shared/schema";
 import { useState } from "react";

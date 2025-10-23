@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { PersonCard } from "@/components/PersonCard";
-import { PersonCardSkeleton } from "@/components/LoadingSpinner";
+import { PersonCard, PersonCardSkeleton } from "@/components/PersonCard";
 import { Calendar } from "lucide-react";
 import type { PersonWithRelations } from "@shared/schema";
 
