@@ -33,12 +33,21 @@ export async function renderPageSSR(url: string, template: string): Promise<stri
     const { html: appHtml, dehydratedState } = await render(url);
 
     // Inject the rendered HTML and dehydrated state into template
-    const finalHtml = template
-      .replace(`<!--app-html-->`, appHtml)
-      .replace(
-        `<!--app-state-->`,
-        `<script>window.__REACT_QUERY_STATE__ = ${JSON.stringify(dehydratedState)};</script>`
-      );
+    let finalHtml = template;
+    
+    // Replace #root div content with SSR HTML
+    // Match: <div id="root">...</div> and replace inner content
+    finalHtml = finalHtml.replace(
+      /<div id="root"[^>]*>[\s\S]*?<\/div>/,
+      `<div id="root">${appHtml}</div>`
+    );
+    
+    // Inject dehydrated state before closing body tag
+    const stateScript = `<script>window.__REACT_QUERY_STATE__ = ${JSON.stringify(dehydratedState).replace(/</g, '\\u003c')};</script>`;
+    finalHtml = finalHtml.replace(
+      /<\/body>/,
+      `${stateScript}\n  </body>`
+    );
 
     return finalHtml;
   } catch (error) {
