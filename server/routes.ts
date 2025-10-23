@@ -5,12 +5,12 @@ import { fetchPersonsFromWikidata, fetchPersonsByQids, PROFESSION_QIDS, categori
 import { generateSitemap } from "./seo/sitemap";
 import { generateRobotsTxt } from "./seo/robots";
 import { fetchWikipediaExtract } from "./wikipedia";
-import { universalSSRMiddleware } from "./middleware/seo";
+import { seoMiddleware } from "./middleware/seo";
 import bcrypt from "bcrypt";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Universal SSR - Works in both dev and production, serves ALL users
-  app.use(universalSSRMiddleware);
+  // SEO Middleware - Crawlerlar için meta tag injection
+  app.use(seoMiddleware);
   // ========== SEO Routes ==========
   
   app.get("/sitemap.xml", async (req, res) => {
