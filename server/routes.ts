@@ -273,96 +273,122 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/admin/import-from-wikidata", async (req, res) => {
     try {
-      console.log("Starting Wikidata import...");
+      console.log("Starting Wikidata import (batched mode)...");
       
-      // Fetch from Wikidata (actors and politicians)
-      const wikidataPersons = await fetchPersonsFromWikidata(
-        [PROFESSION_QIDS.ACTOR, PROFESSION_QIDS.POLITICIAN],
-        500
-      );
+      const BATCH_SIZE = 10;
+      const TOTAL_BATCHES = 5; // 5 batches x 10 = 50 kişi (test için - istersen artırılabilir)
+      const BATCH_DELAY_MS = 2000; // 2 saniye bekleme
       
-      console.log(`Fetched ${wikidataPersons.length} persons from Wikidata`);
-      
-      let imported = 0;
-      let skipped = 0;
+      let totalImported = 0;
+      let totalSkipped = 0;
+      let totalFetched = 0;
 
-      for (const wp of wikidataPersons) {
-        // Check if already exists
-        const existing = await storage.getPersonByQid(wp.qid);
-        if (existing) {
-          skipped++;
-          continue;
-        }
-
-        // Get or create profession
-        const profession = await storage.getOrCreateProfession(
-          wp.professionLabel || "Bilinmiyor",
-          wp.professionQid || undefined
-        );
-
-        // Get or create country
-        const country = await storage.getOrCreateCountry(
-          wp.countryLabel || "Bilinmiyor",
-          wp.countryQid || undefined
-        );
-
-        // Determine category
-        const categorySlug = categorizeDeathCause(wp.deathCauseLabel);
-        const category = await storage.getCategoryBySlug(categorySlug);
-        if (!category) {
-          console.error(`Category not found: ${categorySlug}`);
-          continue;
-        }
-
-        // Get or create death cause
-        let deathCause = null;
-        if (wp.deathCauseLabel) {
-          deathCause = await storage.getOrCreateDeathCause(
-            wp.deathCauseLabel,
-            category.id,
-            wp.deathCauseQid || undefined
-          );
-        }
-
-        // Create slug
-        const slug = wp.name
-          .toLowerCase()
-          .replace(/ı/g, 'i')
-          .replace(/ğ/g, 'g')
-          .replace(/ü/g, 'u')
-          .replace(/ş/g, 's')
-          .replace(/ö/g, 'o')
-          .replace(/ç/g, 'c')
-          .replace(/[^a-z0-9]+/g, '-')
-          .replace(/^-+|-+$/g, '');
-
-        // Create person
-        await storage.createPerson({
-          qid: wp.qid,
-          slug,
-          name: wp.name,
-          birthDate: wp.birthDate,
-          deathDate: wp.deathDate,
-          deathPlace: wp.deathPlace,
-          imageUrl: wp.imageUrl,
-          wikipediaUrl: wp.wikipediaUrl,
-          description: wp.description,
-          professionId: profession.id,
-          countryId: country.id,
-          deathCauseId: deathCause?.id || null,
-          categoryId: category.id,
-          isApproved: true,
-        });
-
-        imported++;
+      for (let batchNum = 1; batchNum <= TOTAL_BATCHES; batchNum++) {
+        console.log(`\n=== Batch ${batchNum}/${TOTAL_BATCHES} - Fetching ${BATCH_SIZE} persons from Wikidata...`);
         
-        if (imported % 50 === 0) {
-          console.log(`Imported ${imported} persons so far...`);
+        // Fetch from Wikidata (actors and politicians)
+        const wikidataPersons = await fetchPersonsFromWikidata(
+          [PROFESSION_QIDS.ACTOR, PROFESSION_QIDS.POLITICIAN],
+          BATCH_SIZE
+        );
+        
+        totalFetched += wikidataPersons.length;
+        console.log(`Batch ${batchNum}: Fetched ${wikidataPersons.length} persons`);
+        
+        if (wikidataPersons.length === 0) {
+          console.log(`Batch ${batchNum}: No more data, stopping early`);
+          break;
+        }
+
+        let batchImported = 0;
+        let batchSkipped = 0;
+
+        for (const wp of wikidataPersons) {
+          // Check if already exists
+          const existing = await storage.getPersonByQid(wp.qid);
+          if (existing) {
+            batchSkipped++;
+            continue;
+          }
+
+          // Get or create profession
+          const profession = await storage.getOrCreateProfession(
+            wp.professionLabel || "Bilinmiyor",
+            wp.professionQid || undefined
+          );
+
+          // Get or create country
+          const country = await storage.getOrCreateCountry(
+            wp.countryLabel || "Bilinmiyor",
+            wp.countryQid || undefined
+          );
+
+          // Determine category
+          const categorySlug = categorizeDeathCause(wp.deathCauseLabel);
+          const category = await storage.getCategoryBySlug(categorySlug);
+          if (!category) {
+            console.error(`Category not found: ${categorySlug}`);
+            continue;
+          }
+
+          // Get or create death cause
+          let deathCause = null;
+          if (wp.deathCauseLabel) {
+            deathCause = await storage.getOrCreateDeathCause(
+              wp.deathCauseLabel,
+              category.id,
+              wp.deathCauseQid || undefined
+            );
+          }
+
+          // Create slug
+          const slug = wp.name
+            .toLowerCase()
+            .replace(/ı/g, 'i')
+            .replace(/ğ/g, 'g')
+            .replace(/ü/g, 'u')
+            .replace(/ş/g, 's')
+            .replace(/ö/g, 'o')
+            .replace(/ç/g, 'c')
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+
+          // Create person
+          await storage.createPerson({
+            qid: wp.qid,
+            slug,
+            name: wp.name,
+            birthDate: wp.birthDate,
+            deathDate: wp.deathDate,
+            deathPlace: wp.deathPlace,
+            imageUrl: wp.imageUrl,
+            wikipediaUrl: wp.wikipediaUrl,
+            description: wp.description,
+            professionId: profession.id,
+            countryId: country.id,
+            deathCauseId: deathCause?.id || null,
+            categoryId: category.id,
+            isApproved: true,
+          });
+
+          batchImported++;
+        }
+        
+        totalImported += batchImported;
+        totalSkipped += batchSkipped;
+        
+        console.log(`Batch ${batchNum} complete: ${batchImported} imported, ${batchSkipped} skipped`);
+        console.log(`Total progress: ${totalImported} imported, ${totalSkipped} skipped, ${totalFetched} fetched`);
+        
+        // Wait before next batch (rate limiting)
+        if (batchNum < TOTAL_BATCHES && wikidataPersons.length > 0) {
+          console.log(`Waiting ${BATCH_DELAY_MS/1000}s before next batch...`);
+          await new Promise(resolve => setTimeout(resolve, BATCH_DELAY_MS));
         }
       }
 
-      console.log(`Import complete: ${imported} imported, ${skipped} skipped`);
-      res.json({ success: true, imported, skipped, total: wikidataPersons.length });
+      console.log(`\n=== Import complete: ${totalImported} imported, ${totalSkipped} skipped, ${totalFetched} total fetched ===`);
+      res.json({ success: true, imported: totalImported, skipped: totalSkipped, total: totalFetched });
     } catch (error) {
       console.error("Error importing from Wikidata:", error);
       res.status(500).json({ error: "Internal server error" });
