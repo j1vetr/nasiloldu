@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { fetchPersonsFromWikidata, PROFESSION_QIDS, categorizeDeathCause } from "./wikidata";
+import { fetchPersonsFromWikidata, fetchPersonsByQids, PROFESSION_QIDS, categorizeDeathCause } from "./wikidata";
 import { generateSitemap, generateRobotsTxt } from "./seo";
 import { fetchWikipediaExtract } from "./wikipedia";
 import bcrypt from "bcrypt";
@@ -454,6 +454,124 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ success: true, imported: totalImported, skipped: totalSkipped, total: totalFetched });
     } catch (error) {
       console.error("Error importing from Wikidata:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  // Import specific persons by QID
+  app.post("/api/admin/import-by-qids", async (req, res) => {
+    try {
+      const { qids } = req.body as { qids: string[] };
+      
+      if (!qids || !Array.isArray(qids) || qids.length === 0) {
+        return res.status(400).json({ error: "QIDs array is required" });
+      }
+
+      console.log(`\n=== Importing ${qids.length} persons by QID...`);
+      
+      const wikidataPersons = await fetchPersonsByQids(qids);
+      console.log(`Fetched ${wikidataPersons.length} persons from Wikidata`);
+      
+      let imported = 0;
+      let skipped = 0;
+      let errors = 0;
+
+      for (const wp of wikidataPersons) {
+        try {
+          // Check if already exists
+          const existing = await storage.getPersonByQid(wp.qid);
+          if (existing) {
+            console.log(`Skipping ${wp.name} (already exists)`);
+            skipped++;
+            continue;
+          }
+
+          // Get or create profession
+          const profession = await storage.getOrCreateProfession(
+            wp.professionLabel || "Bilinmiyor",
+            wp.professionQid || undefined
+          );
+
+          // Get or create country
+          const country = await storage.getOrCreateCountry(
+            wp.countryLabel || "Bilinmiyor",
+            wp.countryQid || undefined
+          );
+
+          // Determine category
+          const categorySlug = categorizeDeathCause(wp.deathCauseLabel);
+          const category = await storage.getCategoryBySlug(categorySlug);
+          if (!category) {
+            console.error(`Category not found: ${categorySlug}`);
+            errors++;
+            continue;
+          }
+
+          // Get or create death cause
+          let deathCause = null;
+          if (wp.deathCauseLabel) {
+            deathCause = await storage.getOrCreateDeathCause(
+              wp.deathCauseLabel,
+              category.id,
+              wp.deathCauseQid || undefined
+            );
+          }
+
+          // Create slug
+          const slug = wp.name
+            .toLowerCase()
+            .replace(/ı/g, 'i')
+            .replace(/ğ/g, 'g')
+            .replace(/ü/g, 'u')
+            .replace(/ş/g, 's')
+            .replace(/ö/g, 'o')
+            .replace(/ç/g, 'c')
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+
+          // Fetch Wikipedia extract for detailed description
+          let detailedDescription = wp.description;
+          if (wp.wikipediaUrl) {
+            console.log(`Fetching Wikipedia extract for ${wp.name}...`);
+            const wikiExtract = await fetchWikipediaExtract(wp.name);
+            if (wikiExtract && wikiExtract.length > 200) {
+              detailedDescription = wikiExtract;
+              console.log(`✓ Got ${wikiExtract.length} chars for ${wp.name}`);
+            } else {
+              console.log(`✗ No Wikipedia extract for ${wp.name}`);
+            }
+          }
+
+          // Create person
+          await storage.createPerson({
+            qid: wp.qid,
+            slug,
+            name: wp.name,
+            birthDate: wp.birthDate,
+            deathDate: wp.deathDate,
+            deathPlace: wp.deathPlace,
+            imageUrl: wp.imageUrl,
+            wikipediaUrl: wp.wikipediaUrl,
+            description: detailedDescription,
+            professionId: profession.id,
+            countryId: country.id,
+            deathCauseId: deathCause?.id || null,
+            categoryId: category.id,
+            isApproved: true,
+          });
+
+          console.log(`✓ Imported ${wp.name} (${categorySlug})`);
+          imported++;
+        } catch (error) {
+          console.error(`Error importing ${wp.name}:`, error);
+          errors++;
+        }
+      }
+
+      console.log(`\n=== Import complete: ${imported} imported, ${skipped} skipped, ${errors} errors ===`);
+      res.json({ success: true, imported, skipped, errors, total: qids.length });
+    } catch (error) {
+      console.error("Error importing by QIDs:", error);
       res.status(500).json({ error: "Internal server error" });
     }
   });

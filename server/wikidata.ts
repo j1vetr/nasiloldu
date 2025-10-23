@@ -111,6 +111,83 @@ export const PROFESSION_QIDS = {
   DIRECTOR: "Q2526255",   // yönetmen
 };
 
+// Belirli QID'ler için kişi çekme
+export async function fetchPersonsByQids(qids: string[]): Promise<WikidataPerson[]> {
+  const qidValues = qids.map(qid => `wd:${qid}`).join(" ");
+  
+  const query = `
+    SELECT DISTINCT ?person ?personLabel ?birthDate ?deathDate ?deathPlace ?deathPlaceLabel 
+                    ?image ?article ?description ?profession ?professionLabel 
+                    ?country ?countryLabel ?deathCause ?deathCauseLabel
+    WHERE {
+      VALUES ?person { ${qidValues} }
+      
+      ?person wdt:P31 wd:Q5 .
+      
+      OPTIONAL { ?person wdt:P569 ?birthDate . }
+      OPTIONAL { ?person wdt:P570 ?deathDate . }
+      OPTIONAL { ?person wdt:P20 ?deathPlace . }
+      OPTIONAL { ?person wdt:P18 ?image . }
+      OPTIONAL { ?person wdt:P106 ?profession . }
+      OPTIONAL { ?person wdt:P27 ?country . }
+      OPTIONAL { ?person wdt:P509 ?deathCause . }
+      
+      OPTIONAL {
+        ?article schema:about ?person ;
+                schema:isPartOf <https://tr.wikipedia.org/> .
+      }
+      
+      SERVICE wikibase:label { 
+        bd:serviceParam wikibase:language "tr,en" .
+        ?person rdfs:label ?personLabel .
+        ?deathPlace rdfs:label ?deathPlaceLabel .
+        ?profession rdfs:label ?professionLabel .
+        ?country rdfs:label ?countryLabel .
+        ?deathCause rdfs:label ?deathCauseLabel .
+        ?person schema:description ?description .
+      }
+    }
+  `;
+
+  try {
+    const response = await fetch(WIKIDATA_SPARQL_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/sparql-query",
+        "Accept": "application/sparql-results+json",
+        "User-Agent": "nasiloldu.net/1.0",
+      },
+      body: query,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Wikidata API error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    
+    return data.results.bindings.map((binding: any) => ({
+      qid: binding.person.value.split("/").pop(),
+      name: binding.personLabel?.value || "Bilinmiyor",
+      birthDate: binding.birthDate?.value?.split("T")[0] || null,
+      deathDate: binding.deathDate?.value?.split("T")[0] || null,
+      deathPlace: binding.deathPlaceLabel?.value || null,
+      imageUrl: binding.image?.value || null,
+      wikipediaUrl: binding.article?.value || null,
+      description: binding.description?.value || null,
+      professionQid: binding.profession?.value?.split("/").pop() || null,
+      professionLabel: binding.professionLabel?.value || "Bilinmiyor",
+      countryQid: binding.country?.value?.split("/").pop() || null,
+      countryLabel: binding.countryLabel?.value || "Bilinmiyor",
+      deathCauseQid: binding.deathCause?.value?.split("/").pop() || null,
+      deathCauseLabel: binding.deathCauseLabel?.value || null,
+    }));
+  } catch (error) {
+    console.error("Wikidata fetch error:", error);
+    return [];
+  }
+}
+
 // Kategori eşleştirme yardımcısı
 export function categorizeDeathCause(deathCauseLabel: string | null): string {
   if (!deathCauseLabel) return "hastalik";
@@ -122,9 +199,11 @@ export function categorizeDeathCause(deathCauseLabel: string | null): string {
     return "intihar";
   }
   
-  // Suikast
+  // Suikast / İdam / Cinayet
   if (lowerLabel.includes("suikast") || lowerLabel.includes("cinayet") || 
-      lowerLabel.includes("assassination") || lowerLabel.includes("murder")) {
+      lowerLabel.includes("assassination") || lowerLabel.includes("murder") ||
+      lowerLabel.includes("idam") || lowerLabel.includes("execution") ||
+      lowerLabel.includes("capital punishment")) {
     return "suikast";
   }
   
