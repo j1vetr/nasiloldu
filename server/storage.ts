@@ -59,6 +59,7 @@ export interface IStorage {
   searchPersons(query: string): Promise<PersonWithRelations[]>;
   getRelatedPersons(personId: number, limit: number): Promise<PersonWithRelations[]>;
   createPerson(person: InsertPerson): Promise<Person>;
+  updatePerson(personId: number, updates: Partial<InsertPerson>): Promise<Person>;
   incrementViewCount(personId: number): Promise<void>;
   
   // Stats
@@ -332,6 +333,14 @@ export class DatabaseStorage implements IStorage {
 
   async createPerson(person: InsertPerson): Promise<Person> {
     const [result] = await db.insert(persons).values(person).returning();
+    return result;
+  }
+
+  async updatePerson(personId: number, updates: Partial<InsertPerson>): Promise<Person> {
+    const [result] = await db.update(persons)
+      .set(updates)
+      .where(eq(persons.id, personId))
+      .returning();
     return result;
   }
 

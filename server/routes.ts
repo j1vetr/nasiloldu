@@ -235,6 +235,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ========== Wikipedia Update Route ==========
+  app.post("/api/admin/update-wikipedia", async (req, res) => {
+    try {
+      // Get all persons
+      const allPersons = await storage.getAllPersons();
+      
+      let updated = 0;
+      let skipped = 0;
+      
+      for (const person of allPersons) {
+        // Skip if already has long description (Wikipedia likely)
+        if (person.description && person.description.length > 500) {
+          skipped++;
+          continue;
+        }
+        
+        // Fetch Wikipedia extract
+        if (person.name) {
+          console.log(`Updating ${person.name}...`);
+          const wikiExtract = await fetchWikipediaExtract(person.name);
+          
+          if (wikiExtract && wikiExtract.length > 200) {
+            await storage.updatePerson(person.id, {
+              description: wikiExtract,
+            });
+            updated++;
+            console.log(`✓ Updated ${person.name} (${wikiExtract.length} chars)`);
+          } else {
+            skipped++;
+            console.log(`✗ No Wikipedia extract for ${person.name}`);
+          }
+          
+          // Rate limiting - wait 500ms between requests
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+      }
+      
+      res.json({ 
+        success: true, 
+        updated, 
+        skipped, 
+        total: allPersons.length 
+      });
+    } catch (error) {
+      console.error("Wikipedia update error:", error);
+      res.status(500).json({ error: "Wikipedia update failed" });
+    }
+  });
+
   // ========== Admin API Routes ==========
 
   app.post("/api/admin/login", async (req, res) => {
