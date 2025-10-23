@@ -51,8 +51,11 @@ export const persons = pgTable("persons", {
   slug: text("slug").notNull().unique(),
   name: text("name").notNull(),
   birthDate: text("birth_date"), // YYYY-MM-DD formatında
+  birthPlace: text("birth_place"), // Doğum yeri
   deathDate: text("death_date"), // YYYY-MM-DD formatında
-  deathPlace: text("death_place"),
+  deathPlace: text("death_place"), // Ölüm yeri
+  deathCause: text("death_cause"), // Ölüm nedeni (text)
+  nationality: text("nationality"), // Uyruk/milliyet
   imageUrl: text("image_url"),
   wikipediaUrl: text("wikipedia_url"),
   description: text("description"), // Kısa açıklama
