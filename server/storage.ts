@@ -307,7 +307,7 @@ export class DatabaseStorage implements IStorage {
   async searchPersons(query: string): Promise<PersonWithRelations[]> {
     const searchTerm = `%${query}%`;
     const results = await db.query.persons.findMany({
-      where: like(persons.name, searchTerm),
+      where: sql`unaccent(${persons.name}) ILIKE unaccent(${searchTerm})`,
       orderBy: [desc(persons.viewCount)],
       limit: 50,
       with: {

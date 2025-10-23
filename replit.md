@@ -133,3 +133,11 @@ Wikidata verilerine dayalı, tamamen Türkçe, kapsamlı ve güncel ünlü ölü
   - window.history.scrollRestoration = 'manual' (browser native scroll hatırlamayı devre dışı bıraktı)
   - Tüm navigasyonlarda (ileri, geri, link, kart) scroll pozisyonu sıfırlanır
   - Browser back button ile geri dönünce bile scroll en üstte açılır
+- ✅ **AJAX Arama Bug Fix (Türkçe Karakter Desteği)**:
+  - PostgreSQL unaccent extension startup'ta otomatik enable ediliyor
+  - searchPersons() fonksiyonu: `unaccent(name) ILIKE unaccent(query)` 
+  - Türkçe karakterler normalize ediliyor (ü→u, ş→s, ö→o, ç→c, İ→i, ğ→g)
+  - "sünal" → "Kemal Sunal" bulunur
+  - "atatürk" → "Mustafa Kemal Atatürk" bulunur
+  - "bud" → "Bud Abbott" bulunur (case-insensitive)
+  - Frontend zaten encodeURIComponent() kullanıyor (URL encoding)
