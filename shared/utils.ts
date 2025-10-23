@@ -6,9 +6,10 @@
  * - "Mustafa Kemal Atatürk" → "mustafa-kemal-ataturk"
  * - "E. H. Calvert" → "eh-calvert"
  * - "Diana, Princess of Wales" → "diana-princess-of-wales"
+ * - "The Notorious B.I.G." → "the-notorious-big"
  */
 export function createSlug(name: string): string {
-  return name
+  let slug = name
     .toLowerCase()
     // Türkçe karakterleri dönüştür
     .replace(/ğ/g, 'g')
@@ -21,7 +22,7 @@ export function createSlug(name: string): string {
     .replace(/â/g, 'a')
     .replace(/î/g, 'i')
     .replace(/û/g, 'u')
-    // Nokta ve virgülleri kaldır (tek harfli kelimeler için)
+    // Nokta ve virgülleri kaldır
     .replace(/\./g, '')
     .replace(/,/g, '')
     // Alfanumerik olmayan karakterleri tire ile değiştir
@@ -30,6 +31,12 @@ export function createSlug(name: string): string {
     .replace(/-+/g, '-')
     // Baş ve sondaki tireleri kaldır
     .replace(/^-+|-+$/g, '');
+
+  // Tek harfli kelimeleri birleştir (e-h → eh)
+  // Regex: tek harf + tire + tek harf patternini bulur
+  slug = slug.replace(/\b([a-z])-([a-z])\b/g, '$1$2');
+  
+  return slug;
 }
 
 /**
