@@ -104,8 +104,27 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Country methods
-  async getAllCountries(): Promise<Country[]> {
-    return await db.select().from(countries).orderBy(countries.name);
+  async getAllCountries(): Promise<(Country & { _count: { persons: number } })[]> {
+    const result = await db
+      .select({
+        id: countries.id,
+        slug: countries.slug,
+        name: countries.name,
+        qid: countries.qid,
+        personCount: sql<number>`count(${persons.id})::int`.as('person_count'),
+      })
+      .from(countries)
+      .leftJoin(persons, eq(countries.id, persons.countryId))
+      .groupBy(countries.id, countries.slug, countries.name, countries.qid)
+      .orderBy(countries.name);
+
+    return result.map(r => ({
+      id: r.id,
+      slug: r.slug,
+      name: r.name,
+      qid: r.qid,
+      _count: { persons: r.personCount || 0 },
+    }));
   }
 
   async getCountryBySlug(slug: string): Promise<Country | undefined> {

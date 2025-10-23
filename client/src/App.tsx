@@ -10,6 +10,7 @@ import PersonDetailPage from "@/pages/PersonDetailPage";
 import CategoriesPage from "@/pages/CategoriesPage";
 import CategoryPage from "@/pages/CategoryPage";
 import CountryPage from "@/pages/CountryPage";
+import Countries from "@/pages/Countries";
 import ProfessionPage from "@/pages/ProfessionPage";
 import TodayPage from "@/pages/TodayPage";
 import SearchPage from "@/pages/SearchPage";
@@ -30,6 +31,7 @@ function Router() {
       <Route path="/nasil-oldu/:slug" component={PersonDetailPage} />
       <Route path="/kategoriler" component={CategoriesPage} />
       <Route path="/kategori/:tip" component={CategoryPage} />
+      <Route path="/ulkeler" component={Countries} />
       <Route path="/ulke/:ulke-adi" component={CountryPage} />
       <Route path="/meslek/:meslek-adi" component={ProfessionPage} />
       <Route path="/bugun" component={TodayPage} />

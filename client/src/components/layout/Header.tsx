@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Menu, Home, Heart, Car, Brain, Crosshair, Calendar } from "lucide-react";
+import { Menu, Home, Heart, Car, Brain, Crosshair, Calendar, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
@@ -15,6 +15,7 @@ export function Header() {
     { label: "Kaza", href: "/kategori/kaza", icon: Car },
     { label: "İntihar", href: "/kategori/intihar", icon: Brain },
     { label: "Suikast", href: "/kategori/suikast", icon: Crosshair },
+    { label: "Ülkeler", href: "/ulkeler", icon: Globe },
     { label: "Bugün Ölenler", href: "/bugun", icon: Calendar },
   ];
 
