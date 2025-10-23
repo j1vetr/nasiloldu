@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { PersonCard } from "@/components/PersonCard";
 import { CategoryCard } from "@/components/CategoryCard";
 import { PageLoading, PersonCardSkeleton } from "@/components/LoadingSpinner";
-import { Calendar, TrendingUp, Layers, Search } from "lucide-react";
+import { Calendar, TrendingUp, Layers, Search, Users, FolderOpen, CalendarDays } from "lucide-react";
 import type { PersonWithRelations, Category } from "@shared/schema";
 import { useState } from "react";
 import { useLocation } from "wouter";
@@ -99,17 +99,22 @@ export default function HomePage() {
           {/* Featured Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mt-16">
             {[
-              { label: "Kişi", value: recentPersons?.length || 0, icon: "👤" },
-              { label: "Kategori", value: categories?.length || 0, icon: "📂" },
-              { label: "Güncel", value: "2025", icon: "📅" },
+              { label: "Kişi", value: recentPersons?.length || 0, Icon: Users, testId: "stat-persons" },
+              { label: "Kategori", value: categories?.length || 0, Icon: FolderOpen, testId: "stat-categories" },
+              { label: "Güncel", value: "2025", Icon: CalendarDays, testId: "stat-year" },
             ].map((stat, i) => (
               <div 
                 key={i}
                 className="relative group"
+                data-testid={stat.testId}
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md rounded-xl border border-white/10 group-hover:border-primary/30 transition-all duration-300" />
                 <div className="relative p-6 text-center">
-                  <div className="text-3xl mb-2">{stat.icon}</div>
+                  <div className="flex justify-center mb-3">
+                    <div className="p-3 bg-primary/10 rounded-xl backdrop-blur-sm">
+                      <stat.Icon className="w-6 h-6 text-primary" />
+                    </div>
+                  </div>
                   <div className="text-2xl md:text-3xl font-bold text-primary mb-1">{stat.value}</div>
                   <div className="text-sm text-zinc-400">{stat.label}</div>
                 </div>
