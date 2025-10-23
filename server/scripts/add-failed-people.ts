@@ -37,7 +37,8 @@ async function getFullWikipediaData(title: string): Promise<{ description: strin
     console.log(`✓ ${title}: ${wordCount} words, ${description.length} characters`);
     
     if (wordCount < 500) {
-      console.warn(`⚠ Warning: ${title} has only ${wordCount} words (minimum 500 requested)`);
+      console.error(`❌ ${title} has only ${wordCount} words (minimum 500 required)`);
+      return { description: "", imageUrl: null };
     }
     
     return {
@@ -79,12 +80,16 @@ function categorizeDeathCause(deathCauseText: string): string {
 function createSlug(name: string): string {
   return name
     .toLocaleLowerCase('tr-TR')
+    .replace(/İ/g, 'i')
     .replace(/ı/g, 'i')
     .replace(/ğ/g, 'g')
     .replace(/ü/g, 'u')
     .replace(/ş/g, 's')
     .replace(/ö/g, 'o')
     .replace(/ç/g, 'c')
+    .replace(/â/g, 'a')
+    .replace(/î/g, 'i')
+    .replace(/û/g, 'u')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
 }
@@ -146,12 +151,12 @@ const failedPeople = [
     country: "Türkiye"
   },
   {
-    name: "Turan Feyzioğlu",
-    wikipediaTitle: "Turan Feyzioğlu",
+    name: "Turhan Feyzioğlu",
+    wikipediaTitle: "Turhan Feyzioğlu",
     qid: "Q2458942",
-    deathDate: "1988-09-11",
-    deathCause: "doğal sebepler",
-    profession: "Siyasetçi",
+    deathDate: "1988-03-24",
+    deathCause: "kalp yetmezliği",
+    profession: "siyasetçi",
     country: "Türkiye"
   }
 ];

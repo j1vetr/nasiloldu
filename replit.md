@@ -175,3 +175,5 @@ Wikidata verilerine dayalı, tamamen Türkçe, kapsamlı ve güncel ünlü ölü
 - ✅ **Yeni Meslekler**: arkeolog, tarihçi
 - ✅ **Toplam Veri**: 92 → 124 kişi (32 yeni ekleme)
 - ✅ **Kategori Dağılımı Güncellendi**: Hastalık 42 → 84 (+42)
+- ✅ **Slug Generation Fix**: createSlug fonksiyonları â, î, û, İ karakterlerini doğru handle ediyor
+- ✅ **Slug Database Cleanup**: Yanlış slug'lar düzeltildi (Kâzım Karabekir → kazim-karabekir, vb.)
