@@ -470,13 +470,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`\n=== Importing ${qids.length} persons by QID...`);
       
       const wikidataPersons = await fetchPersonsByQids(qids);
-      console.log(`Fetched ${wikidataPersons.length} persons from Wikidata`);
+      console.log(`Fetched ${wikidataPersons.length} persons from Wikidata (before dedup)`);
+      
+      // Deduplicate by QID (Wikidata sometimes returns duplicates)
+      const uniquePersons = wikidataPersons.reduce((acc, person) => {
+        if (!acc.some(p => p.qid === person.qid)) {
+          acc.push(person);
+        }
+        return acc;
+      }, [] as typeof wikidataPersons);
+      
+      console.log(`After deduplication: ${uniquePersons.length} unique persons`);
       
       let imported = 0;
       let skipped = 0;
       let errors = 0;
 
-      for (const wp of wikidataPersons) {
+      for (const wp of uniquePersons) {
         try {
           // Check if already exists
           const existing = await storage.getPersonByQid(wp.qid);

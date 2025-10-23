@@ -116,9 +116,11 @@ export async function fetchPersonsByQids(qids: string[]): Promise<WikidataPerson
   const qidValues = qids.map(qid => `wd:${qid}`).join(" ");
   
   const query = `
-    SELECT DISTINCT ?person ?personLabel ?birthDate ?deathDate ?deathPlace ?deathPlaceLabel 
-                    ?image ?article ?description ?profession ?professionLabel 
-                    ?country ?countryLabel ?deathCause ?deathCauseLabel
+    SELECT ?person ?personLabel ?birthDate ?deathDate ?deathPlace ?deathPlaceLabel 
+           ?image ?article ?description
+           (SAMPLE(?profession) AS ?profession) (SAMPLE(?professionLabel) AS ?professionLabel)
+           (SAMPLE(?country) AS ?country) (SAMPLE(?countryLabel) AS ?countryLabel)
+           (SAMPLE(?deathCause) AS ?deathCause) (SAMPLE(?deathCauseLabel) AS ?deathCauseLabel)
     WHERE {
       VALUES ?person { ${qidValues} }
       
@@ -147,6 +149,7 @@ export async function fetchPersonsByQids(qids: string[]): Promise<WikidataPerson
         ?person schema:description ?description .
       }
     }
+    GROUP BY ?person ?personLabel ?birthDate ?deathDate ?deathPlace ?deathPlaceLabel ?image ?article ?description
   `;
 
   try {
@@ -199,11 +202,13 @@ export function categorizeDeathCause(deathCauseLabel: string | null): string {
     return "intihar";
   }
   
-  // Suikast / İdam / Cinayet
+  // Suikast / İdam / Cinayet / Asılma
   if (lowerLabel.includes("suikast") || lowerLabel.includes("cinayet") || 
       lowerLabel.includes("assassination") || lowerLabel.includes("murder") ||
+      lowerLabel.includes("murdered") || lowerLabel.includes("killed") ||
       lowerLabel.includes("idam") || lowerLabel.includes("execution") ||
-      lowerLabel.includes("capital punishment")) {
+      lowerLabel.includes("capital punishment") || lowerLabel.includes("hanging") ||
+      lowerLabel.includes("hanged") || lowerLabel.includes("shot")) {
     return "suikast";
   }
   
