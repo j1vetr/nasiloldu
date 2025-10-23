@@ -68,13 +68,13 @@ Wikidata verilerine dayalı, tamamen Türkçe, kapsamlı ve güncel ünlü ölü
 - Türkçe capitalization (i→İ) için shared utils fonksiyonu
 
 ## Mevcut Veri Durumu
-**Toplam: 24 kişi**
-- **Hastalık**: 22 kişi
+**Toplam: 36 kişi**
+- **Hastalık**: 34 kişi
 - **Suikast**: 2 kişi (Adnan Menderes, Nihat Erim)
 
-**Türk Siyasetçiler (13 kişi):**
+**Türk Siyasetçiler (25 kişi):**
 - **Cumhurbaşkanları (9)**: Mustafa Kemal Atatürk, İsmet İnönü, Celal Bayar, Cemal Gürsel, Cevdet Sunay, Fahri Korutürk, Kenan Evren, Turgut Özal, Süleyman Demirel
-- **Başbakanlar (4)**: Adnan Menderes (suikast), Bülent Ecevit, Necmettin Erbakan, Nihat Erim (suikast)
+- **Başbakanlar (16)**: Adnan Menderes (suikast), Bülent Ecevit, Necmettin Erbakan, Nihat Erim (suikast), Ali Fethi Okyar, Refik Saydam, Şükrü Saracoğlu, Recep Peker, Hasan Saka, Şemsettin Günaltay, Suat Hayri Ürgüplü, Ferit Melen, Naim Talu, Sadi Irmak, Yıldırım Akbulut, Mesut Yılmaz
 
 ## Son Güncellemeler (23 Ekim 2025)
 - ✅ Temel schema tanımlandı (PostgreSQL + Drizzle ORM)
@@ -87,5 +87,8 @@ Wikidata verilerine dayalı, tamamen Türkçe, kapsamlı ve güncel ünlü ölü
 - ✅ SEO optimizasyonu tamamlandı (sitemap.xml, robots.txt, Schema.org JSON-LD)
 - ✅ Link kullanımı düzeltildi (nested anchor problemi çözüldü)
 - ✅ Capitalization bug düzeltildi (Türkçe locale desteği ile shared utils)
-- ✅ 8 Türk cumhurbaşkanı başarıyla eklendi (Wikipedia açıklamaları ile)
+- ✅ 9 Türk cumhurbaşkanı başarıyla eklendi (Wikipedia açıklamaları ile)
+- ✅ 16 Türk başbakanı başarıyla eklendi (Wikidata QID bazlı import)
 - ✅ Wikidata QID doğrulaması yapıldı (yanlış QID'ler düzeltildi)
+- ✅ Mobil responsive tasarım tamamlandı (Header Sheet menu, HomePage responsive breakpoints)
+- ✅ Emoji'ler lucide-react icon'larla değiştirildi (universal_design_guidelines uyumu)
