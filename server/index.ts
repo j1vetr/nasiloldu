@@ -1,6 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { generateSEOData, injectSEOIntoHTML } from "./seo";
 
 const app = express();
 
@@ -56,6 +57,37 @@ app.use((req, res, next) => {
     res.status(status).json({ message });
     throw err;
   });
+
+  // SSR Meta Tags Injection Middleware (production only)
+  if (app.get("env") === "production") {
+    app.use(async (req, res, next) => {
+      // Only intercept HTML requests
+      if (req.path.startsWith('/api') || req.path.includes('.')) {
+        return next();
+      }
+
+      // Capture the response
+      const originalSend = res.send;
+      res.send = function(data: any) {
+        // Only inject for HTML responses
+        if (typeof data === 'string' && data.includes('<!DOCTYPE html>')) {
+          generateSEOData(req.originalUrl || req.url)
+            .then((seoData) => {
+              const injectedHTML = injectSEOIntoHTML(data, seoData);
+              originalSend.call(res, injectedHTML);
+            })
+            .catch((error) => {
+              console.error('SEO injection error:', error);
+              originalSend.call(res, data);
+            });
+        } else {
+          originalSend.call(res, data);
+        }
+        return res;
+      };
+      next();
+    });
+  }
 
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
