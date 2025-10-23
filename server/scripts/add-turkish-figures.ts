@@ -39,7 +39,8 @@ async function getFullWikipediaData(title: string): Promise<{ description: strin
     console.log(`✓ ${title}: ${wordCount} words, ${description.length} characters`);
     
     if (wordCount < 500) {
-      console.warn(`⚠ Warning: ${title} has only ${wordCount} words (minimum 500 requested)`);
+      console.error(`❌ ${title} has only ${wordCount} words (minimum 500 required)`);
+      return { description: "", imageUrl: null };
     }
     
     return {
@@ -280,7 +281,7 @@ const newPeople = [
   "Sabiha Gökçen",
   "Cemal Madanoğlu",
   "İsmet Sezgin",
-  "Turan Feyzioğlu",
+  "Turhan Feyzioğlu",
   "Rauf Denktaş",
   "Fazıl Küçük",
   "Enver Ziya Karal",
