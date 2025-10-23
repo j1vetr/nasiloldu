@@ -4,6 +4,18 @@ import { db } from './db';
 import { persons, categories } from '@shared/schema';
 import { eq, sql } from 'drizzle-orm';
 
+// HTML escape function to prevent XSS
+function escapeHtml(text: string): string {
+  const map: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  };
+  return text.replace(/[&<>"']/g, (m) => map[m]);
+}
+
 export async function generateSitemap(): Promise<string> {
   const baseUrl = "https://nasiloldu.net";
   const persons = await storage.getAllPersons(1000);
@@ -167,80 +179,92 @@ export async function generateSEOData(url: string): Promise<SEOData> {
 }
 
 export function injectSEOIntoHTML(html: string, seoData: SEOData): string {
+  // **CRITICAL XSS PROTECTION**: Escape all user-controlled data before injection
+  const safeTitle = escapeHtml(seoData.title);
+  const safeDescription = escapeHtml(seoData.description);
+  const safeCanonical = escapeHtml(seoData.canonical);
+  const safeOgImage = seoData.ogImage ? escapeHtml(seoData.ogImage) : null;
+  
   // Title değiştir
   html = html.replace(
     /<title>.*?<\/title>/,
-    `<title>${seoData.title}</title>`
+    `<title>${safeTitle}</title>`
   );
   
   // Meta description değiştir
   html = html.replace(
     /<meta name="description" content=".*?">/,
-    `<meta name="description" content="${seoData.description}">`
+    `<meta name="description" content="${safeDescription}">`
   );
   
   // OG tags değiştir
   html = html.replace(
     /<meta property="og:title" content=".*?">/,
-    `<meta property="og:title" content="${seoData.title}">`
+    `<meta property="og:title" content="${safeTitle}">`
   );
   html = html.replace(
     /<meta property="og:description" content=".*?">/,
-    `<meta property="og:description" content="${seoData.description}">`
+    `<meta property="og:description" content="${safeDescription}">`
   );
   html = html.replace(
     /<meta property="og:url" content=".*?">/,
-    `<meta property="og:url" content="${seoData.canonical}">`
+    `<meta property="og:url" content="${safeCanonical}">`
   );
   
-  if (seoData.ogImage) {
+  if (safeOgImage) {
     html = html.replace(
       /<meta property="og:image" content=".*?">/,
-      `<meta property="og:image" content="${seoData.ogImage}">`
+      `<meta property="og:image" content="${safeOgImage}">`
     );
   }
   
   // Twitter tags değiştir
   html = html.replace(
     /<meta name="twitter:title" content=".*?">/,
-    `<meta name="twitter:title" content="${seoData.title}">`
+    `<meta name="twitter:title" content="${safeTitle}">`
   );
   html = html.replace(
     /<meta name="twitter:description" content=".*?">/,
-    `<meta name="twitter:description" content="${seoData.description}">`
+    `<meta name="twitter:description" content="${safeDescription}">`
   );
   html = html.replace(
     /<meta name="twitter:url" content=".*?">/,
-    `<meta name="twitter:url" content="${seoData.canonical}">`
+    `<meta name="twitter:url" content="${safeCanonical}">`
   );
   
-  if (seoData.ogImage) {
+  if (safeOgImage) {
     html = html.replace(
       /<meta name="twitter:image" content=".*?">/,
-      `<meta name="twitter:image" content="${seoData.ogImage}">`
+      `<meta name="twitter:image" content="${safeOgImage}">`
     );
   }
   
   // Canonical URL değiştir
   html = html.replace(
     /<link rel="canonical" href=".*?">/,
-    `<link rel="canonical" href="${seoData.canonical}">`
+    `<link rel="canonical" href="${safeCanonical}">`
   );
   
   // Schema.org JSON-LD değiştir (varsa)
+  // CRITICAL: Escape </script> and line separators to prevent XSS
   if (seoData.schema) {
+    const jsonLd = JSON.stringify(seoData.schema, null, 2)
+      .replace(/<\//g, '<\\/')  // Escape </script> → <\/script>
+      .replace(/\u2028/g, '\\u2028')  // Escape U+2028 line separator
+      .replace(/\u2029/g, '\\u2029'); // Escape U+2029 paragraph separator
+    
     html = html.replace(
       /<script type="application\/ld\+json">[\s\S]*?<\/script>/,
-      `<script type="application/ld+json">\n    ${JSON.stringify(seoData.schema, null, 2).split('\n').join('\n    ')}\n    </script>`
+      `<script type="application/ld+json">\n    ${jsonLd.split('\n').join('\n    ')}\n    </script>`
     );
   }
   
-  // Noscript fallback ekle (SEO için kritik!)
+  // Noscript fallback ekle (SEO için kritik!) - ALSO ESCAPED
   const noscriptContent = `
     <noscript>
       <div style="padding: 40px; text-align: center; font-family: system-ui, sans-serif; background: #000; color: #fff; min-height: 100vh;">
-        <h1 style="color: #FFD60A; font-size: 32px; margin-bottom: 16px;">${seoData.title}</h1>
-        <p style="color: #999; font-size: 18px; max-width: 600px; margin: 0 auto 24px;">${seoData.description}</p>
+        <h1 style="color: #FFD60A; font-size: 32px; margin-bottom: 16px;">${safeTitle}</h1>
+        <p style="color: #999; font-size: 18px; max-width: 600px; margin: 0 auto 24px;">${safeDescription}</p>
         <p style="color: #666; margin-top: 24px;">Bu siteyi görüntülemek için JavaScript'i etkinleştirmeniz gerekmektedir.</p>
       </div>
     </noscript>
