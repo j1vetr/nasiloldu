@@ -5,12 +5,14 @@ import { fetchPersonsFromWikidata, fetchPersonsByQids, PROFESSION_QIDS, categori
 import { generateSitemap } from "./seo/sitemap";
 import { generateRobotsTxt } from "./seo/robots";
 import { fetchWikipediaExtract } from "./wikipedia";
-import { seoMiddleware } from "./middleware/seo";
+import { productionSSRMiddleware, developmentSEOMiddleware } from "./middleware/seo";
 import bcrypt from "bcrypt";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // SEO Middleware - Crawlerlar için meta tag injection
-  app.use(seoMiddleware);
+  // Production: SSR for all users + SEO meta injection
+  // Development: SEO meta injection for crawlers only
+  app.use(productionSSRMiddleware);
+  app.use(developmentSEOMiddleware);
   // ========== SEO Routes ==========
   
   app.get("/sitemap.xml", async (req, res) => {

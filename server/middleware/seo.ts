@@ -1,12 +1,16 @@
 /**
  * SEO Middleware
- * Crawler botları tespit eder ve server-side meta tag injection yapar
+ * Production: SSR rendering + meta tag injection for all users
+ * Development: Meta tag injection for crawlers only
  */
 
 import { Request, Response, NextFunction } from 'express';
 import { generateMetaTags, injectMetaTags } from '../seo/meta-inject';
+import { renderPageSSR } from '../ssr';
 import fs from 'fs';
 import path from 'path';
+
+const isProd = process.env.NODE_ENV === 'production';
 
 /**
  * User agent'ın crawler olup olmadığını kontrol eder
@@ -39,17 +43,67 @@ function isCrawler(userAgent: string): boolean {
 }
 
 /**
- * SEO middleware - Crawler'lar için HTML'i modify eder
+ * Production SSR Middleware - Serves SSR HTML to all users
  */
-export async function seoMiddleware(
+export async function productionSSRMiddleware(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
+  // Only run in production
+  if (!isProd) {
+    return next();
+  }
+
+  const url = req.path;
+
+  // Skip non-HTML requests
+  if (!req.accepts('html') || url.startsWith('/api/') || url.startsWith('/assets/') || url.match(/\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$/)) {
+    return next();
+  }
+
+  try {
+    // Load HTML template
+    const htmlPath = path.join(process.cwd(), 'dist', 'public', 'index.html');
+    let html = fs.readFileSync(htmlPath, 'utf-8');
+
+    // Render React app with SSR
+    html = await renderPageSSR(url, html);
+
+    // Generate and inject meta tags
+    const metaTags = await generateMetaTags(url);
+    if (metaTags) {
+      html = injectMetaTags(html, metaTags);
+    }
+
+    // Send SSR HTML
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.setHeader('X-Robots-Tag', 'index, follow');
+    res.send(html);
+    
+  } catch (error) {
+    console.error('❌ Production SSR middleware error:', error);
+    next();
+  }
+}
+
+/**
+ * Development SEO Middleware - Meta tag injection for crawlers only
+ */
+export async function developmentSEOMiddleware(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  // Only run in development
+  if (isProd) {
+    return next();
+  }
+
   const userAgent = req.get('user-agent') || '';
   const url = req.path;
 
-  // Sadece HTML sayfaları için çalış (query params dahil search pages)
+  // Skip non-HTML requests
   if (!req.accepts('html') || url.startsWith('/api/') || url.startsWith('/assets/') || url.match(/\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$/)) {
     return next();
   }
@@ -68,25 +122,16 @@ export async function seoMiddleware(
     }
 
     // HTML template'ini oku
-    let html: string;
-    
-    if (process.env.NODE_ENV === 'production') {
-      // Production: dist'ten oku
-      const htmlPath = path.join(process.cwd(), 'dist', 'public', 'index.html');
-      html = fs.readFileSync(htmlPath, 'utf-8');
-    } else {
-      // Development: client/index.html'den oku
-      const htmlPath = path.join(process.cwd(), 'client', 'index.html');
-      html = fs.readFileSync(htmlPath, 'utf-8');
-    }
+    const htmlPath = path.join(process.cwd(), 'client', 'index.html');
+    let html = fs.readFileSync(htmlPath, 'utf-8');
 
     // Meta tagları inject et
-    const modifiedHtml = injectMetaTags(html, metaTags);
+    html = injectMetaTags(html, metaTags);
 
     // Modified HTML'i gönder
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.setHeader('X-Robots-Tag', 'index, follow');
-    res.send(modifiedHtml);
+    res.send(html);
     
   } catch (error) {
     console.error('SEO middleware error:', error);
