@@ -3,7 +3,7 @@ import { Menu, Home, Heart, Car, Brain, Crosshair, Calendar, Globe } from "lucid
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
-import logoUrl from "@assets/logo nsl_1761194999380.png";
+import logoUrl from "@assets/logo nsl_1761271756486.png";
 
 export function Header() {
   const [location] = useLocation();
