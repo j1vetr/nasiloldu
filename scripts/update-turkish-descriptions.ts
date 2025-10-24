@@ -36,7 +36,11 @@ async function fetchTurkishWikipediaExtract(wikidataId: string): Promise<string 
     // 1. Wikidata'dan Türkçe Wikipedia sayfa başlığını al
     const wikidataUrl = `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${wikidataId}&props=sitelinks&sitefilter=trwiki&format=json&origin=*`;
     
-    const wikidataResponse = await fetch(wikidataUrl);
+    const wikidataResponse = await fetch(wikidataUrl, {
+      headers: {
+        'User-Agent': 'nasiloldu.net/1.0 (https://nasiloldu.net; info@nasiloldu.net)'
+      }
+    });
     const wikidataData = await wikidataResponse.json();
     
     const entity = wikidataData.entities?.[wikidataId];
@@ -52,7 +56,11 @@ async function fetchTurkishWikipediaExtract(wikidataId: string): Promise<string 
     // 2. Wikipedia Türkçe API'den extract (özet) çek
     const wikipediaUrl = `https://tr.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(trWikiTitle)}&prop=extracts&exintro=1&explaintext=1&format=json&origin=*`;
     
-    const wikipediaResponse = await fetch(wikipediaUrl);
+    const wikipediaResponse = await fetch(wikipediaUrl, {
+      headers: {
+        'User-Agent': 'nasiloldu.net/1.0 (https://nasiloldu.net; info@nasiloldu.net)'
+      }
+    });
     const wikipediaData = await wikipediaResponse.json();
     
     const pages = wikipediaData.query?.pages;
@@ -142,6 +150,12 @@ function isEnglishDescription(description: string | null): boolean {
     /American /i,
     /British /i,
     /English /i,
+    /Turkish /i,
+    /musician/i,
+    /actor/i,
+    /singer/i,
+    /politician/i,
+    /writer/i,
   ];
   
   return englishPatterns.some(pattern => pattern.test(description));
