@@ -113,7 +113,7 @@ export async function renderHTMLWithMeta(
     }
     
     // Daha kısıtlayıcı status code'u kullan
-    const finalStatusCode = contentStatusCode !== 200 ? contentStatusCode : (meta?.statusCode || 200);
+    const finalStatusCode = contentStatusCode !== 200 ? contentStatusCode : 200;
     
     res.status(finalStatusCode).set({ "Content-Type": "text/html" }).send(html);
   } catch (error) {

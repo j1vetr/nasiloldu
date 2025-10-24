@@ -87,7 +87,36 @@ app.use((req, res, next) => {
   if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
-    serveStatic(app);
+    // Production: Serve static files
+    const path = await import("path");
+    const distPath = path.resolve(import.meta.dirname, "public");
+    const express = await import("express");
+    app.use(express.default.static(distPath));
+    
+    // Production: SSR for all HTML routes
+    app.use("*", async (req, res, next) => {
+      try {
+        // Skip static files
+        if (req.path.match(/\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$/)) {
+          return next();
+        }
+        
+        const { renderHTMLWithMeta } = await import("./ssr");
+        const fs = await import("fs");
+        const templatePath = path.resolve(distPath, "index.html");
+        
+        // Check if template exists
+        if (!fs.existsSync(templatePath)) {
+          log("index.html not found, falling back to static serve");
+          return next();
+        }
+        
+        await renderHTMLWithMeta(req, res, templatePath);
+      } catch (error) {
+        console.error("SSR error in production:", error);
+        next();
+      }
+    });
   }
 
   // ALWAYS serve the app on the port specified in the environment variable PORT
