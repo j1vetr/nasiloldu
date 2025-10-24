@@ -74,13 +74,28 @@ export async function generateMetaTags(url: string): Promise<MetaTags | null> {
         ? person.description.substring(0, 155) + '...'
         : `${person.name} (${person.profession.name}, ${person.country.name}) ${deathDateTurkish} tarihinde ${person.deathCause ? person.deathCause.name + ' nedeniyle' : ''} vefat etti. Doğum tarihi: ${formatTurkishDate(person.birthDate)}. Detaylı hayat hikayesi ve ölüm bilgileri.`;
       
+      // Kişiye özel meta keywords
+      const keywords = [
+        `${person.name} nasıl öldü`,
+        `${person.name} ölüm sebebi`,
+        `${person.name} ölüm nedeni`,
+        `${person.name} vefat`,
+        person.name,
+        `${person.profession.name}`,
+        `${person.country.name} ünlüleri`,
+        person.deathCause ? person.deathCause.name : 'ölüm nedeni',
+        deathDateTurkish,
+        'ünlü ölümleri',
+        'wikipedia',
+      ].filter(Boolean).join(', ');
+      
       return {
         title: `${person.name} Nasıl Öldü? | nasiloldu.net`,
         description: seoDescription,
         canonical: `${baseUrl}/nasil-oldu/${person.slug}`,
         ogType: 'profile',
         ogImage: person.imageUrl || `${baseUrl}/og-image.jpg`,
-        keywords: `${person.name}, nasıl öldü, ${person.profession.name}, ${person.country.name}, ölüm nedeni, ${deathDateTurkish}`,
+        keywords,
         schema: {
           '@context': 'https://schema.org',
           '@type': 'Person',
