@@ -54,10 +54,9 @@ export async function seoMiddleware(
     return next();
   }
 
-  // Crawler değilse normal akışa devam et
-  if (!isCrawler(userAgent)) {
-    return next();
-  }
+  // EVERYONE gets SSR - not just crawlers
+  // This ensures all users see correct meta tags and initial content
+  // (React will hydrate on client-side)
 
   try {
     // URL için meta tagları üret
