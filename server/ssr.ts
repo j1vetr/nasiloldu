@@ -174,6 +174,22 @@ function injectMetaTagsWithPlaceholders(html: string, meta: MetaTags): string {
     );
   }
   
+  // Meta keywords (kişiye özel)
+  if (meta.keywords) {
+    if (result.includes('<meta name="keywords"')) {
+      result = result.replace(
+        /<meta name="keywords"[^>]*>/,
+        `<meta name="keywords" content="${escapeHtml(meta.keywords)}" />`
+      );
+    } else {
+      // Yoksa meta description'dan sonra ekle
+      result = result.replace(
+        /(<meta name="description"[^>]*>)/,
+        `$1\n    <meta name="keywords" content="${escapeHtml(meta.keywords)}" />`
+      );
+    }
+  }
+  
   // OG ve Twitter tag'lerini replace et
   result = result.replace(/<meta property="og:title"[^>]*>/, `<meta property="og:title" content="${escapeHtml(meta.title)}" />`);
   result = result.replace(/<meta property="og:description"[^>]*>/, `<meta property="og:description" content="${escapeHtml(meta.description)}" />`);
