@@ -97,12 +97,20 @@ export async function renderHTMLWithMeta(
       const result = await renderStaticPage(parts[0] as 'hakkinda' | 'iletisim' | 'kvkk' | 'kullanim-sartlari');
       renderedContent = result.html;
       contentStatusCode = result.statusCode;
+    } else {
+      // 404 - Bilinmeyen route
+      renderedContent = '<div class="container mx-auto px-4 py-8"><h1 class="text-4xl font-bold mb-4">404 - Sayfa Bulunamadı</h1><p class="text-muted-foreground">Aradığınız sayfa bulunamadı.</p></div>';
+      contentStatusCode = 404;
     }
     
-    // Meta tag'leri inject et (eğer meta varsa)
-    if (meta) {
-      html = injectMetaTagsWithPlaceholders(html, meta);
-    }
+    // Meta tag'leri inject et (fallback ile)
+    const finalMeta = meta || {
+      title: '404 - Sayfa Bulunamadı | nasiloldu.net',
+      description: 'Aradığınız sayfa bulunamadı.',
+      canonical: `https://nasiloldu.net${url}`,
+      ogType: 'website',
+    };
+    html = injectMetaTagsWithPlaceholders(html, finalMeta);
     
     // Render edilmiş içeriği root div'e inject et
     if (renderedContent) {

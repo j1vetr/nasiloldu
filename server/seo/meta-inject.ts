@@ -164,6 +164,18 @@ export async function generateMetaTags(url: string): Promise<MetaTags | null> {
       canonical: `${baseUrl}/iletisim`,
       ogType: 'website',
     },
+    '/kvkk': {
+      title: 'KVKK - Kişisel Verilerin Korunması | nasiloldu.net',
+      description: 'nasiloldu.net kişisel verilerin korunması politikası. KVKK kapsamında kullanıcı hakları ve veri güvenliği.',
+      canonical: `${baseUrl}/kvkk`,
+      ogType: 'website',
+    },
+    '/kullanim-sartlari': {
+      title: 'Kullanım Şartları | nasiloldu.net',
+      description: 'nasiloldu.net kullanım şartları ve koşulları. Platform kullanım kuralları ve sorumluluklar.',
+      canonical: `${baseUrl}/kullanim-sartlari`,
+      ogType: 'website',
+    },
     '/kategoriler': {
       title: 'Tüm Kategoriler - nasiloldu.net',
       description: 'Ölüm kategorilerine göre ünlü kişileri keşfedin. Hastalık, kaza, intihar, suikast kategorileri.',
