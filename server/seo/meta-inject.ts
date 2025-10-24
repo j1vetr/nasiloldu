@@ -191,22 +191,6 @@ export async function generateMetaTags(url: string): Promise<MetaTags | null> {
 }
 
 /**
- * Generates SEO-friendly initial content for <div id="root">
- */
-function generateInitialContent(meta: MetaTags): string {
-  // Extract clean title without " | nasiloldu.net"
-  const cleanTitle = meta.title.replace(' | nasiloldu.net', '');
-  
-  return `
-    <div style="padding: 40px 20px; max-width: 1200px; margin: 0 auto; font-family: system-ui, sans-serif; background: #000; color: #fff; min-height: 100vh;">
-      <h1 style="color: #FFD60A; font-size: 32px; margin-bottom: 16px;">${escapeHtml(cleanTitle)}</h1>
-      <p style="color: #999; font-size: 18px; line-height: 1.6; margin-bottom: 24px;">${escapeHtml(meta.description)}</p>
-      <p style="color: #666; font-size: 14px;">Yükleniyor...</p>
-    </div>
-  `;
-}
-
-/**
  * Meta tagları HTML'e inject eder (duplicate prevention ile)
  */
 export function injectMetaTags(html: string, meta: MetaTags): string {
@@ -266,14 +250,10 @@ export function injectMetaTags(html: string, meta: MetaTags): string {
   // Inject before </head>
   result = result.replace('</head>', `${metaTags}\n  </head>`);
 
-  // Inject initial content into <div id="root"></div>
-  // This provides SEO-friendly content that React will hydrate over
-  const initialContent = generateInitialContent(meta);
-  result = result.replace(
-    /<div id="root"><\/div>/,
-    `<div id="root">${initialContent}</div>`
-  );
-
+  // Keep <div id="root"> empty for React hydration
+  // SSR meta tags are enough for SEO - React handles the UI
+  // (Adding content here causes hydration mismatch and breaks the design)
+  
   return result;
 }
 
