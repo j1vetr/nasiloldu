@@ -1,0 +1,256 @@
+
+<!DOCTYPE html>
+<html lang="tr" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    
+    <!-- Primary Meta Tags -->
+    <title>Uğur Mumcu Nasıl Öldü? | nasiloldu.net</title>
+    
+    
+    <meta name="keywords" content="ünlüler nasıl öldü, ölüm nedenleri, ünlü ölümleri, wikidata, wikipedia, ünlü kişiler, ölüm tarihleri, ansiklopedi, tarihte bugün, ölüm yıldönümü" />
+    <meta name="author" content="nasiloldu.net" />
+    <meta name="publisher" content="nasiloldu.net" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1" />
+    <meta name="bingbot" content="index, follow" />
+    <meta name="theme-color" content="#000000" />
+    
+    <!-- Language & Geo -->
+    <meta name="language" content="Turkish" />
+    <meta name="geo.region" content="TR" />
+    <link rel="alternate" hreflang="tr" href="https://nasiloldu.net/" />
+    <link rel="alternate" hreflang="x-default" href="https://nasiloldu.net/" />
+    
+    <!-- Open Graph / Facebook -->
+    
+    
+    
+    
+    
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="nasiloldu.net - Ünlü Kişiler Nasıl Öldü?" />
+    <meta property="og:site_name" content="nasiloldu.net" />
+    <meta property="og:locale" content="tr_TR" />
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://nasiloldu.net/" />
+    
+    
+    
+    <meta name="twitter:image:alt" content="nasiloldu.net - Ünlü Kişiler Nasıl Öldü?" />
+    
+    <!-- Canonical -->
+    
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=2" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png?v=2" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png?v=2" />
+    <link rel="shortcut icon" href="/favicon.png?v=2" />
+    
+    <!-- Google Search Console Verification (placeholder - update with your verification code) -->
+    <!-- <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE" /> -->
+    
+    <!-- Google Analytics 4 (placeholder - update with your Measurement ID) -->
+    <!-- 
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XXXXXXXXXX');
+    </script>
+    -->
+    
+    <!-- Performance: Preload critical resources -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+    
+    <!-- Schema.org for Google -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "nasiloldu.net",
+      "alternateName": "Ünlü Kişiler Nasıl Öldü",
+      "url": "https://nasiloldu.net",
+      "description": "236+ ünlü kişinin ölüm nedenlerini, tarihlerini ve detaylı hayat hikayelerini keşfedin. Wikidata ve Wikipedia verilerine dayalı, Türkçe, kapsamlı ve güncel ölüm bilgileri platformu.",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://nasiloldu.net/ara?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DND88cCD.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-BVbkO-HG.css">
+  
+    <!-- SSR Meta Tags (for crawlers) -->
+    <meta name="title" content="Uğur Mumcu Nasıl Öldü? | nasiloldu.net" />
+    <meta name="description" content="Uğur Mumcu (22 Ağustos 1942, Kırşehir - 24 Ocak 1993, Ankara), Türk gazeteci, araştırmacı ve yazar.
+24 Ocak 1993&#039;te Ankara&#039;da Karlı Sokak&#039;taki evinin önünd..." />
+    <meta name="keywords" content="Uğur Mumcu, nasıl öldü, gazeteci, Türkiye, ölüm nedeni, 24 Ocak 1993" />
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="profile" />
+    <meta property="og:url" content="https://nasiloldu.net/nasil-oldu/ugur-mumcu" />
+    <meta property="og:title" content="Uğur Mumcu Nasıl Öldü? | nasiloldu.net" />
+    <meta property="og:description" content="Uğur Mumcu (22 Ağustos 1942, Kırşehir - 24 Ocak 1993, Ankara), Türk gazeteci, araştırmacı ve yazar.
+24 Ocak 1993&#039;te Ankara&#039;da Karlı Sokak&#039;taki evinin önünd..." />
+    <meta property="og:image" content="http://commons.wikimedia.org/wiki/Special:FilePath/MumcuDenkmalSelcuk%20%28cropped%29.JPG" />
+    <meta property="og:site_name" content="nasiloldu.net" />
+    <meta property="og:locale" content="tr_TR" />
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Uğur Mumcu Nasıl Öldü? | nasiloldu.net" />
+    <meta name="twitter:description" content="Uğur Mumcu (22 Ağustos 1942, Kırşehir - 24 Ocak 1993, Ankara), Türk gazeteci, araştırmacı ve yazar.
+24 Ocak 1993&#039;te Ankara&#039;da Karlı Sokak&#039;taki evinin önünd..." />
+    <meta name="twitter:image" content="http://commons.wikimedia.org/wiki/Special:FilePath/MumcuDenkmalSelcuk%20%28cropped%29.JPG" />
+    
+    <!-- Canonical -->
+    <link rel="canonical" href="https://nasiloldu.net/nasil-oldu/ugur-mumcu" />
+    
+    <!-- Schema.org JSON-LD (SSR) -->
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Uğur Mumcu","birthDate":"1942-08-22","deathDate":"1993-01-24","jobTitle":"gazeteci","nationality":{"@type":"Country","name":"Türkiye"},"description":"Uğur Mumcu (22 Ağustos 1942, Kırşehir - 24 Ocak 1993, Ankara), Türk gazeteci, araştırmacı ve yazar.\n24 Ocak 1993'te Ankara'da Karlı Sokak'taki evinin önünde arabasına konulan bombanın patlaması nedeniyle suikast sonucu öldü.","image":"http://commons.wikimedia.org/wiki/Special:FilePath/MumcuDenkmalSelcuk%20%28cropped%29.JPG"}</script>
+  
+  </head>
+  <body>
+    <!-- SEO-friendly noscript content for crawlers -->
+    <noscript>
+      <div style="padding: 40px; text-align: center; font-family: system-ui, sans-serif; background: #000; color: #fff; min-height: 100vh;">
+        <h1 style="color: #FFD60A; font-size: 32px; margin-bottom: 16px;">Ünlü Kişiler Nasıl Öldü?</h1>
+        <p style="color: #999; font-size: 18px; max-width: 600px; margin: 0 auto 24px;">236+ ünlü kişinin ölüm nedenlerini, tarihlerini ve detaylı hayat hikayelerini keşfedin. Wikidata ve Wikipedia verilerine dayalı, Türkçe, kapsamlı ve güncel ölüm bilgileri platformu.</p>
+        <p style="color: #666; margin-top: 24px;">Bu siteyi görüntülemek için JavaScript'i etkinleştirmeniz gerekmektedir.</p>
+        <ul style="list-style: none; padding: 0; margin-top: 32px; color: #999;">
+          <li>✓ 236+ Ünlü Kişi</li>
+          <li>✓ 4 Ölüm Kategorisi</li>
+          <li>✓ Wikipedia + Wikidata Destekli</li>
+          <li>✓ Türkçe İçerik</li>
+        </ul>
+      </div>
+    </noscript>
+    
+    <div id="root">
+      <div class="container mx-auto px-4 py-8">
+        <article>
+          <header class="mb-8">
+            
+              <img 
+                src="http://commons.wikimedia.org/wiki/Special:FilePath/MumcuDenkmalSelcuk%20%28cropped%29.JPG" 
+                alt="Uğur Mumcu"
+                class="w-full max-w-2xl mx-auto rounded-lg shadow-lg mb-6"
+                loading="eager"
+              />
+            
+            <h1 class="text-5xl font-bold mb-4 text-foreground">Uğur Mumcu</h1>
+            <div class="flex flex-wrap gap-3 mb-4">
+              <span class="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
+                gazeteci
+              </span>
+              <span class="inline-flex items-center rounded-full bg-card border border-border px-3 py-1 text-sm">
+                Türkiye
+              </span>
+              
+                <span class="inline-flex items-center rounded-full bg-destructive/10 px-3 py-1 text-sm font-medium text-destructive">
+                  Suikast
+                </span>
+              
+            </div>
+          </header>
+          
+          <section class="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="rounded-lg border border-border bg-card p-4">
+              <h3 class="text-sm font-medium text-muted-foreground mb-1">Doğum Tarihi</h3>
+              <p class="text-lg text-foreground">22 Ağustos 1942</p>
+            </div>
+            <div class="rounded-lg border border-border bg-card p-4">
+              <h3 class="text-sm font-medium text-muted-foreground mb-1">Ölüm Tarihi</h3>
+              <p class="text-lg text-foreground">24 Ocak 1993</p>
+            </div>
+            
+          </section>
+          
+          
+            <section class="mb-8">
+              <h2 class="text-3xl font-semibold mb-4 text-foreground">Hayat Hikayesi</h2>
+              <div class="prose prose-invert max-w-none">
+                <p class="text-muted-foreground leading-relaxed">Uğur Mumcu (22 Ağustos 1942, Kırşehir - 24 Ocak 1993, Ankara), Türk gazeteci, araştırmacı ve yazar.
+24 Ocak 1993'te Ankara'da Karlı Sokak'taki evinin önünde arabasına konulan bombanın patlaması nedeniyle suikast sonucu öldü.</p>
+              </div>
+            </section>
+          
+          
+          
+            <section class="mb-8">
+              <h2 class="text-3xl font-semibold mb-6 text-foreground">Benzer Kişiler</h2>
+              <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                
+      <article class="rounded-lg border border-border bg-card p-4">
+        <a href="/nasil-oldu/adolf-hitler" class="block">
+          <img src="http://commons.wikimedia.org/wiki/Special:FilePath/Adolf%20Hitler%20cropped%20restored%203x4.jpg" alt="Adolf Hitler" class="mb-3 h-32 w-full object-cover rounded-md" loading="lazy" />
+          <h3 class="font-semibold text-foreground mb-1">Adolf Hitler</h3>
+          <p class="text-sm text-muted-foreground">Holocaust Suçlusu</p>
+        </a>
+      </article>
+    
+      <article class="rounded-lg border border-border bg-card p-4">
+        <a href="/nasil-oldu/mustafa-kemal-ataturk" class="block">
+          <img src="http://commons.wikimedia.org/wiki/Special:FilePath/Ataturk1930s.jpg" alt="Mustafa Kemal Atatürk" class="mb-3 h-32 w-full object-cover rounded-md" loading="lazy" />
+          <h3 class="font-semibold text-foreground mb-1">Mustafa Kemal Atatürk</h3>
+          <p class="text-sm text-muted-foreground">Baş Komutan</p>
+        </a>
+      </article>
+    
+      <article class="rounded-lg border border-border bg-card p-4">
+        <a href="/nasil-oldu/kazim-karabekir" class="block">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/f/f8/Kiazim_Karabekir_Pasha_with_Djemaliye.jpg" alt="Kâzım Karabekir" class="mb-3 h-32 w-full object-cover rounded-md" loading="lazy" />
+          <h3 class="font-semibold text-foreground mb-1">Kâzım Karabekir</h3>
+          <p class="text-sm text-muted-foreground">Asker</p>
+        </a>
+      </article>
+    
+      <article class="rounded-lg border border-border bg-card p-4">
+        <a href="/nasil-oldu/turhan-feyzioglu" class="block">
+          
+          <h3 class="font-semibold text-foreground mb-1">Turhan Feyzioğlu</h3>
+          <p class="text-sm text-muted-foreground">siyasetçi</p>
+        </a>
+      </article>
+    
+      <article class="rounded-lg border border-border bg-card p-4">
+        <a href="/nasil-oldu/baris-akarsu" class="block">
+          <img src="http://commons.wikimedia.org/wiki/Special:FilePath/Bar%C4%B1%C5%9F%20akarsu.jpg" alt="Barış Akarsu" class="mb-3 h-32 w-full object-cover rounded-md" loading="lazy" />
+          <h3 class="font-semibold text-foreground mb-1">Barış Akarsu</h3>
+          <p class="text-sm text-muted-foreground">sinema oyuncusu</p>
+        </a>
+      </article>
+    
+      <article class="rounded-lg border border-border bg-card p-4">
+        <a href="/nasil-oldu/ismet-inonu" class="block">
+          <img src="http://commons.wikimedia.org/wiki/Special:FilePath/Inonu%20Ismet%20%28cropped%29.jpg" alt="İsmet İnönü" class="mb-3 h-32 w-full object-cover rounded-md" loading="lazy" />
+          <h3 class="font-semibold text-foreground mb-1">İsmet İnönü</h3>
+          <p class="text-sm text-muted-foreground">Diplomat</p>
+        </a>
+      </article>
+    
+              </div>
+            </section>
+          
+        </article>
+      </div>
+    </div>
+  </body>
+</html>

@@ -142,53 +142,75 @@ function injectMetaTagsWithPlaceholders(html: string, meta: MetaTags): string {
     `<title>${escapeHtml(meta.title)}</title>`
   );
 
-  // Duplicate meta tag'leri kaldır
-  result = result.replace(/<!-- SSR Meta Tags \(for crawlers\) -->[\s\S]*?<!-- Canonical -->\s*<link rel="canonical"[^>]*>/g, '');
+  // Önceki SSR tag'lerini temizle (duplicate prevention)
+  result = result.replace(/<!-- SSR Meta Tags -->[\s\S]*?<!-- End SSR Meta Tags -->/g, '');
   
-  // Existing dynamic meta tags'i kaldır
-  result = result.replace(/<meta name="title"[^>]*>/g, '');
-  result = result.replace(/<meta name="description"[^>]*>/g, '');
-  result = result.replace(/<meta property="og:title"[^>]*>/g, '');
-  result = result.replace(/<meta property="og:description"[^>]*>/g, '');
-  result = result.replace(/<meta property="og:type"[^>]*>/g, '');
-  result = result.replace(/<meta property="og:url"[^>]*>/g, '');
-  result = result.replace(/<meta property="og:image"[^>]*>/g, '');
-  result = result.replace(/<meta name="twitter:title"[^>]*>/g, '');
-  result = result.replace(/<meta name="twitter:description"[^>]*>/g, '');
-  result = result.replace(/<meta name="twitter:image"[^>]*>/g, '');
-  result = result.replace(/<link rel="canonical"[^>]*>/g, '');
-
-  // Meta tags'i inject et
-  const metaTags = `
-    <!-- SSR Meta Tags (for crawlers) -->
-    <meta name="title" content="${escapeHtml(meta.title)}" />
-    <meta name="description" content="${escapeHtml(meta.description)}" />
-    ${meta.keywords ? `<meta name="keywords" content="${escapeHtml(meta.keywords)}" />` : ''}
-    
-    <!-- Open Graph -->
-    <meta property="og:type" content="${meta.ogType || 'website'}" />
-    <meta property="og:url" content="${escapeHtml(meta.canonical)}" />
-    <meta property="og:title" content="${escapeHtml(meta.title)}" />
-    <meta property="og:description" content="${escapeHtml(meta.description)}" />
-    ${meta.ogImage ? `<meta property="og:image" content="${escapeHtml(meta.ogImage)}" />` : ''}
-    <meta property="og:site_name" content="nasiloldu.net" />
-    <meta property="og:locale" content="tr_TR" />
-    
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="${escapeHtml(meta.title)}" />
-    <meta name="twitter:description" content="${escapeHtml(meta.description)}" />
-    ${meta.ogImage ? `<meta name="twitter:image" content="${escapeHtml(meta.ogImage)}" />` : ''}
-    
-    <!-- Canonical -->
-    <link rel="canonical" href="${escapeHtml(meta.canonical)}" />
-    
-    ${meta.schema ? `<!-- Schema.org JSON-LD (SSR) -->
-    <script type="application/ld+json">${JSON.stringify(meta.schema)}</script>` : ''}
-  `;
-
-  // Inject before </head>
-  result = result.replace('</head>', `${metaTags}\n  </head>`);
+  // Primary Meta Tags kısmındaki tag'leri REPLACE et (silmek yerine)
+  // Meta title
+  if (result.includes('<meta name="title"')) {
+    result = result.replace(
+      /<meta name="title"[^>]*>/,
+      `<meta name="title" content="${escapeHtml(meta.title)}" />`
+    );
+  } else {
+    // Yoksa title'dan sonra ekle
+    result = result.replace(
+      /(<title>.*?<\/title>)/,
+      `$1\n    <meta name="title" content="${escapeHtml(meta.title)}" />`
+    );
+  }
+  
+  // Meta description
+  if (result.includes('<meta name="description"')) {
+    result = result.replace(
+      /<meta name="description"[^>]*>/,
+      `<meta name="description" content="${escapeHtml(meta.description)}" />`
+    );
+  } else {
+    // Yoksa meta title'dan sonra ekle
+    result = result.replace(
+      /(<meta name="title"[^>]*>)/,
+      `$1\n    <meta name="description" content="${escapeHtml(meta.description)}" />`
+    );
+  }
+  
+  // OG ve Twitter tag'lerini replace et
+  result = result.replace(/<meta property="og:title"[^>]*>/, `<meta property="og:title" content="${escapeHtml(meta.title)}" />`);
+  result = result.replace(/<meta property="og:description"[^>]*>/, `<meta property="og:description" content="${escapeHtml(meta.description)}" />`);
+  result = result.replace(/<meta property="og:type"[^>]*>/, `<meta property="og:type" content="${meta.ogType || 'website'}" />`);
+  result = result.replace(/<meta property="og:url"[^>]*>/, `<meta property="og:url" content="${escapeHtml(meta.canonical)}" />`);
+  
+  // OG image (varsa replace, yoksa ekle)
+  if (meta.ogImage) {
+    if (result.includes('<meta property="og:image"')) {
+      result = result.replace(/<meta property="og:image"[^>]*>/, `<meta property="og:image" content="${escapeHtml(meta.ogImage)}" />`);
+    } else {
+      result = result.replace(
+        /(<meta property="og:url"[^>]*>)/,
+        `$1\n    <meta property="og:image" content="${escapeHtml(meta.ogImage)}" />`
+      );
+    }
+  }
+  
+  // Twitter tags
+  result = result.replace(/<meta name="twitter:title"[^>]*>/, `<meta name="twitter:title" content="${escapeHtml(meta.title)}" />`);
+  result = result.replace(/<meta name="twitter:description"[^>]*>/, `<meta name="twitter:description" content="${escapeHtml(meta.description)}" />`);
+  if (meta.ogImage) {
+    result = result.replace(/<meta name="twitter:image"[^>]*>/, `<meta name="twitter:image" content="${escapeHtml(meta.ogImage)}" />`);
+  }
+  
+  // Canonical
+  result = result.replace(/<link rel="canonical"[^>]*>/, `<link rel="canonical" href="${escapeHtml(meta.canonical)}" />`);
+  
+  // Schema.org JSON-LD (SSR kısmına ekle)
+  if (meta.schema) {
+    const schemaTag = `
+    <!-- SSR Meta Tags -->
+    <!-- Schema.org JSON-LD (SSR) -->
+    <script type="application/ld+json">${JSON.stringify(meta.schema)}</script>
+    <!-- End SSR Meta Tags -->`;
+    result = result.replace('</head>', `${schemaTag}\n  </head>`);
+  }
 
   return result;
 }
