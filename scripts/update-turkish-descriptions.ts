@@ -22,7 +22,7 @@ interface PersonUpdate {
   id: number;
   name: string;
   slug: string;
-  wikidataId: string | null;
+  qid: string | null;
   currentDescription: string;
   newDescription: string;
   source: 'wikipedia-tr' | 'generic';
@@ -182,14 +182,14 @@ async function updateTurkishDescriptions() {
     let source: 'wikipedia-tr' | 'generic' = 'generic';
     
     // Wikipedia Türkçe'den çekmeyi dene
-    if (person.wikidataId) {
-      newDescription = await fetchTurkishWikipediaExtract(person.wikidataId);
+    if (person.qid) {
+      newDescription = await fetchTurkishWikipediaExtract(person.qid);
       if (newDescription) {
         source = 'wikipedia-tr';
         wikipediaSuccess++;
       }
     } else {
-      console.log(`⚠️ Wikidata ID yok, generic metin oluşturulacak`);
+      console.log(`⚠️ Wikidata QID yok, generic metin oluşturulacak`);
     }
     
     // Bulamazsa generic metin oluştur
@@ -204,7 +204,7 @@ async function updateTurkishDescriptions() {
       id: person.id,
       name: person.name,
       slug: person.slug,
-      wikidataId: person.wikidataId,
+      qid: person.qid,
       currentDescription: person.description || '',
       newDescription,
       source,
