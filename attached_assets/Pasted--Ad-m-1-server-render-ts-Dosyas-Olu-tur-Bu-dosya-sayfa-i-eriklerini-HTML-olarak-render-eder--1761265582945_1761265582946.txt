@@ -1,0 +1,330 @@
+
+📁 Adım 1: server/render.ts Dosyası Oluştur
+Bu dosya sayfa içeriklerini HTML olarak render eder:
+
+import { storage } from "./storage";
+interface RenderResult {
+  html: string;
+  statusCode: number;
+}
+// Ana Sayfa SSR
+export async function renderHomePage(): Promise<RenderResult> {
+  try {
+    // Veritabanından gerekli verileri çek
+    const data = await storage.getHomeData(); // Kendi metodunu kullan
+    
+    const html = `
+      <div class="container mx-auto px-4 py-8">
+        <article>
+          <header class="mb-8 text-center">
+            <h1 class="text-4xl font-bold mb-4">Ana Sayfa Başlığı</h1>
+            <p class="text-xl text-muted-foreground">
+              Açıklama metni buraya gelecek
+            </p>
+          </header>
+          
+          <section>
+            <h2 class="text-3xl font-semibold mb-6">İçerik Bölümü</h2>
+            <!-- Dinamik içerik -->
+          </section>
+        </article>
+      </div>
+    `;
+    
+    return { html, statusCode: 200 };
+  } catch (error) {
+    console.error("Home SSR error:", error);
+    return {
+      html: '<div class="container"><p>Bir hata oluştu</p></div>',
+      statusCode: 500,
+    };
+  }
+}
+// Detay Sayfası SSR (örnek: /:slug)
+export async function renderDetailPage(slug: string): Promise<RenderResult> {
+  try {
+    const item = await storage.getItemBySlug(slug); // Kendi metodunu kullan
+    
+    if (!item) {
+      return {
+        html: '<div class="container"><h1>Sayfa Bulunamadı</h1></div>',
+        statusCode: 404,
+      };
+    }
+    
+    const html = `
+      <div class="container mx-auto px-4 py-8">
+        <article>
+          <header class="mb-8">
+            <h1 class="text-4xl font-bold mb-4">${item.title}</h1>
+            <p class="text-lg text-muted-foreground">
+              ${item.description}
+            </p>
+          </header>
+          
+          <section class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">İçerik</h2>
+            <div class="prose max-w-none">
+              ${item.content}
+            </div>
+          </section>
+        </article>
+      </div>
+    `;
+    
+    return { html, statusCode: 200 };
+  } catch (error) {
+    console.error("Detail SSR error:", error);
+    return {
+      html: '<div class="container"><p>Bir hata oluştu</p></div>',
+      statusCode: 500,
+    };
+  }
+}
+📁 Adım 2: server/ssr.ts Dosyası Oluştur
+Bu dosya meta tag'leri ve SSR'ı yönetir:
+
+import { type Request, type Response } from "express";
+import { storage } from "./storage";
+import fs from "fs";
+import {
+  renderHomePage,
+  renderDetailPage,
+} from "./render";
+interface PageMeta {
+  title: string;
+  description: string;
+  canonicalUrl: string;
+  ogTitle: string;
+  ogDescription: string;
+  statusCode: number;
+}
+// URL'e göre meta tag'leri oluştur
+export async function generatePageMeta(url: string): Promise<PageMeta> {
+  const baseUrl = process.env.BASE_URL || "https://yoursite.com";
+  const canonicalUrl = `${baseUrl}${url}`;
+  
+  try {
+    // Ana sayfa
+    if (url === "/" || url === "") {
+      return {
+        title: "Ana Sayfa - Site Adı",
+        description: "Site açıklaması buraya gelecek",
+        canonicalUrl: baseUrl,
+        ogTitle: "Ana Sayfa",
+        ogDescription: "Site açıklaması",
+        statusCode: 200,
+      };
+    }
+    
+    // Detay sayfası: /:slug
+    const parts = url.split("/").filter(Boolean);
+    if (parts.length === 1) {
+      const slug = parts[0];
+      const item = await storage.getItemBySlug(slug);
+      
+      if (!item) {
+        return {
+          title: "Sayfa Bulunamadı",
+          description: "Aradığınız sayfa bulunamadı",
+          canonicalUrl,
+          ogTitle: "Sayfa Bulunamadı",
+          ogDescription: "Aradığınız sayfa bulunamadı",
+          statusCode: 404,
+        };
+      }
+      
+      return {
+        title: `${item.title} - Site Adı`,
+        description: item.description || "Varsayılan açıklama",
+        canonicalUrl,
+        ogTitle: item.title,
+        ogDescription: item.description || "Varsayılan açıklama",
+        statusCode: 200,
+      };
+    }
+  } catch (error) {
+    console.error("SSR Meta Generation Error:", error);
+  }
+  
+  // 404 için varsayılan
+  return {
+    title: "Sayfa Bulunamadı",
+    description: "Aradığınız sayfa bulunamadı",
+    canonicalUrl,
+    ogTitle: "Sayfa Bulunamadı",
+    ogDescription: "Aradığınız sayfa bulunamadı",
+    statusCode: 404,
+  };
+}
+// HTML'i meta tag'ler ile render et
+export async function renderHTMLWithMeta(
+  req: Request,
+  res: Response,
+  templatePath: string
+) {
+  try {
+    const url = req.originalUrl.split("?")[0]; // Query params'ı kaldır
+    const meta = await generatePageMeta(url);
+    
+    // HTML template'ini oku
+    let html = await fs.promises.readFile(templatePath, "utf-8");
+    
+    // URL'i parse et
+    const parts = url.split("/").filter(Boolean);
+    let renderedContent = "";
+    let contentStatusCode = 200;
+    
+    // Admin ve statik sayfalar için SSR'ı atla
+    const skipSSR = url.startsWith("/admin") || 
+                    url.startsWith("/api") ||
+                    url === "/ara"; // Arama gibi client-side sayfalar
+    
+    if (!skipSSR) {
+      if (parts.length === 0 || url === "/") {
+        // Ana sayfa
+        const result = await renderHomePage();
+        renderedContent = result.html;
+        contentStatusCode = result.statusCode;
+      } else if (parts.length === 1) {
+        // Detay sayfası: /:slug
+        const result = await renderDetailPage(parts[0]);
+        renderedContent = result.html;
+        contentStatusCode = result.statusCode;
+      }
+    }
+    
+    // Placeholder'ları değiştir
+    html = html
+      .replace(/\{\{TITLE\}\}/g, meta.title)
+      .replace(/\{\{DESCRIPTION\}\}/g, meta.description)
+      .replace(/\{\{CANONICAL_URL\}\}/g, meta.canonicalUrl)
+      .replace(/\{\{OG_TITLE\}\}/g, meta.ogTitle)
+      .replace(/\{\{OG_DESCRIPTION\}\}/g, meta.ogDescription);
+    
+    // Render edilmiş içeriği root div'e inject et
+    if (renderedContent) {
+      html = html.replace(
+        '<div id="root"></div>',
+        `<div id="root">${renderedContent}</div>`
+      );
+    }
+    
+    // Daha kısıtlayıcı status code'u kullan
+    const finalStatusCode = contentStatusCode !== 200 ? contentStatusCode : meta.statusCode;
+    
+    res.status(finalStatusCode).set({ "Content-Type": "text/html" }).send(html);
+  } catch (error) {
+    console.error("SSR Render Error:", error);
+    res.status(500).send("Internal Server Error");
+  }
+}
+📁 Adım 3: server/index.ts - SSR Route'ları Ekle
+Mevcut server/index.ts dosyana şunu ekle:
+
+import express from "express";
+import path from "path";
+import { renderHTMLWithMeta } from "./ssr";
+const app = express();
+const PORT = process.env.PORT || 5000;
+const NODE_ENV = process.env.NODE_ENV || "development";
+// ... Diğer middleware'ler (body-parser, session, vs.)
+// API route'ları
+app.use("/api", apiRoutes); // Senin API route'larını buraya
+// Production için SSR
+if (NODE_ENV === "production") {
+  const distPath = path.resolve(__dirname, "../dist/public");
+  const templatePath = path.join(distPath, "index.html");
+  
+  // Static dosyalar
+  app.use(express.static(distPath));
+  
+  // Tüm route'ları SSR ile handle et
+  app.get("*", async (req, res) => {
+    await renderHTMLWithMeta(req, res, templatePath);
+  });
+} else {
+  // Development için normal Vite
+  // (Mevcut Vite setup'ın burada olmalı)
+}
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+📁 Adım 4: client/index.html - Placeholder'ları Ekle
+HTML template'ini şöyle düzenle:
+
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- SEO Meta Tags (SSR tarafından doldurulacak) -->
+    <title>{{TITLE}}</title>
+    <meta name="description" content="{{DESCRIPTION}}" />
+    <link rel="canonical" href="{{CANONICAL_URL}}" />
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="{{OG_TITLE}}" />
+    <meta property="og:description" content="{{OG_DESCRIPTION}}" />
+    <meta property="og:url" content="{{CANONICAL_URL}}" />
+    <meta property="og:type" content="website" />
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{OG_TITLE}}" />
+    <meta name="twitter:description" content="{{OG_DESCRIPTION}}" />
+  </head>
+  <body>
+    <!-- SSR tarafından içerik buraya gelecek -->
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+📁 Adım 5: .env Dosyasına Ekle
+NODE_ENV=production
+BASE_URL=https://yoursite.com
+🚀 Kullanım Adımları
+1. Dosyaları Yerleştir:
+server/
+  ├── render.ts       (Yeni oluştur)
+  ├── ssr.ts          (Yeni oluştur)
+  └── index.ts        (Güncelle)
+client/
+  └── index.html      (Güncelle - placeholder'lar ekle)
+2. Storage Metodlarını Adapte Et:
+render.ts içindeki storage metodlarını kendi veritabanı yapına göre değiştir:
+
+// Örnek:
+const data = await storage.getHomeData();        // Kendi metodun
+const item = await storage.getItemBySlug(slug);  // Kendi metodun
+3. Route Yapını Düzenle:
+ssr.ts içinde URL parse mantığını kendi route yapına göre ayarla:
+
+// Örnek route yapıları:
+// /:slug              → Tek seviye
+// /:category/:slug    → İki seviye
+// /:year/:month/:slug → Üç seviye
+4. Production Build Al:
+npm run build
+NODE_ENV=production node dist/index.js
+5. Test Et:
+# View Source kontrolü
+curl http://localhost:5000/ | grep "<h1>"
+# Meta tag kontrolü
+curl http://localhost:5000/ | grep "<title>"
+✅ Checklist
+ server/render.ts oluşturuldu
+ server/ssr.ts oluşturuldu
+ server/index.ts güncellendi (SSR route'ları eklendi)
+ client/index.html placeholder'lar eklendi
+ Storage metodları adapte edildi
+ .env dosyasında BASE_URL ayarlandı
+ Production build test edildi
+ View Source'da içerik görünüyor
+💡 Önemli Notlar
+Development'ta SSR çalışmaz - Sadece production build'de aktif
+Static sayfaları skipSSR'a ekle - API, admin, vs. gibi
+Her sayfa tipi için ayrı render fonksiyonu - Modüler yapı
+404 durumunu handle et - SEO için önemli
+Meta tag'leri dinamik oluştur - Her sayfa için unique
