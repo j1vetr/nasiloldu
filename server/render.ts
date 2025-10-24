@@ -95,9 +95,7 @@ function renderFooter(): string {
             rel="noopener noreferrer"
             class="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group"
           >
-            <span>Made with</span>
-            <span class="text-red-500">❤</span>
-            <span>by</span>
+            <span>Made with love by</span>
             <span class="font-semibold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
               TOOV
             </span>
@@ -195,12 +193,22 @@ export async function renderPersonDetailPage(slug: string): Promise<RenderResult
       };
     }
     
-    // Calculate age
+    // Calculate age (with month/day precision)
     let age: number | null = null;
     if (person.birthDate && person.deathDate) {
       const birth = new Date(person.birthDate);
       const death = new Date(person.deathDate);
-      age = death.getFullYear() - birth.getFullYear();
+      age = death.getUTCFullYear() - birth.getUTCFullYear();
+      
+      // Adjust if death occurred before birthday in that year
+      const birthMonth = birth.getUTCMonth();
+      const birthDay = birth.getUTCDate();
+      const deathMonth = death.getUTCMonth();
+      const deathDay = death.getUTCDate();
+      
+      if (deathMonth < birthMonth || (deathMonth === birthMonth && deathDay < birthDay)) {
+        age--;
+      }
     }
     
     const relatedPersons = await storage.getRelatedPersons(person.id, 6);
