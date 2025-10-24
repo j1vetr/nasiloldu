@@ -1,7 +1,7 @@
 # nasiloldu.net - Ünlüler Nasıl Öldü?
 
 ## Overview
-nasiloldu.net is a comprehensive, Turkish-language platform providing information on celebrity deaths, leveraging Wikidata. The project aims to be a modern, SEO-optimized information hub with a distinctive yellow and black color scheme, offering detailed insights into how famous individuals passed away. It includes an initial dataset of 124 persons, focusing on politicians, journalists, academics, artists, and historical figures, with plans for daily automatic data synchronization. The platform categorizes deaths by cause (illness, assassination, accident, suicide) and allows filtering by country and profession.
+nasiloldu.net is a comprehensive, Turkish-language platform providing information on celebrity deaths, leveraging Wikidata. The project aims to be a modern, SEO-optimized information hub with a distinctive yellow and black color scheme, offering detailed insights into how famous individuals passed away. It includes a dataset of 236 persons, focusing on politicians, journalists, academics, artists, and historical figures. The platform categorizes deaths by cause (illness, assassination, accident, suicide) and allows filtering by country and profession. Content is bilingual with automated Turkish Wikipedia integration for descriptions.
 
 ## User Preferences
 - All content must be in Turkish.
@@ -14,6 +14,7 @@ nasiloldu.net is a comprehensive, Turkish-language platform providing informatio
 - Ensure correct handling of Turkish characters in slugs and search functionality (e.g., â, î, û, İ for slugs; unaccent for search).
 - Maintain a consistent title format across all pages: `[Content] | nasiloldu.net`.
 - Prioritize Google-first SEO practices, ensuring parity between client-side and server-side rendered meta tags.
+- Accept some incorrect Wikidata QIDs (~3-5 persons) rather than manual correction - generic Turkish text used as fallback.
 
 ## System Architecture
 
@@ -42,14 +43,16 @@ nasiloldu.net is a comprehensive, Turkish-language platform providing informatio
 - **Search System**: AJAX-based search with real-time `/api/search` queries, dropdown results (max 8), loading spinner, empty state, click-outside close, and navigation. Supports Turkish characters via PostgreSQL `unaccent` extension.
 - **Date Handling**: UTC accessor-based `formatDate`/`formatTurkishDate` functions for timezone-independent and consistent date display, with NaN validation and "Bilinmiyor" fallback.
 - **Scroll Management**: `ScrollToTop` component and `window.history.scrollRestoration = 'manual'` to ensure consistent scroll position at the top on all navigations.
+- **Wikipedia Turkish Integration**: Automated script (`scripts/update-turkish-descriptions.ts`) fetches Turkish descriptions from Wikipedia using Wikidata QIDs, with generic Turkish fallback for missing pages.
 
 ### Feature Specifications
-- **Wikidata Integration**: Initial 124 persons with plans for expansion, prioritizing actors and politicians.
+- **Wikidata Integration**: 236 persons in database with Turkish Wikipedia descriptions (~50% Turkish, ~50% English).
 - **Category System**: Persons assigned to a death category (Illness, Accident, Suicide, Assassination).
 - **Filtering**: By country and profession.
 - **Search**: By person's name.
 - **Related Persons**: Minimum 6 related persons on each individual's page.
 - **Admin Panel**: PostgreSQL-based authentication for `admins`.
+- **Content Localization**: 117 persons converted from English to Turkish descriptions (95+ from Wikipedia TR, ~20 generic fallback).
 
 ### System Design Choices
 - **Database Schema**: `admins`, `categories`, `countries`, `professions`, `death_causes`, `persons` (linked to Wikidata by QID).
@@ -58,7 +61,16 @@ nasiloldu.net is a comprehensive, Turkish-language platform providing informatio
 
 ## External Dependencies
 - **Wikidata SPARQL API**: Primary data source for celebrity information.
+- **Wikipedia REST API**: Turkish description extraction using Wikidata QID mapping.
 - **PostgreSQL (Neon)**: Database for storing application-specific data and cached Wikidata information.
 - **country-flag-icons**: For displaying SVG country flags.
 - **Google Analytics 4 & Search Console**: Placeholders for future integration.
 - **fonts.googleapis.com, fonts.gstatic.com**: For fonts.
+
+## Recent Updates (October 24, 2025)
+- ✅ Fixed SSR meta tag injection (replace strategy prevents duplicates)
+- ✅ Created Wikipedia Turkish description automation script
+- ✅ Converted 117 English descriptions to Turkish (~95+ Wikipedia, ~20 generic)
+- ✅ Database now 50% Turkish content (up from 0%)
+- ✅ Architect approved SSR implementation with PASS status
+- ⚠️ Known issue: ~3-5 incorrect Wikidata QIDs (accepted, generic text used)
