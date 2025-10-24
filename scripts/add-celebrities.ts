@@ -149,6 +149,29 @@ async function searchWikidataQID(name: string): Promise<string | null> {
   }
 }
 
+async function resolveWikidataLabel(qid: string | null): Promise<string | null> {
+  if (!qid) return null;
+  
+  try {
+    const url = `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${qid}&props=labels&languages=tr|en&format=json`;
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'nasiloldu.net/1.0 (https://nasiloldu.net; info@nasiloldu.net)'
+      }
+    });
+    const data = await response.json();
+    
+    const entity = data.entities?.[qid];
+    if (!entity) return null;
+    
+    // Try Turkish first, fallback to English
+    return entity.labels?.tr?.value || entity.labels?.en?.value || null;
+  } catch (error) {
+    console.error(`Error resolving label for ${qid}:`, error);
+    return null;
+  }
+}
+
 async function fetchWikidataInfo(qid: string): Promise<WikidataItem | null> {
   try {
     const url = `https://www.wikidata.org/wiki/Special:EntityData/${qid}.json`;
@@ -209,12 +232,15 @@ async function fetchWikidataInfo(qid: string): Promise<WikidataItem | null> {
     const countryQIDs = getMultiValue('P27');
     const image = getValue('P18');
 
+    // Resolve death place QID to readable name
+    const deathPlaceName = deathPlaceQID ? await resolveWikidataLabel(deathPlaceQID) : null;
+
     return {
       name: entity.labels?.en?.value || entity.labels?.tr?.value || qid,
       qid,
       birthDate,
       deathDate,
-      deathPlace: deathPlaceQID,
+      deathPlace: deathPlaceName || 'Bilinmiyor',
       causeOfDeath: causeOfDeathQID,
       occupation: occupationQIDs,
       countryOfCitizenship: countryQIDs,
