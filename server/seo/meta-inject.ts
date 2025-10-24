@@ -235,6 +235,7 @@ export function injectMetaTags(html: string, meta: MetaTags): string {
   // Remove existing dynamic meta tags that we'll replace
   result = result.replace(/<meta name="title"[^>]*>/g, '');
   result = result.replace(/<meta name="description"[^>]*>/g, '');
+  result = result.replace(/<meta name="keywords"[^>]*>/g, '');
   result = result.replace(/<meta property="og:title"[^>]*>/g, '');
   result = result.replace(/<meta property="og:description"[^>]*>/g, '');
   result = result.replace(/<meta property="og:type"[^>]*>/g, '');
