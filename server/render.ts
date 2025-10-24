@@ -4,7 +4,7 @@
  */
 
 import { storage } from "./storage";
-import { formatTurkishDate } from "@shared/utils";
+import { formatTurkishDate, generateDeathStory } from "@shared/utils";
 
 interface RenderResult {
   html: string;
@@ -222,11 +222,25 @@ export async function renderPersonDetailPage(slug: string): Promise<RenderResult
       </article>
     `).join('');
     
+    // Ölüm Hikayesi oluştur
+    const deathStory = generateDeathStory(person, age);
+    
     const html = `
       <div class="container mx-auto px-4 py-12">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <!-- Left Column - Main Content -->
           <div class="lg:col-span-2 space-y-8">
+            <!-- Ölüm Hikayesi Section (SSR) - EN ÜSTTE -->
+            <section>
+              <h2 class="text-2xl md:text-3xl font-bold text-white mb-6 flex items-center gap-3">
+                <span class="text-amber-400">💀</span>
+                Ölüm Hikayesi
+              </h2>
+              <div class="rounded-2xl border border-amber-500/20 bg-gradient-to-br from-amber-500/5 to-white/5 p-8">
+                <p class="text-base md:text-lg leading-relaxed text-zinc-300">${deathStory}</p>
+              </div>
+            </section>
+            
             ${person.description ? `
               <section>
                 <h2 class="text-2xl md:text-3xl font-bold text-white mb-6 flex items-center gap-3">

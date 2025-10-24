@@ -119,6 +119,73 @@ export function formatTurkishDate(dateStr: string | null): string {
 }
 
 /**
+ * Kişi için ölüm hikayesi oluşturur (max 150 kelime)
+ * Mevcut bilgilerden yararlanarak akıcı, açıklayıcı bir paragraf oluşturur
+ * 
+ * @param person - Kişi bilgileri
+ * @param age - Vefat yaşı (opsiyonel)
+ * @returns Ölüm hikayesi metni
+ */
+export function generateDeathStory(person: {
+  name: string;
+  deathDate: string | null;
+  deathPlace?: string | null;
+  deathCause?: { name: string } | null;
+  profession?: { name: string };
+  country?: { name: string };
+  birthDate?: string | null;
+}, age?: number | null): string {
+  const parts: string[] = [];
+  
+  // Başlangıç cümlesi
+  const name = person.name;
+  const deathDateStr = person.deathDate ? formatTurkishDate(person.deathDate) : null;
+  const profession = person.profession?.name || '';
+  const country = person.country?.name || '';
+  
+  // Ana cümle: [İsim], [tarih]'de [yer]'da [neden]'den [yaş] yaşında vefat etti.
+  let mainSentence = `${name}`;
+  
+  if (deathDateStr) {
+    mainSentence += `, ${deathDateStr} tarihinde`;
+  }
+  
+  if (person.deathPlace) {
+    mainSentence += ` ${person.deathPlace}'da`;
+  }
+  
+  if (person.deathCause) {
+    mainSentence += ` ${person.deathCause.name} nedeniyle`;
+  }
+  
+  if (age) {
+    mainSentence += ` ${age} yaşında`;
+  }
+  
+  mainSentence += ' hayatını kaybetmiştir.';
+  parts.push(mainSentence);
+  
+  // İkinci cümle: Meslek ve ülke bilgisi
+  if (profession && country) {
+    parts.push(`${country} kökenli ${profession.toLowerCase()} olarak tanınan ${name}, dünya çapında büyük bir üne sahipti.`);
+  } else if (profession) {
+    parts.push(`${profession} olarak tanınan ${name}, kariyeri boyunca önemli başarılara imza atmıştır.`);
+  } else if (country) {
+    parts.push(`${country} doğumlu ${name}, yaşamı boyunca iz bırakan bir kişilikti.`);
+  }
+  
+  // Üçüncü cümle: Ölüm detayı vurgusu
+  if (person.deathCause && deathDateStr) {
+    const causeName = person.deathCause.name.toLowerCase();
+    parts.push(`${deathDateStr} tarihinde ${causeName} sonucu yaşamını yitiren ${name}'ın ölümü, dünya genelinde derin bir üzüntüye neden olmuştur.`);
+  } else if (deathDateStr) {
+    parts.push(`${deathDateStr} tarihinde vefat eden ${name}, geride unutulmaz bir miras bırakmıştır.`);
+  }
+  
+  return parts.join(' ');
+}
+
+/**
  * İngilizce meslek adlarını Türkçe'ye çevirir
  */
 export function translateProfession(profession: string): string {

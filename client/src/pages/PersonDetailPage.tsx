@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SEOHead, generatePersonSchema } from "@/components/SEOHead";
 import { capitalize } from "@/lib/utils";
-import { formatDate, formatTurkishDate } from "@shared/utils";
+import { formatDate, formatTurkishDate, generateDeathStory } from "@shared/utils";
 import { 
   User, ExternalLink, Calendar, MapPin, Briefcase, 
   AlertCircle, Heart, Clock, Globe 
@@ -58,6 +58,9 @@ export default function PersonDetailPage() {
   const descriptionParagraphs = person.description 
     ? person.description.split('\n\n').filter(p => p.trim().length > 0)
     : [];
+
+  // Generate death story
+  const deathStory = generateDeathStory(person, age);
 
   // Breadcrumb Schema for SEO
   const breadcrumbSchema = {
@@ -215,6 +218,27 @@ export default function PersonDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Main Content */}
           <div className="lg:col-span-2 space-y-8">
+            {/* Death Story Section - EN ÜSTTE */}
+            <section>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-3 bg-amber-500/10 rounded-xl backdrop-blur-sm">
+                  <AlertCircle className="w-5 h-5 text-amber-400" />
+                </div>
+                <h2 className="text-2xl md:text-3xl font-bold text-white">
+                  Ölüm Hikayesi
+                </h2>
+              </div>
+              
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-white/5 backdrop-blur-md rounded-2xl border border-amber-500/20" />
+                <div className="relative p-8">
+                  <p className="text-base md:text-lg leading-relaxed text-zinc-300 first-letter:text-4xl first-letter:font-bold first-letter:text-amber-400 first-letter:mr-1">
+                    {deathStory}
+                  </p>
+                </div>
+              </div>
+            </section>
+
             {/* Biography Section */}
             {descriptionParagraphs.length > 0 && (
               <section>
