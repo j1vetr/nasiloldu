@@ -78,4 +78,8 @@ nasiloldu.net is a comprehensive, Turkish-language platform providing informatio
   - "Ölüm Bilgileri" section (death date, age, location, cause)
   - "Detaylı Bilgiler" sidebar (birth date, profession, country)
 - ✅ Footer component on all SSR pages (home, person, category, country, profession, today, static)
+- ✅ Turkified all 51 profession slugs (merged 8 duplicates, converted 43 English slugs)
+- ✅ "Ölüm Hikayesi" section added (factual death narrative, positioned before biography)
+- ✅ Death story function made objective and neutral - removed all dramatic/emotional language
+- ✅ Cleaned index.html (removed all HTML comments except TOOV branding, removed Google Analytics)
 - ⚠️ Known issue: ~3-5 incorrect Wikidata QIDs (accepted, generic text used)

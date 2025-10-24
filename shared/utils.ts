@@ -120,7 +120,7 @@ export function formatTurkishDate(dateStr: string | null): string {
 
 /**
  * Kişi için ölüm hikayesi oluşturur (max 150 kelime)
- * Mevcut bilgilerden yararlanarak akıcı, açıklayıcı bir paragraf oluşturur
+ * Mevcut bilgilerden yararlanarak objektif, açıklayıcı bir paragraf oluşturur
  * 
  * @param person - Kişi bilgileri
  * @param age - Vefat yaşı (opsiyonel)
@@ -137,7 +137,6 @@ export function generateDeathStory(person: {
 }, age?: number | null): string {
   const parts: string[] = [];
   
-  // Başlangıç cümlesi
   const name = person.name;
   const deathDateStr = person.deathDate ? formatTurkishDate(person.deathDate) : null;
   const profession = person.profession?.name || '';
@@ -165,21 +164,13 @@ export function generateDeathStory(person: {
   mainSentence += ' hayatını kaybetmiştir.';
   parts.push(mainSentence);
   
-  // İkinci cümle: Meslek ve ülke bilgisi
+  // İkinci cümle: Meslek ve ülke bilgisi (sadece olgusal)
   if (profession && country) {
-    parts.push(`${country} kökenli ${profession.toLowerCase()} olarak tanınan ${name}, dünya çapında büyük bir üne sahipti.`);
+    parts.push(`${country} kökenli ${profession.toLowerCase()} olarak bilinen ${name}, bu tarihte yaşamını yitirmiştir.`);
   } else if (profession) {
-    parts.push(`${profession} olarak tanınan ${name}, kariyeri boyunca önemli başarılara imza atmıştır.`);
+    parts.push(`${profession} olarak bilinen bir kişi olan ${name}, bu tarihte vefat etmiştir.`);
   } else if (country) {
-    parts.push(`${country} doğumlu ${name}, yaşamı boyunca iz bırakan bir kişilikti.`);
-  }
-  
-  // Üçüncü cümle: Ölüm detayı vurgusu
-  if (person.deathCause && deathDateStr) {
-    const causeName = person.deathCause.name.toLowerCase();
-    parts.push(`${deathDateStr} tarihinde ${causeName} sonucu yaşamını yitiren ${name}'ın ölümü, dünya genelinde derin bir üzüntüye neden olmuştur.`);
-  } else if (deathDateStr) {
-    parts.push(`${deathDateStr} tarihinde vefat eden ${name}, geride unutulmaz bir miras bırakmıştır.`);
+    parts.push(`${country} doğumlu olan ${name}, bu tarihte yaşamını kaybetmiştir.`);
   }
   
   return parts.join(' ');
