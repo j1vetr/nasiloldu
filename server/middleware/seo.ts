@@ -9,37 +9,7 @@ import fs from 'fs';
 import path from 'path';
 
 /**
- * User agent'ın crawler olup olmadığını kontrol eder
- */
-function isCrawler(userAgent: string): boolean {
-  const crawlers = [
-    'Googlebot',
-    'Google-InspectionTool', // Google Search Console
-    'Bingbot',
-    'Slurp', // Yahoo
-    'DuckDuckBot',
-    'Baiduspider',
-    'YandexBot',
-    'facebookexternalhit', // Facebook
-    'Twitterbot',
-    'LinkedInBot',
-    'WhatsApp',
-    'TelegramBot',
-    'Discordbot',
-    'Slackbot',
-    'redditbot',
-    'SkypeUriPreview',
-    'HeadlessChrome',
-    'Lighthouse',
-    'PageSpeed',
-  ];
-
-  const ua = userAgent.toLowerCase();
-  return crawlers.some(crawler => ua.includes(crawler.toLowerCase()));
-}
-
-/**
- * SEO middleware - Crawler'lar için HTML'i modify eder
+ * SEO middleware - Tüm kullanıcılar için HTML'i modify eder (SSR)
  */
 export async function seoMiddleware(
   req: Request,
