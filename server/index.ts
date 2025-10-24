@@ -85,6 +85,35 @@ app.use((req, res, next) => {
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
   if (app.get("env") === "development") {
+    // SSR for crawlers in development (before vite middleware)
+    app.use("*", async (req, res, next) => {
+      // Check if it's a crawler
+      const userAgent = req.get('user-agent') || '';
+      const crawlers = [
+        'Googlebot', 'Google-InspectionTool', 'Bingbot', 'Slurp', 
+        'DuckDuckBot', 'Baiduspider', 'YandexBot', 'facebookexternalhit',
+        'Twitterbot', 'LinkedInBot', 'WhatsApp', 'TelegramBot',
+      ];
+      const isCrawler = crawlers.some(crawler => 
+        userAgent.toLowerCase().includes(crawler.toLowerCase())
+      );
+      
+      // Skip API routes and static files
+      if (req.path.startsWith('/api/') || req.path.match(/\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$/)) {
+        return next();
+      }
+      
+      if (isCrawler) {
+        // Use SSR for crawlers
+        const { renderHTMLWithMeta } = await import("./ssr");
+        const path = await import("path");
+        const clientTemplate = path.resolve(import.meta.dirname, "..", "client", "index.html");
+        return await renderHTMLWithMeta(req, res, clientTemplate);
+      }
+      
+      next();
+    });
+    
     await setupVite(app, server);
   } else {
     // Production: Serve static files

@@ -3,6 +3,7 @@ import { storage } from "./storage";
 import { db } from './db';
 import { persons, categories } from '@shared/schema';
 import { eq, sql } from 'drizzle-orm';
+import { generateDeathStory } from '@shared/utils';
 
 // HTML escape function to prevent XSS
 function escapeHtml(text: string): string {
@@ -127,12 +128,34 @@ export async function generateSEOData(url: string): Promise<SEOData> {
     const personMatch = pathname.match(/^\/nasil-oldu\/([^\/]+)$/);
     if (personMatch) {
       const slug = personMatch[1];
-      const [person] = await db.select().from(persons).where(eq(persons.slug, slug)).limit(1);
+      const person = await storage.getPersonBySlug(slug);
       
       if (person) {
+        // Calculate age (with month/day precision)
+        let age: number | null = null;
+        if (person.birthDate && person.deathDate) {
+          const birth = new Date(person.birthDate);
+          const death = new Date(person.deathDate);
+          age = death.getUTCFullYear() - birth.getUTCFullYear();
+          
+          // Adjust if death occurred before birthday in that year
+          const birthMonth = birth.getUTCMonth();
+          const birthDay = birth.getUTCDate();
+          const deathMonth = death.getUTCMonth();
+          const deathDay = death.getUTCDate();
+          
+          if (deathMonth < birthMonth || (deathMonth === birthMonth && deathDay < birthDay)) {
+            age--;
+          }
+        }
+        
+        // Ölüm hikayesini oluştur ve ilk 150 karakterini al
+        const deathStory = generateDeathStory(person, age);
+        const metaDescription = deathStory.substring(0, 150).trim() + (deathStory.length > 150 ? '...' : '');
+        
         return {
           title: `${person.name} Nasıl Öldü? - nasiloldu.net`,
-          description: `${person.name} hakkında detaylı ölüm bilgileri. ${person.deathDate ? `Ölüm tarihi: ${new Date(person.deathDate).toLocaleDateString('tr-TR')}` : ''}. ${person.deathPlace ? `Ölüm yeri: ${person.deathPlace}.` : ''} Detaylı biyografi ve ansiklopedik bilgiler.`,
+          description: metaDescription,
           canonical: `https://nasiloldu.net/nasil-oldu/${slug}`,
           ogImage: person.imageUrl || undefined,
           schema: {
