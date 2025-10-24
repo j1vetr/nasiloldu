@@ -9,7 +9,37 @@ import fs from 'fs';
 import path from 'path';
 
 /**
- * SEO middleware - Tüm kullanıcılar için HTML'i modify eder (SSR)
+ * User agent'ın crawler olup olmadığını kontrol eder
+ */
+function isCrawler(userAgent: string): boolean {
+  const crawlers = [
+    'Googlebot',
+    'Google-InspectionTool', // Google Search Console
+    'Bingbot',
+    'Slurp', // Yahoo
+    'DuckDuckBot',
+    'Baiduspider',
+    'YandexBot',
+    'facebookexternalhit', // Facebook
+    'Twitterbot',
+    'LinkedInBot',
+    'WhatsApp',
+    'TelegramBot',
+    'Discordbot',
+    'Slackbot',
+    'redditbot',
+    'SkypeUriPreview',
+    'HeadlessChrome',
+    'Lighthouse',
+    'PageSpeed',
+  ];
+
+  const ua = userAgent.toLowerCase();
+  return crawlers.some(crawler => ua.includes(crawler.toLowerCase()));
+}
+
+/**
+ * SEO middleware - Crawler'lar için HTML'i modify eder
  */
 export async function seoMiddleware(
   req: Request,
@@ -24,9 +54,10 @@ export async function seoMiddleware(
     return next();
   }
 
-  // EVERYONE gets SSR - not just crawlers
-  // This ensures all users see correct meta tags and initial content
-  // (React will hydrate on client-side)
+  // Crawler değilse normal akışa devam et
+  if (!isCrawler(userAgent)) {
+    return next();
+  }
 
   try {
     // URL için meta tagları üret

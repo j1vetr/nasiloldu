@@ -250,10 +250,6 @@ export function injectMetaTags(html: string, meta: MetaTags): string {
   // Inject before </head>
   result = result.replace('</head>', `${metaTags}\n  </head>`);
 
-  // Keep <div id="root"> empty for React hydration
-  // SSR meta tags are enough for SEO - React handles the UI
-  // (Adding content here causes hydration mismatch and breaks the design)
-  
   return result;
 }
 
