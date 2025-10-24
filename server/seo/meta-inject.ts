@@ -6,7 +6,7 @@
 import { db } from '../db';
 import { persons, categories, countries, professions } from '@shared/schema';
 import { eq } from 'drizzle-orm';
-import { formatDate, formatTurkishDate, generateDeathStory } from '@shared/utils';
+import { formatDate, formatTurkishDate } from '@shared/utils';
 
 export interface MetaTags {
   title: string;
@@ -70,33 +70,9 @@ export async function generateMetaTags(url: string): Promise<MetaTags | null> {
 
     if (person) {
       const deathDateTurkish = formatTurkishDate(person.deathDate);
-      
-      // Yaş hesaplama
-      let age: number | null = null;
-      if (person.birthDate && person.deathDate) {
-        const birth = new Date(person.birthDate);
-        const death = new Date(person.deathDate);
-        age = death.getUTCFullYear() - birth.getUTCFullYear();
-        
-        // Doğum gününden önce öldüyse 1 yıl düş
-        const birthMonth = birth.getUTCMonth();
-        const deathMonth = death.getUTCMonth();
-        const birthDay = birth.getUTCDate();
-        const deathDay = death.getUTCDate();
-        
-        if (deathMonth < birthMonth || (deathMonth === birthMonth && deathDay < birthDay)) {
-          age--;
-        }
-      }
-      
-      // Ölüm hikayesini oluştur
-      const deathStory = generateDeathStory(person, age);
-      
-      // İlk cümleyi meta description olarak kullan (155 karakter limit)
-      const firstSentence = deathStory.split('.')[0] + '.';
-      const seoDescription = firstSentence.length > 155 
-        ? firstSentence.substring(0, 152) + '...' 
-        : firstSentence;
+      const seoDescription = person.description 
+        ? person.description.substring(0, 155) + '...'
+        : `${person.name} (${person.profession.name}, ${person.country.name}) ${deathDateTurkish} tarihinde ${person.deathCause ? person.deathCause.name + ' nedeniyle' : ''} vefat etti. Doğum tarihi: ${formatTurkishDate(person.birthDate)}. Detaylı hayat hikayesi ve ölüm bilgileri.`;
       
       // Kişiye özel meta keywords
       const keywords = [
@@ -131,7 +107,7 @@ export async function generateMetaTags(url: string): Promise<MetaTags | null> {
             '@type': 'Country',
             'name': person.country.name,
           },
-          'description': deathStory,
+          'description': person.description || `${person.name} - ${person.profession.name}`,
           'image': person.imageUrl || undefined,
         },
       };
