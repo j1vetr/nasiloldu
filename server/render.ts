@@ -12,6 +12,103 @@ interface RenderResult {
 }
 
 /**
+ * Footer HTML (SSR için statik)
+ */
+function renderFooter(): string {
+  const currentYear = new Date().getFullYear();
+  
+  return `
+    <footer class="relative border-t border-border/50 bg-gradient-to-b from-card to-background mt-auto">
+      <div class="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent pointer-events-none"></div>
+      
+      <div class="container mx-auto px-4 py-12 relative">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+          <!-- Brand Section -->
+          <div class="space-y-4">
+            <a href="/" class="inline-flex items-center gap-3 group text-2xl font-bold text-primary">
+              nasiloldu.net
+            </a>
+            
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              Türkiye'nin en kapsamlı ünlü biyografi ve ölüm bilgileri platformu. 
+              236+ ünlü kişinin hayat hikayesini ve vefat detaylarını keşfedin.
+            </p>
+            
+            <div class="flex items-center gap-2 text-xs text-muted-foreground/70">
+              <div class="w-2 h-2 rounded-full bg-primary/50 animate-pulse"></div>
+              <span>Her gün güncellenen içerik</span>
+            </div>
+          </div>
+
+          <!-- Kategoriler -->
+          <div>
+            <h4 class="font-semibold text-foreground mb-4 flex items-center gap-2">
+              Kategoriler
+              <div class="h-px flex-1 bg-gradient-to-r from-border to-transparent"></div>
+            </h4>
+            <ul class="space-y-2.5">
+              <li><a href="/kategori/hastalik" class="text-sm text-muted-foreground hover:text-primary transition-colors">Hastalık</a></li>
+              <li><a href="/kategori/kaza" class="text-sm text-muted-foreground hover:text-primary transition-colors">Kaza</a></li>
+              <li><a href="/kategori/intihar" class="text-sm text-muted-foreground hover:text-primary transition-colors">İntihar</a></li>
+              <li><a href="/kategori/suikast" class="text-sm text-muted-foreground hover:text-primary transition-colors">Suikast</a></li>
+            </ul>
+          </div>
+
+          <!-- Keşfet -->
+          <div>
+            <h4 class="font-semibold text-foreground mb-4 flex items-center gap-2">
+              Keşfet
+              <div class="h-px flex-1 bg-gradient-to-r from-border to-transparent"></div>
+            </h4>
+            <ul class="space-y-2.5">
+              <li><a href="/bugun" class="text-sm text-muted-foreground hover:text-primary transition-colors">Bugün Ölenler</a></li>
+              <li><a href="/ulkeler" class="text-sm text-muted-foreground hover:text-primary transition-colors">Ülkeler</a></li>
+              <li><a href="/meslek/oyuncu" class="text-sm text-muted-foreground hover:text-primary transition-colors">Oyuncular</a></li>
+              <li><a href="/meslek/politikaci" class="text-sm text-muted-foreground hover:text-primary transition-colors">Politikacılar</a></li>
+            </ul>
+          </div>
+
+          <!-- Bilgi -->
+          <div>
+            <h4 class="font-semibold text-foreground mb-4 flex items-center gap-2">
+              Bilgi
+              <div class="h-px flex-1 bg-gradient-to-r from-border to-transparent"></div>
+            </h4>
+            <ul class="space-y-2.5">
+              <li><a href="/hakkinda" class="text-sm text-muted-foreground hover:text-primary transition-colors">Hakkında</a></li>
+              <li><a href="/iletisim" class="text-sm text-muted-foreground hover:text-primary transition-colors">İletişim</a></li>
+              <li><a href="/kvkk" class="text-sm text-muted-foreground hover:text-primary transition-colors">KVKK</a></li>
+              <li><a href="/kullanim-sartlari" class="text-sm text-muted-foreground hover:text-primary transition-colors">Kullanım Şartları</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Bottom Section -->
+        <div class="pt-8 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p class="text-sm text-muted-foreground text-center md:text-left">
+            &copy; ${currentYear} nasiloldu.net. Tüm hakları saklıdır.
+          </p>
+          
+          <a 
+            href="https://toov.com.tr" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group"
+          >
+            <span>Made with</span>
+            <span class="text-red-500">❤</span>
+            <span>by</span>
+            <span class="font-semibold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+              TOOV
+            </span>
+          </a>
+        </div>
+      </div>
+    </footer>
+  `;
+}
+
+/**
  * Ana Sayfa SSR
  */
 export async function renderHomePage(): Promise<RenderResult> {
@@ -71,6 +168,7 @@ export async function renderHomePage(): Promise<RenderResult> {
           </div>
         </section>
       </div>
+      ${renderFooter()}
     `;
     
     return { html, statusCode: 200 };
@@ -263,6 +361,7 @@ export async function renderPersonDetailPage(slug: string): Promise<RenderResult
           </section>
         ` : ''}
       </div>
+      ${renderFooter()}
     `;
     
     return { html, statusCode: 200 };
@@ -313,6 +412,7 @@ export async function renderCategoryPage(slug: string): Promise<RenderResult> {
           </div>
         </section>
       </div>
+      ${renderFooter()}
     `;
     
     return { html, statusCode: 200 };
@@ -363,6 +463,7 @@ export async function renderCountryPage(slug: string): Promise<RenderResult> {
           </div>
         </section>
       </div>
+      ${renderFooter()}
     `;
     
     return { html, statusCode: 200 };
@@ -413,6 +514,7 @@ export async function renderProfessionPage(slug: string): Promise<RenderResult> 
           </div>
         </section>
       </div>
+      ${renderFooter()}
     `;
     
     return { html, statusCode: 200 };
@@ -455,6 +557,7 @@ export async function renderTodayPage(): Promise<RenderResult> {
           </div>
         </section>
       </div>
+      ${renderFooter()}
     `;
     
     return { html, statusCode: 200 };
@@ -495,6 +598,7 @@ export async function renderCategoriesPage(): Promise<RenderResult> {
           </div>
         </section>
       </div>
+      ${renderFooter()}
     `;
     
     return { html, statusCode: 200 };
@@ -535,6 +639,7 @@ export async function renderCountriesPage(): Promise<RenderResult> {
           </div>
         </section>
       </div>
+      ${renderFooter()}
     `;
     
     return { html, statusCode: 200 };
@@ -605,6 +710,7 @@ export async function renderStaticPage(pageName: 'hakkinda' | 'iletisim' | 'kvkk
         </section>
       </article>
     </div>
+    ${renderFooter()}
   `;
   
   return { html, statusCode: 200 };
