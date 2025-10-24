@@ -313,8 +313,10 @@ async function mapProfessionQIDToDBId(qids: string[]): Promise<number | null> {
 }
 
 async function mapCountryQIDToDBId(qids: string[]): Promise<number | null> {
-  // Common country mappings
+  // ULTRA CONSERVATIVE: Only 100% verified major countries
+  // Everything else fallsback to "Bilinmiyor" (user accepts missing data)
   const countryMap: Record<string, string> = {
+    // Major modern countries - absolutely verified
     'Q43': 'turkiye', // Turkey
     'Q30': 'amerika-birlesik-devletleri', // USA
     'Q145': 'birlesik-krallik', // UK
@@ -324,89 +326,13 @@ async function mapCountryQIDToDBId(qids: string[]): Promise<number | null> {
     'Q29': 'i-spanya', // Spain
     'Q159': 'rusya', // Russia
     'Q148': 'cin-halk-cumhuriyeti', // China
-    'Q17': 'japonya', // Japan
+    'Q16': 'canada', // Canada ⭐ CRITICAL FIX FOR TRUDEAU, PEARSON, etc.
     'Q155': 'brazil', // Brazil
-    'Q96': 'mexico', // Mexico
-    'Q16': 'canada', // Canada (CRITICAL FIX)
-    'Q794': 'iran', // Iran
-    'Q668': 'hindistan', // India
-    'Q717': 'venezuella', // Venezuela
     'Q414': 'argentina', // Argentina
-    'Q219': 'bulgaristan', // Bulgaria
-    'Q258': 'guney-afrika', // South Africa
-    'Q298': 'sili', // Chile
     'Q408': 'australia', // Australia
     'Q40': 'austria', // Austria
-    'Q736': 'ekvador', // Ecuador
-    'Q225': 'bosna-hersek', // Bosnia and Herzegovina
-    'Q403': 'sırbistan', // Serbia
-    'Q212': 'ukrayna', // Ukraine
-    'Q252': 'endonezya', // Indonesia
-    'Q800': 'kosta-rika', // Costa Rica
-    'Q967': 'burundi', // Burundi
-    'Q837': 'nepal', // Nepal
-    'Q881': 'vietnam', // Vietnam
-    'Q79': 'misir', // Egypt
-    'Q801': 'israil', // Israel
-    'Q810': 'urdun', // Jordan
-    'Q1033': 'nijerya', // Nigeria
-    'Q232': 'kazakistan', // Kazakhstan
-    'Q843': 'pakistan', // Pakistan
-    'Q889': 'afganistan', // Afghanistan
-    'Q954': 'zimbabve', // Zimbabwe
-    'Q1028': 'fas', // Morocco
     'Q114': 'kenya', // Kenya
-    'Q945': 'togo', // Togo
-    'Q986': 'eritre', // Eritrea
-    'Q298': 'chile', // Chile
-    'Q962': 'benin', // Benin
-    'Q948': 'tunus', // Tunisia
-    'Q1025': 'mauritanya', // Mauritania
-    'Q1032': 'nijer', // Niger
-    'Q1036': 'uganda', // Uganda
-    'Q1041': 'senegal', // Senegal
-    'Q1044': 'sierra-leone', // Sierra Leone
-    'Q1049': 'sudan', // Sudan
-    'Q929': 'orta-afrika-cumhuriyeti', // Central African Republic
-    'Q916': 'angola', // Angola
-    'Q953': 'zambiya', // Zambia
-    'Q924': 'tanzanya', // Tanzania
-    'Q1246': 'kosova', // Kosovo
-    'Q31': 'belcika', // Belgium
-    'Q191': 'estonya', // Estonia
-    'Q211': 'letonya', // Latvia
-    'Q213': 'cek-cumhuriyeti', // Czech Republic
-    'Q215': 'slovenya', // Slovenia
-    'Q224': 'hirvatistan', // Croatia
-    'Q233': 'malta', // Malta
-    'Q236': 'karadag', // Montenegro
-    'Q241': 'kuба', // Cuba
-    'Q786': 'dominik-cumhuriyeti', // Dominican Republic
-    'Q774': 'guatemala', // Guatemala
-    'Q783': 'honduras', // Honduras
-    'Q804': 'panama', // Panama
-    'Q811': 'nikaragua', // Nicaragua
-    'Q733': 'paraguay', // Paraguay
-    'Q739': 'kolombiya', // Colombia
-    'Q750': 'bolivya', // Bolivia
-    'Q760': 'surinam', // Suriname
-    'Q77': 'uruguay', // Uruguay
-    'Q833': 'malezya', // Malaysia
-    'Q819': 'laos', // Laos
-    'Q822': 'lübnan', // Lebanon
-    'Q858': 'suriye', // Syria
-    'Q878': 'birlesik-arap-emirlikleri', // UAE
-    'Q884': 'guney-kore', // South Korea
-    'Q423': 'kuzey-kore', // North Korea
-    'Q869': 'tayland', // Thailand
-    'Q902': 'banglades', // Bangladesh
-    'Q917': 'bhutan', // Bhutan
-    'Q928': 'filipinler', // Philippines
-    'Q683': 'samoa', // Samoa
-    'Q691': 'papua-yeni-gine', // Papua New Guinea
-    'Q664': 'yeni-zelanda', // New Zealand
-    'Q691': 'papua-yeni-gine', // Papua New Guinea
-  };
+   };
 
   // Try to find a matching country
   for (const qid of qids) {
