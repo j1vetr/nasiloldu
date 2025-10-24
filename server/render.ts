@@ -97,6 +97,14 @@ export async function renderPersonDetailPage(slug: string): Promise<RenderResult
       };
     }
     
+    // Calculate age
+    let age: number | null = null;
+    if (person.birthDate && person.deathDate) {
+      const birth = new Date(person.birthDate);
+      const death = new Date(person.deathDate);
+      age = death.getFullYear() - birth.getFullYear();
+    }
+    
     const relatedPersons = await storage.getRelatedPersons(person.id, 6);
     const relatedHTML = relatedPersons.map(p => `
       <article class="rounded-lg border border-border bg-card p-4">
@@ -109,68 +117,151 @@ export async function renderPersonDetailPage(slug: string): Promise<RenderResult
     `).join('');
     
     const html = `
-      <div class="container mx-auto px-4 py-8">
-        <article>
-          <header class="mb-8">
+      <div class="container mx-auto px-4 py-12">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- Left Column - Main Content -->
+          <div class="lg:col-span-2 space-y-8">
+            ${person.description ? `
+              <section>
+                <h2 class="text-2xl md:text-3xl font-bold text-white mb-6 flex items-center gap-3">
+                  <span class="text-primary">❤</span>
+                  Hayat Hikayesi
+                </h2>
+                <div class="rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/0 p-8">
+                  <p class="text-base md:text-lg leading-relaxed text-zinc-300">${person.description}</p>
+                </div>
+              </section>
+            ` : ''}
+            
+            <!-- Ölüm Bilgileri Section (SSR) -->
+            <section>
+              <h2 class="text-2xl md:text-3xl font-bold text-white mb-6 flex items-center gap-3">
+                <span class="text-red-400">⚠</span>
+                Ölüm Bilgileri
+              </h2>
+              <div class="rounded-2xl border border-red-500/20 bg-gradient-to-br from-red-500/5 to-white/5 p-8">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div class="flex items-start gap-4">
+                    <div class="p-3 bg-red-500/10 rounded-xl">
+                      <span class="text-red-400">📅</span>
+                    </div>
+                    <div>
+                      <p class="text-sm text-zinc-500 mb-1">Ölüm Tarihi</p>
+                      <p class="font-mono text-xl text-white">${person.deathDate ? formatTurkishDate(person.deathDate) : 'Bilinmiyor'}</p>
+                    </div>
+                  </div>
+                  
+                  ${age ? `
+                    <div class="flex items-start gap-4">
+                      <div class="p-3 bg-red-500/10 rounded-xl">
+                        <span class="text-red-400">⏰</span>
+                      </div>
+                      <div>
+                        <p class="text-sm text-zinc-500 mb-1">Vefat Yaşı</p>
+                        <p class="font-mono text-xl text-white">${age} yaşında</p>
+                      </div>
+                    </div>
+                  ` : ''}
+                  
+                  ${person.deathPlace ? `
+                    <div class="flex items-start gap-4">
+                      <div class="p-3 bg-red-500/10 rounded-xl">
+                        <span class="text-red-400">📍</span>
+                      </div>
+                      <div>
+                        <p class="text-sm text-zinc-500 mb-1">Ölüm Yeri</p>
+                        <p class="text-lg text-white">${person.deathPlace}</p>
+                      </div>
+                    </div>
+                  ` : ''}
+                  
+                  ${person.deathCause ? `
+                    <div class="flex items-start gap-4">
+                      <div class="p-3 bg-red-500/10 rounded-xl">
+                        <span class="text-red-400">⚠</span>
+                      </div>
+                      <div>
+                        <p class="text-sm text-zinc-500 mb-1">Ölüm Nedeni</p>
+                        <p class="text-lg font-semibold text-white">${person.deathCause.name}</p>
+                      </div>
+                    </div>
+                  ` : ''}
+                </div>
+              </div>
+            </section>
+            
+            ${person.wikipediaUrl ? `
+              <a href="${person.wikipediaUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 transition-all text-white">
+                <span>🌐</span>
+                <span>Wikipedia'da Devamını Oku</span>
+                <span>↗</span>
+              </a>
+            ` : ''}
+          </div>
+          
+          <!-- Right Column - Sidebar -->
+          <div class="space-y-6">
+            <!-- Portrait Card -->
             ${person.imageUrl ? `
-              <img 
-                src="${person.imageUrl}" 
-                alt="${person.name}"
-                class="w-full max-w-2xl mx-auto rounded-lg shadow-lg mb-6"
-                loading="eager"
-              />
-            ` : ''}
-            <h1 class="text-5xl font-bold mb-4 text-foreground">${person.name}</h1>
-            <div class="flex flex-wrap gap-3 mb-4">
-              <span class="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
-                ${person.profession.name}
-              </span>
-              <span class="inline-flex items-center rounded-full bg-card border border-border px-3 py-1 text-sm">
-                ${person.country.name}
-              </span>
-              ${person.category ? `
-                <span class="inline-flex items-center rounded-full bg-destructive/10 px-3 py-1 text-sm font-medium text-destructive">
-                  ${person.category.name}
-                </span>
-              ` : ''}
-            </div>
-          </header>
-          
-          <section class="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="rounded-lg border border-border bg-card p-4">
-              <h3 class="text-sm font-medium text-muted-foreground mb-1">Doğum Tarihi</h3>
-              <p class="text-lg text-foreground">${person.birthDate ? formatTurkishDate(person.birthDate) : 'Bilinmiyor'}</p>
-            </div>
-            <div class="rounded-lg border border-border bg-card p-4">
-              <h3 class="text-sm font-medium text-muted-foreground mb-1">Ölüm Tarihi</h3>
-              <p class="text-lg text-foreground">${person.deathDate ? formatTurkishDate(person.deathDate) : 'Bilinmiyor'}</p>
-            </div>
-            ${person.deathCause ? `
-              <div class="rounded-lg border border-border bg-card p-4 md:col-span-2">
-                <h3 class="text-sm font-medium text-muted-foreground mb-1">Ölüm Nedeni</h3>
-                <p class="text-lg text-foreground">${person.deathCause.name}</p>
+              <div class="rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 overflow-hidden">
+                <div class="aspect-square relative bg-gradient-to-br from-zinc-800 to-zinc-900">
+                  <img src="${person.imageUrl}" alt="${person.name} portresi" class="w-full h-full object-cover" loading="eager" />
+                </div>
               </div>
             ` : ''}
+            
+            <!-- Detaylı Bilgiler Section (SSR) -->
+            <div class="rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-6">
+              <h3 class="font-bold text-lg text-white mb-6 flex items-center gap-2">
+                <span class="text-primary">💼</span>
+                Detaylı Bilgiler
+              </h3>
+              <div class="space-y-5">
+                <div class="flex items-start gap-4">
+                  <div class="p-2 bg-primary/10 rounded-lg">
+                    <span class="text-primary">📅</span>
+                  </div>
+                  <div class="flex-1">
+                    <p class="text-xs text-zinc-500 mb-1">Doğum Tarihi</p>
+                    <p class="font-mono text-sm text-white">${person.birthDate ? formatTurkishDate(person.birthDate) : 'Bilinmiyor'}</p>
+                  </div>
+                </div>
+                
+                <div class="flex items-start gap-4">
+                  <div class="p-2 bg-primary/10 rounded-lg">
+                    <span class="text-primary">💼</span>
+                  </div>
+                  <div class="flex-1">
+                    <p class="text-xs text-zinc-500 mb-1">Meslek</p>
+                    <p class="text-sm text-white">${person.profession.name}</p>
+                  </div>
+                </div>
+                
+                <div class="flex items-start gap-4">
+                  <div class="p-2 bg-primary/10 rounded-lg">
+                    <span class="text-primary">📍</span>
+                  </div>
+                  <div class="flex-1">
+                    <p class="text-xs text-zinc-500 mb-1">Ülke</p>
+                    <p class="text-sm text-white">${person.country.name}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        ${relatedPersons.length > 0 ? `
+          <section class="mt-20">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-8 flex items-center gap-3">
+              <span class="text-primary">👥</span>
+              İlgili Kişiler
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              ${relatedHTML}
+            </div>
           </section>
-          
-          ${person.description ? `
-            <section class="mb-8">
-              <h2 class="text-3xl font-semibold mb-4 text-foreground">Hayat Hikayesi</h2>
-              <div class="prose prose-invert max-w-none">
-                <p class="text-muted-foreground leading-relaxed">${person.description}</p>
-              </div>
-            </section>
-          ` : ''}
-          
-          ${relatedPersons.length > 0 ? `
-            <section class="mb-8">
-              <h2 class="text-3xl font-semibold mb-6 text-foreground">Benzer Kişiler</h2>
-              <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                ${relatedHTML}
-              </div>
-            </section>
-          ` : ''}
-        </article>
+        ` : ''}
       </div>
     `;
     
