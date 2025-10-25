@@ -46,14 +46,14 @@ nasiloldu.net is a comprehensive, Turkish-language platform providing informatio
 - **Wikipedia Turkish Integration**: Automated script (`scripts/update-turkish-descriptions.ts`) fetches Turkish descriptions from Wikipedia using Wikidata QIDs, with generic Turkish fallback for missing pages.
 
 ### Feature Specifications
-- **Wikidata Integration**: 367 persons in database with Turkish Wikipedia descriptions (160 Turkish, 207 English = 43% Turkish).
+- **Wikidata Integration**: 367 persons in database with **100% Turkish descriptions** (367/367 = 100% Turkish).
 - **Country Coverage**: 100 countries (45 original + 55 newly added) covering all major world regions.
 - **Category System**: Persons assigned to a death category (Illness, Accident, Suicide, Assassination).
 - **Filtering**: By country and profession.
 - **Search**: By person's name.
 - **Related Persons**: Minimum 6 related persons on each individual's page.
 - **Admin Panel**: PostgreSQL-based authentication for `admins`.
-- **Content Localization**: Turkish Wikipedia integration with automated fallback for missing pages.
+- **Content Localization**: Comprehensive Turkish Wikipedia integration with automated generic fallback for missing pages.
 
 ### System Design Choices
 - **Database Schema**: `admins`, `categories`, `countries`, `professions`, `death_causes`, `persons` (linked to Wikidata by QID).
@@ -69,6 +69,8 @@ nasiloldu.net is a comprehensive, Turkish-language platform providing informatio
 - **fonts.googleapis.com, fonts.gstatic.com**: For fonts.
 
 ## Recent Updates (October 25, 2025)
+- ✅ **100% TURKISH CONTENT**: All 367 persons now have Turkish descriptions (367/367 = 100%)
+- ✅ **Turkish Description Update**: 223 persons updated via Wikipedia TR API + generic fallback
 - ✅ **Database Expansion**: Added 97 political leaders (302 → 367 persons total)
 - ✅ **Country Coverage**: Added 55 countries (45 → 100 total) covering all major regions
   - Asia: Japan, India, Iran, Pakistan, Indonesia, Thailand, Vietnam, Korea, Israel, etc.
@@ -77,7 +79,6 @@ nasiloldu.net is a comprehensive, Turkish-language platform providing informatio
   - Africa: South Africa, Ghana, Ethiopia, Zimbabwe, Nigeria, Egypt, DR Congo, etc.
 - ✅ **Country Backfill**: 13 leaders assigned correct countries (Mahatma Gandhi → India, Fidel Castro → Cuba, Nelson Mandela → South Africa, etc.)
 - ✅ **Wikidata QID Mapping**: Expanded to 80+ countries for accurate auto-assignment
-- ✅ **Turkish Content**: 160/367 persons (43%) now have Turkish descriptions
 - ✅ Fixed SSR meta tag injection (replace strategy prevents duplicates)
 - ✅ Person-specific meta keywords (e.g., "Adolf Hitler nasıl öldü, Adolf Hitler ölüm sebebi")
 - ✅ Enhanced person detail SSR pages:
