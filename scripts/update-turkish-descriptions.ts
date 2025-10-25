@@ -134,11 +134,17 @@ function generateGenericTurkishDescription(person: any): string {
 }
 
 /**
- * İngilizce description'ları tespit eder
+ * İngilizce veya yetersiz description'ları tespit eder
  */
-function isEnglishDescription(description: string | null): boolean {
-  if (!description) return false;
+function needsTurkishUpdate(description: string | null): boolean {
+  if (!description) return true;
   
+  // 1. Çok kısa generic metinler (100 karakterden az)
+  if (description.length < 150) {
+    return true;
+  }
+  
+  // 2. İngilizce pattern'ler
   const englishPatterns = [
     / was /i,
     / were /i,
@@ -146,6 +152,10 @@ function isEnglishDescription(description: string | null): boolean {
     / are /i,
     / had /i,
     / has /i,
+    / the /i,
+    / and /i,
+    / for /i,
+    / from /i,
     /notable figure/i,
     /American /i,
     /British /i,
@@ -153,12 +163,37 @@ function isEnglishDescription(description: string | null): boolean {
     /Turkish /i,
     /musician/i,
     /actor/i,
+    /actress/i,
     /singer/i,
     /politician/i,
     /writer/i,
+    /journalist/i,
+    /activist/i,
+    /researcher/i,
+    /geophysicist/i,
+    /physicist/i,
+    /director/i,
+    /composer/i,
+    /\(d\. \d{4}\)/i, // (d. 1957) format
+    /Chinese /i,
+    /Indian /i,
+    /Japanese /i,
+    /French /i,
+    /German /i,
+    /Italian /i,
+    /Russian /i,
+    /Brazilian /i,
   ];
   
-  return englishPatterns.some(pattern => pattern.test(description));
+  const hasEnglish = englishPatterns.some(pattern => pattern.test(description));
+  
+  // 3. Detaylı Türkçe kontrol - bunlar varsa muhtemelen zaten Türkçe Wikipedia'dan gelmiş
+  const hasTurkishWikipedia = description.includes('görev yaptı') || 
+                              description.includes('olarak bilinir') ||
+                              description.includes('doğdu') ||
+                              description.length > 500;
+  
+  return hasEnglish || !hasTurkishWikipedia;
 }
 
 /**
@@ -178,10 +213,10 @@ async function updateTurkishDescriptions() {
   
   console.log(`📊 Toplam Kişi: ${allPersons.length}\n`);
   
-  // 2. İngilizce description'ları filtrele
-  const englishPersons = allPersons.filter(p => isEnglishDescription(p.description));
+  // 2. Türkçe güncelleme gereken kişileri filtrele
+  const personsNeedingUpdate = allPersons.filter(p => needsTurkishUpdate(p.description));
   
-  console.log(`🇬🇧 İngilizce Description: ${englishPersons.length} kişi\n`);
+  console.log(`🔄 Güncelleme Gerekiyor: ${personsNeedingUpdate.length} kişi\n`);
   console.log('─'.repeat(80));
   
   // 3. Her kişi için güncelleme yap
@@ -189,8 +224,9 @@ async function updateTurkishDescriptions() {
   let wikipediaSuccess = 0;
   let genericFallback = 0;
   
-  for (const person of englishPersons) {
-    console.log(`\n📝 İşleniyor: ${person.name} (${person.slug})`);
+  for (let i = 0; i < personsNeedingUpdate.length; i++) {
+    const person = personsNeedingUpdate[i];
+    console.log(`\n[${i + 1}/${personsNeedingUpdate.length}] 📝 İşleniyor: ${person.name} (${person.slug})`);
     
     let newDescription: string | null = null;
     let source: 'wikipedia-tr' | 'generic' = 'generic';
@@ -202,6 +238,9 @@ async function updateTurkishDescriptions() {
         source = 'wikipedia-tr';
         wikipediaSuccess++;
       }
+      
+      // API rate limit için delay (500ms)
+      await new Promise(resolve => setTimeout(resolve, 500));
     } else {
       console.log(`⚠️ Wikidata QID yok, generic metin oluşturulacak`);
     }
