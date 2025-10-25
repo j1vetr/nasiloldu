@@ -2,33 +2,54 @@ import { db } from '../server/db';
 import { persons, countries } from '../shared/schema';
 import { eq, and } from 'drizzle-orm';
 
-// Leaders and their expected country slugs
+// Leaders and their expected country slugs (updated with all newly added countries)
 const LEADER_COUNTRY_FIXES: Record<string, string> = {
+  // Canadian leaders
   'pierre-trudeau': 'canada',
   'lester-b-pearson': 'canada',
   'john-diefenbaker': 'canada',
+  
+  // German/Austrian leaders
   'konrad-adenauer': 'almanya',
   'otto-von-bismarck': 'almanya',
   'kaiser-wilhelm-ii': 'almanya',
   'franz-joseph-i': 'austria',
+  
+  // Balkan leaders
   'josip-broz-tito': 'yugoslavya',
-  'slobodan-milo-evi': 'sırbistan',
-  'juan-per-n': 'argentina',
-  'eva-per-n': 'argentina',
-  'augusto-pinochet': 'chile',
+  'slobodan-milosevic': 'sirbistan',
+  
+  // Latin American leaders
+  'juan-peron': 'argentina',
+  'eva-peron': 'argentina',
   'jorge-rafael-videla': 'argentina',
-  'get-lio-vargas': 'brazil',
+  'augusto-pinochet': 'chile',
+  'getulio-vargas': 'brazil',
   'juscelino-kubitschek': 'brazil',
+  'fidel-castro': 'kuba',
+  
+  // Middle Eastern leaders
   'ruhollah-khomeini': 'iran',
-  'mohammad-reza-i-of-iran': 'iran',
+  'mohammad-reza-pahlavi': 'iran',
+  
+  // Indian leaders
   'mahatma-gandhi': 'hindistan',
   'indira-gandhi': 'hindistan',
+  'jawaharlal-nehru': 'hindistan',
+  
+  // African leaders
   'haile-selassie': 'etiyopya',
   'kwame-nkrumah': 'gana',
   'patrice-lumumba': 'kongo-demokratik-cumhuriyeti',
   'mobutu-sese-seko': 'zaire',
   'robert-mugabe': 'zimbabve',
   'f-w-de-klerk': 'guney-afrika',
+  'nelson-mandela': 'guney-afrika',
+  
+  // Asian leaders
+  'emperor-hirohito': 'japonya',
+  'mao-zedong': 'cin',
+  'deng-xiaoping': 'cin',
 };
 
 async function fixLeaderCountries() {

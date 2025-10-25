@@ -313,10 +313,9 @@ async function mapProfessionQIDToDBId(qids: string[]): Promise<number | null> {
 }
 
 async function mapCountryQIDToDBId(qids: string[]): Promise<number | null> {
-  // ULTRA CONSERVATIVE: Only 100% verified major countries
-  // Everything else fallsback to "Bilinmiyor" (user accepts missing data)
+  // Comprehensive country QID mapping - all countries now in DB!
   const countryMap: Record<string, string> = {
-    // Major modern countries - absolutely verified
+    // Core countries
     'Q43': 'turkiye', // Turkey
     'Q30': 'amerika-birlesik-devletleri', // USA
     'Q145': 'birlesik-krallik', // UK
@@ -325,14 +324,90 @@ async function mapCountryQIDToDBId(qids: string[]): Promise<number | null> {
     'Q38': 'italy', // Italy
     'Q29': 'i-spanya', // Spain
     'Q159': 'rusya', // Russia
-    'Q148': 'cin-halk-cumhuriyeti', // China
-    'Q16': 'canada', // Canada ⭐ CRITICAL FIX FOR TRUDEAU, PEARSON, etc.
+    'Q148': 'cin', // China
+    'Q16': 'canada', // Canada ⭐ CRITICAL
     'Q155': 'brazil', // Brazil
     'Q414': 'argentina', // Argentina
     'Q408': 'australia', // Australia
     'Q40': 'austria', // Austria
     'Q114': 'kenya', // Kenya
-   };
+    'Q27': 'ireland', // Ireland
+    'Q34': 'sweden', // Sweden
+    'Q39': 'switzerland', // Switzerland
+    'Q664': 'new-zealand', // New Zealand
+    
+    // Asia
+    'Q17': 'japonya', // Japan
+    'Q668': 'hindistan', // India
+    'Q794': 'iran', // Iran
+    'Q843': 'pakistan', // Pakistan
+    'Q252': 'endonezya', // Indonesia
+    'Q869': 'tayland', // Thailand
+    'Q928': 'filipinler', // Philippines
+    'Q881': 'vietnam', // Vietnam
+    'Q884': 'guney-kore', // South Korea
+    'Q423': 'kuzey-kore', // North Korea
+    'Q801': 'israil', // Israel
+    'Q851': 'suudi-arabistan', // Saudi Arabia
+    'Q796': 'irak', // Iraq
+    'Q858': 'suriye', // Syria
+    
+    // Europe
+    'Q36': 'polonya', // Poland
+    'Q55': 'hollanda', // Netherlands
+    'Q31': 'belcika', // Belgium
+    'Q45': 'portekiz', // Portugal
+    'Q41': 'yunanistan', // Greece
+    'Q20': 'norvec', // Norway
+    'Q35': 'danimarka', // Denmark
+    'Q33': 'finlandiya', // Finland
+    'Q218': 'romanya', // Romania
+    'Q28': 'macaristan', // Hungary
+    'Q219': 'bulgaristan', // Bulgaria
+    'Q403': 'sirbistan', // Serbia
+    'Q212': 'ukrayna', // Ukraine
+    
+    // Americas
+    'Q96': 'meksika', // Mexico
+    'Q241': 'kuba', // Cuba
+    'Q298': 'chile', // Chile
+    'Q739': 'kolombiya', // Colombia
+    'Q717': 'venezuela', // Venezuela
+    'Q419': 'peru', // Peru
+    'Q736': 'ekvador', // Ecuador
+    'Q77': 'uruguay', // Uruguay
+    'Q733': 'paraguay', // Paraguay
+    'Q750': 'bolivya', // Bolivia
+    
+    // Africa
+    'Q258': 'guney-afrika', // South Africa
+    'Q117': 'gana', // Ghana
+    'Q115': 'etiyopya', // Ethiopia
+    'Q954': 'zimbabve', // Zimbabwe
+    'Q1033': 'nijerya', // Nigeria
+    'Q79': 'misir', // Egypt
+    'Q974': 'kongo-demokratik-cumhuriyeti', // DR Congo
+    'Q916': 'angola', // Angola
+    'Q1029': 'mozambik', // Mozambique
+    'Q924': 'tanzanya', // Tanzania
+    'Q1036': 'uganda', // Uganda
+    'Q262': 'cezayir', // Algeria
+    'Q1028': 'fas', // Morocco
+    'Q948': 'tunus', // Tunisia
+    'Q1016': 'libya', // Libya
+    
+    // Historical entities
+    'Q15180': 'soviet-union', // Soviet Union
+    'Q83958': 'yugoslavya', // Yugoslavia
+    'Q971': 'zaire', // Zaire
+    'Q34266': 'russian-socialist-federative-soviet-republic', // RSFSR
+    'Q131964': 'austrian-empire', // Austrian Empire
+    'Q7318': 'nazi-almanyasi', // Nazi Germany
+    'Q12560': 'osmanli-i-mparatorlugu', // Ottoman Empire
+    'Q172579': 'i-talya-kralligi', // Kingdom of Italy
+    'Q153966': 'italian-social-republic', // Italian Social Republic
+    'Q1049476': 'libyan-arab-republic', // Libya Arab Republic
+  };
 
   // Try to find a matching country
   for (const qid of qids) {

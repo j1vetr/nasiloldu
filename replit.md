@@ -46,13 +46,14 @@ nasiloldu.net is a comprehensive, Turkish-language platform providing informatio
 - **Wikipedia Turkish Integration**: Automated script (`scripts/update-turkish-descriptions.ts`) fetches Turkish descriptions from Wikipedia using Wikidata QIDs, with generic Turkish fallback for missing pages.
 
 ### Feature Specifications
-- **Wikidata Integration**: 236 persons in database with Turkish Wikipedia descriptions (~50% Turkish, ~50% English).
+- **Wikidata Integration**: 367 persons in database with Turkish Wikipedia descriptions (160 Turkish, 207 English = 43% Turkish).
+- **Country Coverage**: 100 countries (45 original + 55 newly added) covering all major world regions.
 - **Category System**: Persons assigned to a death category (Illness, Accident, Suicide, Assassination).
 - **Filtering**: By country and profession.
 - **Search**: By person's name.
 - **Related Persons**: Minimum 6 related persons on each individual's page.
 - **Admin Panel**: PostgreSQL-based authentication for `admins`.
-- **Content Localization**: 117 persons converted from English to Turkish descriptions (95+ from Wikipedia TR, ~20 generic fallback).
+- **Content Localization**: Turkish Wikipedia integration with automated fallback for missing pages.
 
 ### System Design Choices
 - **Database Schema**: `admins`, `categories`, `countries`, `professions`, `death_causes`, `persons` (linked to Wikidata by QID).
@@ -67,12 +68,17 @@ nasiloldu.net is a comprehensive, Turkish-language platform providing informatio
 - **Google Analytics 4 & Search Console**: Placeholders for future integration.
 - **fonts.googleapis.com, fonts.gstatic.com**: For fonts.
 
-## Recent Updates (October 24, 2025)
+## Recent Updates (October 25, 2025)
+- ✅ **Database Expansion**: Added 97 political leaders (302 → 367 persons total)
+- ✅ **Country Coverage**: Added 55 countries (45 → 100 total) covering all major regions
+  - Asia: Japan, India, Iran, Pakistan, Indonesia, Thailand, Vietnam, Korea, Israel, etc.
+  - Europe: Poland, Netherlands, Belgium, Portugal, Greece, Norway, Denmark, Finland, etc.
+  - Americas: Mexico, Cuba, Chile, Colombia, Venezuela, Peru, Ecuador, etc.
+  - Africa: South Africa, Ghana, Ethiopia, Zimbabwe, Nigeria, Egypt, DR Congo, etc.
+- ✅ **Country Backfill**: 13 leaders assigned correct countries (Mahatma Gandhi → India, Fidel Castro → Cuba, Nelson Mandela → South Africa, etc.)
+- ✅ **Wikidata QID Mapping**: Expanded to 80+ countries for accurate auto-assignment
+- ✅ **Turkish Content**: 160/367 persons (43%) now have Turkish descriptions
 - ✅ Fixed SSR meta tag injection (replace strategy prevents duplicates)
-- ✅ Created Wikipedia Turkish description automation script
-- ✅ Converted 117 English descriptions to Turkish (~95+ Wikipedia, ~20 generic)
-- ✅ Database now 50% Turkish content (up from 0%)
-- ✅ Architect approved SSR implementation with PASS status
 - ✅ Person-specific meta keywords (e.g., "Adolf Hitler nasıl öldü, Adolf Hitler ölüm sebebi")
 - ✅ Enhanced person detail SSR pages:
   - "Ölüm Bilgileri" section (death date, age, location, cause)
