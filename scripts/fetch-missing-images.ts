@@ -10,6 +10,23 @@ interface WikidataImageResponse {
   };
 }
 
+interface WikipediaSummary {
+  title?: string;
+  thumbnail?: {
+    source: string;
+    width: number;
+    height: number;
+  };
+  originalimage?: {
+    source: string;
+    width: number;
+    height: number;
+  };
+}
+
+/**
+ * Wikidata SPARQL ile fotoğraf çeker (P18 property)
+ */
 async function fetchImageFromWikidata(qid: string): Promise<string | null> {
   const query = `
     SELECT ?image WHERE {
@@ -28,7 +45,7 @@ async function fetchImageFromWikidata(qid: string): Promise<string | null> {
     });
 
     if (!response.ok) {
-      console.log(`❌ ${qid}: HTTP ${response.status}`);
+      console.log(`❌ Wikidata ${qid}: HTTP ${response.status}`);
       return null;
     }
 
@@ -36,16 +53,112 @@ async function fetchImageFromWikidata(qid: string): Promise<string | null> {
 
     if (data.results.bindings.length > 0 && data.results.bindings[0].image) {
       const imageUrl = data.results.bindings[0].image.value;
-      console.log(`✅ ${qid}: Görsel bulundu`);
+      console.log(`✅ Wikidata ${qid}: Görsel bulundu`);
       return imageUrl;
     } else {
-      console.log(`⚠️ ${qid}: Görsel yok`);
+      console.log(`⚠️ Wikidata ${qid}: Görsel yok`);
       return null;
     }
   } catch (error) {
-    console.error(`❌ ${qid}: Hata -`, error);
+    console.error(`❌ Wikidata ${qid}: Hata -`, error);
     return null;
   }
+}
+
+/**
+ * Wikidata QID'den Wikipedia sayfa başlığını çeker
+ */
+async function getWikipediaTitle(qid: string, lang: 'tr' | 'en'): Promise<string | null> {
+  try {
+    const sitefilter = lang === 'tr' ? 'trwiki' : 'enwiki';
+    const url = `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${qid}&props=sitelinks&sitefilter=${sitefilter}&format=json&origin=*`;
+    
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'nasiloldu.net/1.0'
+      }
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const data = await response.json();
+    const entity = data.entities?.[qid];
+    const title = entity?.sitelinks?.[sitefilter]?.title;
+    
+    return title || null;
+  } catch (error) {
+    console.error(`❌ Wikidata title fetch error (${qid}, ${lang}):`, error);
+    return null;
+  }
+}
+
+/**
+ * Wikipedia REST API ile fotoğraf çeker
+ */
+async function fetchImageFromWikipedia(qid: string): Promise<string | null> {
+  // TR Wikipedia'yı dene
+  const trTitle = await getWikipediaTitle(qid, 'tr');
+  
+  if (trTitle) {
+    const trUrl = `https://tr.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(trTitle)}`;
+    
+    try {
+      const response = await fetch(trUrl, {
+        headers: {
+          'User-Agent': 'nasiloldu.net/1.0'
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json() as WikipediaSummary;
+        
+        // Orijinal resmi tercih et, yoksa thumbnail kullan
+        if (data.originalimage?.source) {
+          console.log(`✅ Wikipedia TR ${qid}: Orijinal görsel bulundu`);
+          return data.originalimage.source;
+        } else if (data.thumbnail?.source) {
+          console.log(`✅ Wikipedia TR ${qid}: Thumbnail bulundu`);
+          return data.thumbnail.source;
+        }
+      }
+    } catch (error) {
+      console.error(`❌ Wikipedia TR fetch error (${qid}):`, error);
+    }
+  }
+
+  // EN Wikipedia'yı dene (fallback)
+  const enTitle = await getWikipediaTitle(qid, 'en');
+  
+  if (enTitle) {
+    const enUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(enTitle)}`;
+    
+    try {
+      const response = await fetch(enUrl, {
+        headers: {
+          'User-Agent': 'nasiloldu.net/1.0'
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json() as WikipediaSummary;
+        
+        if (data.originalimage?.source) {
+          console.log(`✅ Wikipedia EN ${qid}: Orijinal görsel bulundu`);
+          return data.originalimage.source;
+        } else if (data.thumbnail?.source) {
+          console.log(`✅ Wikipedia EN ${qid}: Thumbnail bulundu`);
+          return data.thumbnail.source;
+        }
+      }
+    } catch (error) {
+      console.error(`❌ Wikipedia EN fetch error (${qid}):`, error);
+    }
+  }
+
+  console.log(`⚠️ Wikipedia ${qid}: Hiçbir kaynakta görsel yok`);
+  return null;
 }
 
 async function main() {
@@ -73,7 +186,16 @@ async function main() {
       continue;
     }
 
-    const imageUrl = await fetchImageFromWikidata(person.qid);
+    let imageUrl: string | null = null;
+
+    // 1. Önce Wikidata'dan dene
+    imageUrl = await fetchImageFromWikidata(person.qid);
+
+    // 2. Bulamazsa Wikipedia'dan dene (TR → EN fallback)
+    if (!imageUrl) {
+      console.log(`🔄 Wikipedia fallback deneniyor...`);
+      imageUrl = await fetchImageFromWikipedia(person.qid);
+    }
 
     if (imageUrl) {
       updates.push({
@@ -86,8 +208,8 @@ async function main() {
       failCount++;
     }
 
-    // API rate limit için delay (300ms)
-    await new Promise(resolve => setTimeout(resolve, 300));
+    // API rate limit için delay (400ms - 3 API call olabilir)
+    await new Promise(resolve => setTimeout(resolve, 400));
   }
 
   console.log('\n\n================================================================================');
